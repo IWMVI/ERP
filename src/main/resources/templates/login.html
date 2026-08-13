@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login | ERP</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="auth-page">
+<main class="auth-card">
+    <h1>ERP</h1>
+    <p class="muted">Entre para acessar o sistema.</p>
+
+    <div class="alert error" th:if="${param.error}">E-mail ou senha inválidos.</div>
+    <div class="alert success" th:if="${param.logout}">Sessão encerrada com sucesso.</div>
+
+    <form th:action="@{/login}" method="post" class="form-stack">
+        <label for="username">E-mail</label>
+        <input id="username" name="username" type="email" autocomplete="username" required autofocus>
+
+        <label for="password">Senha</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+
+        <button type="submit">Entrar</button>
+    </form>
+</main>
+</body>
+</html>
