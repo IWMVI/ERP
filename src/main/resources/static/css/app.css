@@ -1,0 +1,27 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Arial, sans-serif; background: #f5f6f8; color: #1f2937; }
+a { color: inherit; }
+.topbar { height: 64px; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; background: #fff; border-bottom: 1px solid #e5e7eb; }
+.brand { font-weight: 700; text-decoration: none; }
+.container { max-width: 1100px; margin: 40px auto; padding: 0 24px; }
+.narrow { max-width: 620px; }
+.page-heading { display: flex; justify-content: space-between; gap: 24px; align-items: center; margin-bottom: 24px; }
+.muted { color: #6b7280; }
+.auth-page { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+.auth-card { width: 100%; max-width: 420px; background: #fff; padding: 32px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 10px 30px rgba(0,0,0,.06); }
+.form-stack { display: flex; flex-direction: column; gap: 10px; }
+input, select { width: 100%; padding: 11px 12px; border: 1px solid #d1d5db; border-radius: 8px; font: inherit; background: #fff; }
+button, .button { display: inline-block; padding: 10px 16px; border: 0; border-radius: 8px; background: #111827; color: #fff; font: inherit; text-decoration: none; cursor: pointer; }
+.button.secondary { background: #e5e7eb; color: #111827; }
+.link-button { background: transparent; color: #111827; padding: 0; }
+.actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+.alert { padding: 12px 14px; border-radius: 8px; margin: 16px 0; }
+.alert.error, .field-error { color: #991b1b; background: #fee2e2; }
+.alert.success { color: #166534; background: #dcfce7; }
+.field-error { background: transparent; font-size: 12px; }
+.table-wrapper { overflow-x: auto; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+th { font-size: 13px; color: #6b7280; }
+.badge { display: inline-block; padding: 4px 8px; border-radius: 999px; background: #eef2ff; font-size: 12px; }
+@media (max-width: 640px) { .page-heading { align-items: flex-start; flex-direction: column; } .topbar { padding: 0 20px; } }
