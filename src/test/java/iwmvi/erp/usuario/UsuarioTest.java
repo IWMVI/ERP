@@ -1,12 +1,9 @@
 package iwmvi.erp.usuario;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class UsuarioTest {
 
@@ -23,6 +20,7 @@ class UsuarioTest {
         assertEquals("Wallace", usuario.getNome());
         assertEquals("wallace@gmail.com", usuario.getEmail());
         assertEquals("123456", usuario.getSenha());
+        assertEquals(PerfilUsuario.USUARIO, usuario.getPerfil());
     }
 
     @Test
@@ -43,6 +41,7 @@ class UsuarioTest {
         assertNull(usuarioSemDados.getNome());
         assertNull(usuarioSemDados.getEmail());
         assertNull(usuarioSemDados.getSenha());
+        assertNull(usuarioSemDados.getPerfil());
         assertTrue(usuarioSemDados.isAtivo());
     }
 }
