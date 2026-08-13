@@ -1,5 +1,6 @@
 package iwmvi.erp.security;
 
+import iwmvi.erp.shared.exception.EmailJaCadastradoException;
 import iwmvi.erp.usuario.PerfilUsuario;
 import iwmvi.erp.usuario.UsuarioRequest;
 import iwmvi.erp.usuario.UsuarioService;
@@ -35,7 +36,7 @@ public class AdministradorInicialInitializer implements ApplicationRunner {
 
         try {
             usuarioService.criar(new UsuarioRequest(nome, email, senha, PerfilUsuario.ADMIN));
-        } catch (RuntimeException ignored) {
+        } catch (EmailJaCadastradoException ignored) {
             // Administrador já cadastrado.
         }
     }
