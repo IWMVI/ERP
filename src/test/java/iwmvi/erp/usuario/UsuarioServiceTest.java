@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import iwmvi.erp.shared.exception.EmailJaCadastradoException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,19 +16,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import iwmvi.erp.Usuario.Usuario;
-import iwmvi.erp.Usuario.UsuarioRepository;
-import iwmvi.erp.Usuario.UsuarioRequest;
-import iwmvi.erp.Usuario.UsuarioService;
-import iwmvi.erp.exceptions.EmailJaCadastradoException;
-
 @ExtendWith(MockitoExtension.class)
-public class UsuarioServiceTest {
+class UsuarioServiceTest {
 
     @Mock
     private UsuarioRepository usuarioRepository;
 
-    @Mock
     private UsuarioService usuarioService;
 
     @BeforeEach
@@ -37,7 +31,7 @@ public class UsuarioServiceTest {
 
     @Test
     @DisplayName("Deve cadastrar usuário.")
-    void deveCadastrarUsuario() throws EmailJaCadastradoException {
+    void deveCadastrarUsuario() {
         UsuarioRequest request = new UsuarioRequest(
                 "Wallace",
                 "wallace@gmail.com",
@@ -67,8 +61,6 @@ public class UsuarioServiceTest {
 
         when(usuarioRepository.existsByEmail(request.email())).thenReturn(true);
 
-        assertThrows(EmailJaCadastradoException.class, () -> {
-            usuarioService.criar(request);
-        });
+        assertThrows(EmailJaCadastradoException.class, () -> usuarioService.criar(request));
     }
 }
