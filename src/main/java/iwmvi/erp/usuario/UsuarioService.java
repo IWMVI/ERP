@@ -1,6 +1,6 @@
-package iwmvi.erp.Usuario;
+package iwmvi.erp.usuario;
 
-import iwmvi.erp.exceptions.EmailJaCadastradoException;
+import iwmvi.erp.shared.exception.EmailJaCadastradoException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,7 +12,7 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    public Usuario criar(UsuarioRequest request) throws EmailJaCadastradoException {
+    public Usuario criar(UsuarioRequest request) {
         if (usuarioRepository.existsByEmail(request.email())) {
             throw new EmailJaCadastradoException(request.email());
         }

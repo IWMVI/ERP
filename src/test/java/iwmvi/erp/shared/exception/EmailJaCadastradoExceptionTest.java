@@ -1,11 +1,11 @@
-package iwmvi.erp.exceptions;
+package iwmvi.erp.shared.exception;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
-public class EmailJaCadastradoExceptionTest {
+class EmailJaCadastradoExceptionTest {
 
     @Test
     void deveInstanciarExcecao() {

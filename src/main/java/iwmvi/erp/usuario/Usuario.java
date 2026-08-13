@@ -1,11 +1,15 @@
-package iwmvi.erp.Usuario;
+package iwmvi.erp.usuario;
 
-import jakarta.persistence.*;
-import lombok.Builder;
-import org.springframework.boot.context.properties.bind.DefaultValue;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "usuarios", uniqueConstraints = {@UniqueConstraint(name = "uk_usuario_email", columnNames = "email")})
+@Table(name = "usuarios", uniqueConstraints = @UniqueConstraint(name = "uk_usuario_email", columnNames = "email"))
 public class Usuario {
 
     @Id
@@ -24,7 +28,7 @@ public class Usuario {
     @Column(nullable = false)
     private boolean ativo = true;
 
-    public Usuario() {
+    protected Usuario() {
     }
 
     public Usuario(String nome, String email, String senha) {

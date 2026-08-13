@@ -1,4 +1,4 @@
-package iwmvi.erp.Usuario;
+package iwmvi.erp.usuario;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

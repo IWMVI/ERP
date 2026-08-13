@@ -8,9 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import iwmvi.erp.Usuario.Usuario;
-
-public class UsuarioTest {
+class UsuarioTest {
 
     private Usuario usuario;
 
@@ -38,7 +36,7 @@ public class UsuarioTest {
     }
 
     @Test
-    void deveCriarUsuarioComConstrutorPadrao() {
+    void deveCriarUsuarioComConstrutorPadraoParaJpa() {
         Usuario usuarioSemDados = new Usuario();
 
         assertNotNull(usuarioSemDados);
