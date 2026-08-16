@@ -74,6 +74,7 @@ public class ProdutoController {
             RedirectAttributes redirect) {
         if (result.hasErrors()) {
             preparar(model, request, null);
+            model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o produto.");
             return "produtos/form";
         }
 
@@ -83,14 +84,17 @@ public class ProdutoController {
         } catch (CodigoProdutoJaCadastradoException exception) {
             result.rejectValue("codigo", "duplicado", exception.getMessage());
             preparar(model, request, null);
+            model.addAttribute("erroGlobal", exception.getMessage());
             return "produtos/form";
         } catch (DocumentoInvalidoException exception) {
             result.rejectValue("gtin", "gtin.invalido", exception.getMessage());
             preparar(model, request, null);
+            model.addAttribute("erroGlobal", exception.getMessage());
             return "produtos/form";
         } catch (IllegalArgumentException | IllegalStateException exception) {
             result.reject("foto.invalida", exception.getMessage());
             preparar(model, request, null);
+            model.addAttribute("erroGlobal", exception.getMessage());
             return "produtos/form";
         }
 
@@ -108,6 +112,7 @@ public class ProdutoController {
             RedirectAttributes redirect) {
         if (result.hasErrors()) {
             preparar(model, request, id);
+            model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o produto.");
             return "produtos/form";
         }
 
@@ -123,14 +128,17 @@ public class ProdutoController {
         } catch (CodigoProdutoJaCadastradoException exception) {
             result.rejectValue("codigo", "duplicado", exception.getMessage());
             preparar(model, request, id);
+            model.addAttribute("erroGlobal", exception.getMessage());
             return "produtos/form";
         } catch (DocumentoInvalidoException exception) {
             result.rejectValue("gtin", "gtin.invalido", exception.getMessage());
             preparar(model, request, id);
+            model.addAttribute("erroGlobal", exception.getMessage());
             return "produtos/form";
         } catch (IllegalArgumentException | IllegalStateException exception) {
             result.reject("foto.invalida", exception.getMessage());
             preparar(model, request, id);
+            model.addAttribute("erroGlobal", exception.getMessage());
             return "produtos/form";
         }
 
@@ -139,8 +147,9 @@ public class ProdutoController {
     }
 
     @PostMapping("/{id}/status")
-    public String status(@PathVariable Long id) {
+    public String status(@PathVariable Long id, RedirectAttributes redirect) {
         service.alternarAtivo(id);
+        redirect.addFlashAttribute("sucesso", "Status do produto atualizado.");
         return "redirect:/produtos";
     }
 
