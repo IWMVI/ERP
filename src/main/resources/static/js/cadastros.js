@@ -37,6 +37,27 @@
 
     const maskGtin = (value) => digits(value).slice(0, 14);
 
+    const formatMoney = (cents) => {
+        const normalized = String(cents || "0").padStart(3, "0");
+        const integerPart = normalized.slice(0, -2).replace(/^0+(?=\d)/, "") || "0";
+        const decimalPart = normalized.slice(-2);
+        const grouped = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        return `${grouped},${decimalPart}`;
+    };
+
+    const decimalToCents = (value) => {
+        if (value === null || value === undefined || value === "") return "0";
+        const normalized = String(value).replace(",", ".");
+        const [integer = "0", decimal = ""] = normalized.split(".");
+        return `${digits(integer) || "0"}${digits(decimal).padEnd(2, "0").slice(0, 2)}`.replace(/^0+(?=\d)/, "") || "0";
+    };
+
+    const centsToDecimal = (cents) => {
+        const normalized = String(cents || "0").padStart(3, "0");
+        const integerPart = normalized.slice(0, -2).replace(/^0+(?=\d)/, "") || "0";
+        return `${integerPart}.${normalized.slice(-2)}`;
+    };
+
     const formatters = {
         cpf: maskCpf,
         documento: maskCpfCnpj,
@@ -59,6 +80,33 @@
     document.querySelectorAll("[data-format]").forEach((element) => {
         const formatter = formatters[element.dataset.format];
         if (formatter) element.textContent = formatter(element.textContent ?? "");
+    });
+
+    document.querySelectorAll("[data-money-input]").forEach((input) => {
+        const targetId = input.dataset.moneyTarget;
+        const hidden = targetId ? document.getElementById(targetId) : null;
+        if (!hidden) return;
+
+        let cents = decimalToCents(hidden.value);
+
+        const render = () => {
+            input.value = formatMoney(cents);
+            hidden.value = centsToDecimal(cents);
+        };
+
+        input.addEventListener("input", () => {
+            cents = digits(input.value).replace(/^0+(?=\d)/, "") || "0";
+            render();
+        });
+
+        input.addEventListener("keydown", (event) => {
+            if (event.key !== "Backspace" && event.key !== "Delete") return;
+            event.preventDefault();
+            cents = cents.length > 1 ? cents.slice(0, -1) : "0";
+            render();
+        });
+
+        render();
     });
 
     document.querySelectorAll("[data-image-input]").forEach((input) => {
