@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Privacidade e proteção de dados | ERP</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+</head>
+<body>
+<main class="privacy-page">
+    <article class="privacy-card">
+        <header>
+            <span class="brand-mark">ERP</span>
+            <div>
+                <h1>Privacidade e proteção de dados</h1>
+                <p class="muted">Informações sobre o tratamento de dados pessoais neste sistema.</p>
+            </div>
+        </header>
+
+        <section>
+            <h2>Controlador e contato</h2>
+            <p><strong>Controlador:</strong> <span th:text="${controladorPrivacidade}">Empresa</span></p>
+            <p><strong>Canal de privacidade:</strong> <a th:href="${'mailto:' + contatoPrivacidade}" th:text="${contatoPrivacidade}">privacidade@empresa.com.br</a></p>
+            <p><strong>Encarregado:</strong> <span th:text="${encarregadoPrivacidade}">Encarregado</span></p>
+        </section>
+
+        <section>
+            <h2>Dados e finalidades</h2>
+            <p>O ERP trata dados cadastrais e de contato de usuários, funcionários, clientes e fornecedores para autenticação, controle de acesso, execução de relações contratuais, rotinas administrativas, estoque, segurança e cumprimento de obrigações legais ou regulatórias.</p>
+            <p>Podem ser tratados nome, e-mail, telefone, endereço, CPF ou CNPJ, data de nascimento, função e fotografia, conforme a necessidade de cada cadastro. O acesso é limitado a usuários autorizados segundo suas atribuições.</p>
+        </section>
+
+        <section>
+            <h2>Compartilhamento e conservação</h2>
+            <p>Consultas de CEP e CNPJ podem ser encaminhadas a serviços externos de consulta cadastral. Outros compartilhamentos somente devem ocorrer quando necessários à operação, ao cumprimento de obrigação legal ou ao exercício regular de direitos.</p>
+            <p>Os dados são conservados pelo período necessário às finalidades informadas e aos prazos legais aplicáveis. Encerrada a finalidade e inexistindo fundamento para conservação, devem ser eliminados ou anonimizados de forma segura.</p>
+        </section>
+
+        <section>
+            <h2>Direitos do titular</h2>
+            <p>O titular pode solicitar confirmação e acesso, correção, informação sobre compartilhamentos, portabilidade quando regulamentada, anonimização, bloqueio ou eliminação nos casos permitidos, além de oposição ou revogação de consentimento quando aplicável.</p>
+            <p>As solicitações devem ser enviadas ao canal de privacidade acima. Para proteger o próprio titular, poderá ser solicitada comprovação de identidade antes do atendimento.</p>
+        </section>
+
+        <footer>
+            <a class="button secondary" th:href="@{/login}">Voltar ao acesso</a>
+        </footer>
+    </article>
+</main>
+</body>
+</html>

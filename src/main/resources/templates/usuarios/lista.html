@@ -20,15 +20,23 @@
             <section class="registry-card">
                 <div class="table-wrapper">
                     <table>
-                        <thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Status</th></tr></thead>
+                        <thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Status</th><th aria-label="Ações"></th></tr></thead>
                         <tbody>
                         <tr th:each="usuario : ${usuarios}">
                             <td th:text="${usuario.nome}"></td>
                             <td th:text="${usuario.email}"></td>
                             <td th:text="${usuario.perfil}"></td>
                             <td><span class="badge success" th:if="${usuario.ativo}">Ativo</span><span class="badge" th:unless="${usuario.ativo}">Inativo</span></td>
+                            <td>
+                                <details class="row-actions">
+                                    <summary aria-label="Abrir ações do usuário" title="Ações"><svg class="row-actions-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></summary>
+                                    <div class="row-actions-menu">
+                                        <form th:action="@{/usuarios/{id}/status(id=${usuario.id})}" method="post"><button type="submit" th:text="${usuario.ativo ? 'Revogar acesso' : 'Reativar acesso'}"></button></form>
+                                    </div>
+                                </details>
+                            </td>
                         </tr>
-                        <tr th:if="${#lists.isEmpty(usuarios)}"><td colspan="4">Nenhum usuário cadastrado.</td></tr>
+                        <tr th:if="${#lists.isEmpty(usuarios)}"><td colspan="5">Nenhum usuário cadastrado.</td></tr>
                         </tbody>
                     </table>
                 </div>

@@ -11,6 +11,7 @@ import iwmvi.erp.fornecedor.FornecedorService;
 import iwmvi.erp.funcionario.FuncionarioService;
 import iwmvi.erp.integracao.BrasilApiClient;
 import iwmvi.erp.integracao.PessoaCadastroLookupService;
+import iwmvi.erp.integracao.ValidacaoCadastroService;
 import iwmvi.erp.produto.ProdutoRepository;
 import iwmvi.erp.produto.ProdutoService;
 import iwmvi.erp.security.SecurityConfig;
@@ -79,6 +80,8 @@ class PageRenderingSmokeTest {
     private BrasilApiClient brasilApiClient;
     @MockitoBean
     private PessoaCadastroLookupService pessoaCadastroLookupService;
+    @MockitoBean
+    private ValidacaoCadastroService validacaoCadastroService;
 
     @BeforeEach
     void setUp() {

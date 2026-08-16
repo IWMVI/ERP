@@ -17,11 +17,11 @@ public class Usuario {
     private String email;
     @Column(nullable = false)
     private String senha;
-    @Column(nullable = false)
-    private final boolean ativo = true;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PerfilUsuario perfil = PerfilUsuario.USUARIO;
+    @Column(nullable = false)
+    private boolean ativo = true;
 
     protected Usuario() {
     }
@@ -35,6 +35,10 @@ public class Usuario {
         this.email = email;
         this.senha = senha;
         this.perfil = perfil;
+    }
+
+    public void alternarAtivo() {
+        this.ativo = !this.ativo;
     }
 
     public Long getId() {

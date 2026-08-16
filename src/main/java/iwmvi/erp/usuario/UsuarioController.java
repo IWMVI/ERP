@@ -4,11 +4,13 @@ import iwmvi.erp.auditoria.AuditoriaService;
 import iwmvi.erp.shared.exception.EmailJaCadastradoException;
 import iwmvi.erp.shared.web.PageView;
 import jakarta.validation.Valid;
+import java.security.Principal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -64,6 +66,25 @@ public class UsuarioController {
         }
 
         redirectAttributes.addFlashAttribute("sucesso", "Usuário cadastrado com sucesso.");
+        return "redirect:/usuarios";
+    }
+
+    @PostMapping("/usuarios/{id}/status")
+    public String alternarStatus(
+        @PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
+        try {
+            Usuario usuario = usuarioService.alternarAtivo(id, principal.getName());
+            auditoriaService.registrar(
+                usuario.isAtivo() ? "ATIVAR" : "INATIVAR",
+                "Usuario",
+                usuario.getId(),
+                usuario.getEmail());
+            redirectAttributes.addFlashAttribute(
+                "sucesso",
+                usuario.isAtivo() ? "Usuário ativado com sucesso." : "Acesso revogado com sucesso.");
+        } catch (IllegalArgumentException | IllegalStateException exception) {
+            redirectAttributes.addFlashAttribute("erroGlobal", exception.getMessage());
+        }
         return "redirect:/usuarios";
     }
 }

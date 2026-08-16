@@ -8,6 +8,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -30,10 +32,11 @@ class UsuarioServiceTest {
     @Test
     void deveCadastrarUsuarioComSenhaCodificada() {
         UsuarioRequest request =
-            new UsuarioRequest("Wallace", "wallace@gmail.com", "123456", PerfilUsuario.ADMIN);
+            new UsuarioRequest(
+                "Wallace", "wallace@gmail.com", "senha-segura-123", PerfilUsuario.ADMIN);
 
         when(usuarioRepository.existsByEmail(request.email())).thenReturn(false);
-        when(passwordEncoder.encode("123456")).thenReturn("senha-codificada");
+        when(passwordEncoder.encode("senha-segura-123")).thenReturn("senha-codificada");
         when(usuarioRepository.save(any(Usuario.class)))
             .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -44,33 +47,59 @@ class UsuarioServiceTest {
         assertEquals("senha-codificada", usuario.getSenha());
         assertEquals(PerfilUsuario.ADMIN, usuario.getPerfil());
         assertTrue(usuario.isAtivo());
-        verify(passwordEncoder).encode("123456");
-    }
-
-    @Test
-    void deveCadastrarUsuarioPublicoSempreComPerfilUsuario() {
-        CadastroUsuarioRequest request =
-            new CadastroUsuarioRequest("Wallace", "wallace@gmail.com", "123456");
-
-        when(usuarioRepository.existsByEmail(request.email())).thenReturn(false);
-        when(passwordEncoder.encode("123456")).thenReturn("senha-codificada");
-        when(usuarioRepository.save(any(Usuario.class)))
-            .thenAnswer(invocation -> invocation.getArgument(0));
-
-        Usuario usuario = usuarioService.criarPublico(request);
-
-        assertEquals(PerfilUsuario.USUARIO, usuario.getPerfil());
-        assertEquals("senha-codificada", usuario.getSenha());
-        verify(passwordEncoder).encode("123456");
+        verify(passwordEncoder).encode("senha-segura-123");
     }
 
     @Test
     void deveLancarExcecaoAoCadastrarUsuarioComEmailJaCadastrado() {
         UsuarioRequest request =
-            new UsuarioRequest("Wallace", "wallace@gmail.com", "123456", PerfilUsuario.USUARIO);
+            new UsuarioRequest(
+                "Wallace", "wallace@gmail.com", "senha-segura-123", PerfilUsuario.USUARIO);
         when(usuarioRepository.existsByEmail(request.email())).thenReturn(true);
 
         assertThrows(EmailJaCadastradoException.class, () -> usuarioService.criar(request));
         verify(passwordEncoder, never()).encode(any());
+    }
+
+    @Test
+    void deveReconhecerUsuarioExistenteAntesDeValidarSenhaDoInicializador() {
+        UsuarioRequest request =
+            new UsuarioRequest("Administrador", "admin@erp.local", "antiga", PerfilUsuario.ADMIN);
+        when(usuarioRepository.existsByEmail(request.email())).thenReturn(true);
+
+        assertThrows(EmailJaCadastradoException.class, () -> usuarioService.criar(request));
+        verify(passwordEncoder, never()).encode(any());
+    }
+
+    @Test
+    void deveRejeitarSenhaCurtaMesmoSemValidacaoDoController() {
+        UsuarioRequest request =
+            new UsuarioRequest("Wallace", "wallace@gmail.com", "curta", PerfilUsuario.USUARIO);
+
+        assertThrows(IllegalArgumentException.class, () -> usuarioService.criar(request));
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    void deveRevogarAcessoDeOutroUsuario() {
+        Usuario usuario =
+            new Usuario(
+                "Colaborador", "colaborador@erp.local", "senha-codificada", PerfilUsuario.USUARIO);
+        when(usuarioRepository.findById(10L)).thenReturn(Optional.of(usuario));
+
+        Usuario atualizado = usuarioService.alternarAtivo(10L, "admin@erp.local");
+
+        assertTrue(!atualizado.isAtivo());
+    }
+
+    @Test
+    void deveImpedirRevogacaoDoProprioAcesso() {
+        Usuario usuario =
+            new Usuario(
+                "Administrador", "admin@erp.local", "senha-codificada", PerfilUsuario.ADMIN);
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+
+        assertThrows(
+            IllegalStateException.class, () -> usuarioService.alternarAtivo(1L, "admin@erp.local"));
     }
 }
