@@ -5,6 +5,7 @@ import iwmvi.erp.integracao.PessoaCadastroLookupService.PessoaCadastroLookupResu
 import iwmvi.erp.shared.exception.CepInvalidoException;
 import iwmvi.erp.shared.exception.DocumentoInvalidoException;
 import iwmvi.erp.shared.exception.DocumentoJaCadastradoException;
+import iwmvi.erp.shared.validation.DocumentoValidator;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,7 +64,6 @@ public class FornecedorController {
                     "");
             preparar(model, request, null);
             model.addAttribute("cadastroNovo", true);
-            model.addAttribute("tipoPessoa", dados.pessoaJuridica() ? "JURIDICA" : "FISICA");
             model.addAttribute("avisoConsulta", dados.aviso());
             model.addAttribute("situacaoCadastral", dados.situacaoCadastral());
             return "fornecedores/form";
@@ -171,6 +171,9 @@ public class FornecedorController {
     private void preparar(Model model, FornecedorRequest request, Long id) {
         model.addAttribute("fornecedorRequest", request);
         model.addAttribute("id", id);
+        String documento = DocumentoValidator.normalizarDocumento(request.documento());
+        model.addAttribute(
+                "tipoPessoa", DocumentoValidator.documentoEhCnpj(documento) ? "JURIDICA" : "FISICA");
     }
 
     private String valor(String valor) {
