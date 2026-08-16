@@ -11,41 +11,35 @@
 <div class="app-shell">
     <aside th:replace="~{fragments/sidebar :: sidebar('produtos')}"></aside>
     <div class="app-main">
-        <header class="topbar"><span class="topbar-title">Cadastros / Produtos</span></header>
-        <main class="content">
+        <header th:replace="~{fragments/topbar :: topbar('Cadastros / Produtos')}"></header>
+        <main class="content registry-page">
             <div class="page-heading">
-                <div><h1>Produtos</h1><p class="muted">Catálogo comercial e parâmetros de estoque.</p></div>
+                <div><h1>Produtos</h1><p class="muted">Catálogo, preços e parâmetros de estoque.</p></div>
                 <a class="button" th:href="@{/produtos/novo}">Novo produto</a>
             </div>
-            <form class="form-grid panel panel-body" method="get">
-                <input name="q" th:value="${q}" placeholder="Buscar por nome ou código">
-                <button type="submit">Buscar</button>
-            </form>
-            <div class="alert success" th:if="${sucesso}" th:text="${sucesso}"></div>
-            <div class="table-wrapper">
-                <table>
-                    <thead><tr><th>Código</th><th>Produto</th><th>Categoria</th><th>Venda</th><th>Saldo</th><th>Status</th><th>Ações</th></tr></thead>
-                    <tbody>
-                    <tr th:each="produto : ${produtos}">
-                        <td th:text="${produto.codigo}"></td>
-                        <td th:text="${produto.nome}"></td>
-                        <td th:text="${produto.categoria}"></td>
-                        <td th:text="${#numbers.formatDecimal(produto.precoVenda, 1, 2)}"></td>
-                        <td th:text="${produto.saldoEstoque}"></td>
-                        <td><span class="badge" th:text="${produto.ativo ? 'Ativo' : 'Inativo'}"></span></td>
-                        <td>
-                            <div class="user-menu">
-                                <a th:href="@{/produtos/{id}/editar(id=${produto.id})}">Editar</a>
-                                <form th:action="@{/produtos/{id}/status(id=${produto.id})}" method="post">
-                                    <button class="link-button" type="submit" th:text="${produto.ativo ? 'Inativar' : 'Ativar'}"></button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(produtos)}"><td colspan="7">Nenhum produto encontrado.</td></tr>
-                    </tbody>
-                </table>
+            <div class="registry-toolbar">
+                <form class="form-grid panel panel-body" method="get">
+                    <input name="q" th:value="${q}" placeholder="Buscar por nome ou código">
+                    <button type="submit">Buscar</button>
+                </form>
             </div>
+            <div class="alert success" th:if="${sucesso}" th:text="${sucesso}"></div>
+            <section class="registry-card">
+                <div class="registry-card-header"><h2>Produtos cadastrados</h2><span class="muted" th:text="${#lists.size(produtos) + ' registro(s)'}"></span></div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Código</th><th>Produto</th><th>Categoria</th><th>Venda</th><th>Saldo</th><th>Status</th><th>Ações</th></tr></thead>
+                        <tbody>
+                        <tr th:each="produto : ${produtos}">
+                            <td th:text="${produto.codigo}"></td><td th:text="${produto.nome}"></td><td th:text="${produto.categoria}"></td><td th:text="${#numbers.formatDecimal(produto.precoVenda, 1, 2)}"></td><td th:text="${produto.saldoEstoque}"></td>
+                            <td><span class="badge" th:classappend="${produto.ativo} ? ' success'" th:text="${produto.ativo ? 'Ativo' : 'Inativo'}"></span></td>
+                            <td><div class="user-menu"><a th:href="@{/produtos/{id}/editar(id=${produto.id})}">Editar</a><form th:action="@{/produtos/{id}/status(id=${produto.id})}" method="post"><button class="link-button" type="submit" th:text="${produto.ativo ? 'Inativar' : 'Ativar'}"></button></form></div></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(produtos)}"><td colspan="7">Nenhum produto encontrado.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
         </main>
     </div>
 </div>
