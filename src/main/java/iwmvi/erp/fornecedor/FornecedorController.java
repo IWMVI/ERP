@@ -1,5 +1,7 @@
 package iwmvi.erp.fornecedor;
 
+import iwmvi.erp.integracao.PessoaCadastroLookupService;
+import iwmvi.erp.integracao.PessoaCadastroLookupService.PessoaCadastroLookupResult;
 import iwmvi.erp.shared.exception.CepInvalidoException;
 import iwmvi.erp.shared.exception.DocumentoInvalidoException;
 import iwmvi.erp.shared.exception.DocumentoJaCadastradoException;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -19,9 +22,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class FornecedorController {
 
     private final FornecedorService service;
+    private final PessoaCadastroLookupService pessoaCadastroLookupService;
 
-    public FornecedorController(FornecedorService service) {
+    public FornecedorController(
+            FornecedorService service, PessoaCadastroLookupService pessoaCadastroLookupService) {
         this.service = service;
+        this.pessoaCadastroLookupService = pessoaCadastroLookupService;
     }
 
     @GetMapping
@@ -32,8 +38,39 @@ public class FornecedorController {
 
     @GetMapping("/novo")
     public String novo(Model model) {
-        preparar(model, vazio(), null);
-        return "fornecedores/form";
+        prepararIdentificacao(model, "", null);
+        return "cadastros/identificar-pessoa";
+    }
+
+    @PostMapping("/novo/identificar")
+    public String identificar(@RequestParam String documento, Model model) {
+        try {
+            PessoaCadastroLookupResult dados = pessoaCadastroLookupService.consultar(documento);
+            FornecedorRequest request = new FornecedorRequest(
+                    valor(dados.nome()),
+                    valor(dados.nomeFantasia()),
+                    dados.documento(),
+                    valor(dados.email()),
+                    valor(dados.telefone()),
+                    "",
+                    valor(dados.cep()),
+                    valor(dados.logradouro()),
+                    valor(dados.numero()),
+                    valor(dados.complemento()),
+                    valor(dados.bairro()),
+                    valor(dados.cidade()),
+                    valor(dados.estado()),
+                    "");
+            preparar(model, request, null);
+            model.addAttribute("cadastroNovo", true);
+            model.addAttribute("tipoPessoa", dados.pessoaJuridica() ? "JURIDICA" : "FISICA");
+            model.addAttribute("avisoConsulta", dados.aviso());
+            model.addAttribute("situacaoCadastral", dados.situacaoCadastral());
+            return "fornecedores/form";
+        } catch (DocumentoInvalidoException exception) {
+            prepararIdentificacao(model, documento, exception.getMessage());
+            return "cadastros/identificar-pessoa";
+        }
     }
 
     @GetMapping("/{id}/editar")
@@ -121,12 +158,22 @@ public class FornecedorController {
         return "redirect:/fornecedores";
     }
 
+    private void prepararIdentificacao(Model model, String documento, String erro) {
+        model.addAttribute("titulo", "Novo fornecedor");
+        model.addAttribute("breadcrumb", "Cadastros / Fornecedores / Novo");
+        model.addAttribute("activePage", "fornecedores");
+        model.addAttribute("formAction", "/fornecedores/novo/identificar");
+        model.addAttribute("voltarUrl", "/fornecedores");
+        model.addAttribute("documento", documento);
+        model.addAttribute("erro", erro);
+    }
+
     private void preparar(Model model, FornecedorRequest request, Long id) {
         model.addAttribute("fornecedorRequest", request);
         model.addAttribute("id", id);
     }
 
-    private FornecedorRequest vazio() {
-        return new FornecedorRequest("", "", "", "", "", "", "", "", "", "", "", "", "", "");
+    private String valor(String valor) {
+        return valor == null ? "" : valor;
     }
 }
