@@ -89,7 +89,7 @@ public class EstoqueService {
     @Transactional(readOnly = true)
     public List<MovimentacaoEstoque> historico(
             Long produtoId, LocalDate inicio, LocalDate fim) {
-        Specification<MovimentacaoEstoque> spec = Specification.where(null);
+        Specification<MovimentacaoEstoque> spec = Specification.unrestricted();
 
         if (produtoId != null) {
             spec = spec.and((root, query, cb) -> cb.equal(root.get("produto").get("id"), produtoId));

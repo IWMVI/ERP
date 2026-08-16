@@ -37,7 +37,7 @@ public class AuditoriaService {
     @Transactional(readOnly = true)
     public List<Auditoria> buscar(
             String usuario, String entidade, LocalDate inicio, LocalDate fim) {
-        Specification<Auditoria> spec = Specification.where(null);
+        Specification<Auditoria> spec = Specification.unrestricted();
 
         String usuarioNormalizado = normalizar(usuario);
         if (usuarioNormalizado != null) {
