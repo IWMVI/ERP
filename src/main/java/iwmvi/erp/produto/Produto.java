@@ -60,6 +60,9 @@ public class Produto {
 
     private String localizacao;
 
+    @Column(name = "foto_arquivo", length = 255)
+    private String fotoArquivo;
+
     @Column(nullable = false)
     private boolean ativo = true;
 
@@ -89,8 +92,17 @@ public class Produto {
         this.localizacao = request.localizacao();
     }
 
-    public void alternarAtivo() { this.ativo = !this.ativo; }
-    public void definirSaldo(BigDecimal saldo) { this.saldoEstoque = saldo; }
+    public void definirFotoArquivo(String fotoArquivo) {
+        this.fotoArquivo = fotoArquivo;
+    }
+
+    public void alternarAtivo() {
+        this.ativo = !this.ativo;
+    }
+
+    public void definirSaldo(BigDecimal saldo) {
+        this.saldoEstoque = saldo;
+    }
 
     public Long getId() { return id; }
     public String getCodigo() { return codigo; }
@@ -107,6 +119,7 @@ public class Produto {
     public BigDecimal getEstoqueMaximo() { return estoqueMaximo; }
     public BigDecimal getSaldoEstoque() { return saldoEstoque; }
     public String getLocalizacao() { return localizacao; }
+    public String getFotoArquivo() { return fotoArquivo; }
     public boolean isAtivo() { return ativo; }
     public long getVersion() { return version; }
 }
