@@ -25,7 +25,7 @@
                     <div class="panel-body form-grid">
                         <div class="full-width"><label for="nome">Nome</label><input id="nome" th:field="*{nome}" type="text" autocomplete="name" required><small class="field-error" th:errors="*{nome}"></small></div>
                         <div><label for="email">E-mail</label><input id="email" th:field="*{email}" type="email" autocomplete="email" required><small class="field-error" th:errors="*{email}"></small></div>
-                        <div><label for="senha">Senha inicial</label><input id="senha" th:field="*{senha}" type="password" autocomplete="new-password" minlength="6" required><small class="field-error" th:errors="*{senha}"></small></div>
+                        <div><label for="senha">Senha inicial</label><input id="senha" th:field="*{senha}" type="password" autocomplete="new-password" minlength="12" maxlength="72" required><small class="field-error" th:errors="*{senha}"></small></div>
                         <div><label for="perfil">Perfil</label><select id="perfil" th:field="*{perfil}" required><option value="">Selecione</option><option th:each="perfil : ${perfis}" th:value="${perfil}" th:text="${perfil}"></option></select><small class="field-error" th:errors="*{perfil}"></small></div>
                     </div>
                 </section>

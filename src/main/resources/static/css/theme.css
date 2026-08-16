@@ -172,6 +172,51 @@ td .muted {
     padding: 26px 22px;
     border-radius: var(--radius-lg);
 }
+.privacy-page {
+    min-height: 100vh;
+    padding: 24px 16px;
+    background: #f3f6f8;
+}
+.privacy-card {
+    width: min(100%, 860px);
+    margin: 0 auto;
+    padding: 26px 22px;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    background: #fff;
+    box-shadow: var(--shadow-soft);
+}
+.privacy-card header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-soft);
+}
+.privacy-card h1 {
+    margin: 0 0 4px;
+    font-size: clamp(24px, 4vw, 34px);
+}
+.privacy-card h2 {
+    margin: 0 0 8px;
+    color: #253a49;
+    font-size: 18px;
+}
+.privacy-card p {
+    margin: 6px 0;
+    line-height: 1.65;
+}
+.privacy-card section {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border-soft);
+}
+.privacy-card footer {
+    padding-top: 22px;
+}
+.sidebar-footer a {
+    color: inherit;
+    text-decoration: none;
+}
 
 .sidebar {
     padding: 10px;

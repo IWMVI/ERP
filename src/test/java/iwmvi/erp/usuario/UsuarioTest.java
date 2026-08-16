@@ -41,7 +41,7 @@ class UsuarioTest {
         assertNull(usuarioSemDados.getNome());
         assertNull(usuarioSemDados.getEmail());
         assertNull(usuarioSemDados.getSenha());
-        assertNull(usuarioSemDados.getPerfil());
+        assertEquals(PerfilUsuario.USUARIO, usuarioSemDados.getPerfil());
         assertTrue(usuarioSemDados.isAtivo());
     }
 }
