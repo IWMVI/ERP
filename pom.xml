@@ -169,6 +169,10 @@
                                 <include>**/*.xml</include>
                                 <include>.editorconfig</include>
                             </includes>
+                            <excludes>
+                                <exclude>.idea/**</exclude>
+                                <exclude>target/**</exclude>
+                            </excludes>
                             <trimTrailingWhitespace/>
                             <endWithNewline/>
                         </format>
