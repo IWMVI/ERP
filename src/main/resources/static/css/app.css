@@ -58,7 +58,9 @@ button,
     cursor: pointer;
     font-weight: 600;
     text-decoration: none;
-    transition: background-color 120ms ease, border-color 120ms ease;
+    transition:
+        background-color 120ms ease,
+        border-color 120ms ease;
 }
 
 button:hover,
@@ -93,6 +95,172 @@ input:focus,
 select:focus {
     border-color: var(--color-accent);
     box-shadow: 0 0 0 2px rgb(47 111 115 / 14%);
+}
+
+.custom-select-native {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border: 0 !important;
+    clip: rect(0 0 0 0) !important;
+    clip-path: inset(50%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    white-space: nowrap !important;
+}
+
+.custom-select {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+}
+
+.custom-select-trigger {
+    position: relative;
+    display: flex;
+    width: 100%;
+    min-height: 40px;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 8px 38px 8px 10px;
+    overflow: hidden;
+    border: 1px solid #bcc7d1;
+    border-radius: 4px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-weight: 400;
+    text-align: left;
+    transition:
+        border-color 120ms ease,
+        box-shadow 120ms ease,
+        background-color 120ms ease;
+}
+
+.custom-select-trigger::after {
+    position: absolute;
+    top: 50%;
+    right: 13px;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid #667785;
+    border-bottom: 2px solid #667785;
+    content: "";
+    transform: translateY(-70%) rotate(45deg);
+    transition: transform 140ms ease;
+}
+
+.custom-select-trigger:hover {
+    border-color: #91a0ac;
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+
+.custom-select-trigger:focus-visible,
+.custom-select.is-open .custom-select-trigger {
+    border-color: var(--color-accent);
+    background: var(--color-surface);
+    box-shadow: 0 0 0 2px rgb(47 111 115 / 14%);
+    outline: none;
+}
+
+.custom-select.is-open .custom-select-trigger::after {
+    transform: translateY(-30%) rotate(225deg);
+}
+
+.custom-select-trigger.is-placeholder {
+    color: var(--color-muted);
+}
+
+.custom-select-trigger:disabled {
+    border-color: #d7dde2;
+    background: #f0f2f4;
+    color: #89949d;
+    cursor: not-allowed;
+}
+
+.custom-select-value {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.custom-select-options {
+    position: fixed;
+    z-index: 1200;
+    padding: 5px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border: 1px solid #c2ccd4;
+    border-radius: 7px;
+    background: var(--color-surface);
+    box-shadow: 0 12px 30px rgb(24 39 52 / 18%);
+    overscroll-behavior: contain;
+}
+
+.custom-select-options[hidden] {
+    display: none;
+}
+
+.custom-select-option {
+    position: relative;
+    min-height: 34px;
+    padding: 7px 32px 7px 9px;
+    border-radius: 4px;
+    color: var(--color-text);
+    cursor: pointer;
+    line-height: 1.4;
+}
+
+.custom-select-option.is-active {
+    background: #edf3f5;
+}
+
+.custom-select-option.is-selected {
+    color: var(--color-primary);
+    font-weight: 650;
+}
+
+.custom-select-option.is-selected::after {
+    position: absolute;
+    top: 50%;
+    right: 11px;
+    width: 10px;
+    height: 5px;
+    border-bottom: 2px solid var(--color-accent);
+    border-left: 2px solid var(--color-accent);
+    content: "";
+    transform: translateY(-65%) rotate(-45deg);
+}
+
+.custom-select-option[aria-disabled="true"] {
+    color: #9ba5ad;
+    cursor: not-allowed;
+}
+
+.custom-select-group {
+    padding: 8px 9px 4px;
+    color: var(--color-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.custom-select.is-invalid .custom-select-trigger,
+.custom-select-trigger[aria-invalid="true"] {
+    border-color: var(--color-danger);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .custom-select-trigger,
+    .custom-select-trigger::after {
+        transition: none;
+    }
 }
 
 label {
