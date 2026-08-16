@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import iwmvi.erp.auditoria.AuditoriaService;
+import iwmvi.erp.integracao.ValidacaoCadastroService;
 import iwmvi.erp.shared.exception.DocumentoJaCadastradoException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,11 +20,12 @@ class ClienteServiceTest {
 
     @Mock private ClienteRepository repository;
     @Mock private AuditoriaService auditoriaService;
+    @Mock private ValidacaoCadastroService validacaoCadastroService;
     private ClienteService service;
 
     @BeforeEach
     void setUp() {
-        service = new ClienteService(repository, auditoriaService);
+        service = new ClienteService(repository, auditoriaService, validacaoCadastroService);
     }
 
     @Test
@@ -44,6 +46,7 @@ class ClienteServiceTest {
 
         assertThrows(DocumentoJaCadastradoException.class, () -> service.criar(request));
 
+        verify(validacaoCadastroService, never()).validarDocumento(any());
         verify(repository, never()).save(any());
     }
 }
