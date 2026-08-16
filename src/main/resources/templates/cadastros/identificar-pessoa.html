@@ -16,7 +16,7 @@
         <main class="content registry-page">
             <div class="registry-page-header">
                 <h1 th:text="${titulo}"></h1>
-                <p>Informe o documento. Assim que ele for identificado, o sistema continua automaticamente.</p>
+                <p>Informe um CPF ou CNPJ válido e escolha continuar para preencher os demais dados.</p>
             </div>
 
             <section class="registry-form-stack identification-step">
@@ -34,13 +34,13 @@
                                    autocomplete="off"
                                    autofocus
                                    required>
-                            <small class="document-type" data-document-identification-type>Informe CPF ou CNPJ</small>
+                            <small class="document-type" data-document-identification-type>Informe um CPF ou CNPJ completo.</small>
                         </div>
                     </div>
                     <div class="registry-form-actions">
                         <div class="registry-actions-buttons">
                             <a class="button secondary" th:href="${voltarUrl}">Cancelar</a>
-                            <button type="submit">Continuar</button>
+                            <button type="submit" disabled aria-disabled="true">Continuar</button>
                         </div>
                     </div>
                 </form>
