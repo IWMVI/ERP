@@ -10,21 +10,8 @@
 <body>
 <div class="app-shell">
     <aside th:replace="~{fragments/sidebar :: sidebar('inicio')}"></aside>
-
     <div class="app-main">
-        <header class="topbar">
-            <span class="topbar-title">Visão geral</span>
-            <div class="user-menu">
-                <div class="user-identity">
-                    <strong>Usuário conectado</strong>
-                    <span th:text="${email}"></span>
-                </div>
-                <form th:action="@{/logout}" method="post">
-                    <button class="link-button" type="submit">Sair</button>
-                </form>
-            </div>
-        </header>
-
+        <header th:replace="~{fragments/topbar :: topbar('Visão geral')}"></header>
         <main class="content">
             <div class="page-heading">
                 <div>
@@ -32,7 +19,6 @@
                     <p class="muted">Acesse as rotinas operacionais e cadastros do sistema.</p>
                 </div>
             </div>
-
             <section class="dashboard-grid">
                 <article class="metric-card">
                     <div class="metric-label">Cadastros comerciais</div>
