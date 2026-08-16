@@ -7,64 +7,61 @@ import jakarta.persistence.*;
     name = "usuarios",
     uniqueConstraints = @UniqueConstraint(name = "uk_usuario_email", columnNames = "email"))
 public class Usuario {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
 
-  @Column(nullable = false)
-  private String nome;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false)
+    private String nome;
+    @Column(nullable = false, unique = true)
+    private String email;
+    @Column(nullable = false)
+    private String senha;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PerfilUsuario perfil = PerfilUsuario.USUARIO;
+    @Column(nullable = false)
+    private boolean ativo = true;
 
-  @Column(nullable = false, unique = true)
-  private String email;
+    protected Usuario() {
+    }
 
-  @Column(nullable = false)
-  private String senha;
+    public Usuario(String nome, String email, String senha) {
+        this(nome, email, senha, PerfilUsuario.USUARIO);
+    }
 
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  private PerfilUsuario perfil = PerfilUsuario.USUARIO;
+    public Usuario(String nome, String email, String senha, PerfilUsuario perfil) {
+        this.nome = nome;
+        this.email = email;
+        this.senha = senha;
+        this.perfil = perfil;
+    }
 
-  @Column(nullable = false)
-  private boolean ativo = true;
+    public void alternarAtivo() {
+        this.ativo = !this.ativo;
+    }
 
-  protected Usuario() {}
+    public Long getId() {
+        return id;
+    }
 
-  public Usuario(String nome, String email, String senha) {
-    this(nome, email, senha, PerfilUsuario.USUARIO);
-  }
+    public String getNome() {
+        return nome;
+    }
 
-  public Usuario(String nome, String email, String senha, PerfilUsuario perfil) {
-    this.nome = nome;
-    this.email = email;
-    this.senha = senha;
-    this.perfil = perfil;
-  }
+    public String getEmail() {
+        return email;
+    }
 
-  public void alternarAtivo() {
-    this.ativo = !this.ativo;
-  }
+    public String getSenha() {
+        return senha;
+    }
 
-  public Long getId() {
-    return id;
-  }
+    public PerfilUsuario getPerfil() {
+        return perfil;
+    }
 
-  public String getNome() {
-    return nome;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  public String getSenha() {
-    return senha;
-  }
-
-  public PerfilUsuario getPerfil() {
-    return perfil;
-  }
-
-  public boolean isAtivo() {
-    return ativo;
-  }
+    public boolean isAtivo() {
+        return ativo;
+    }
 }

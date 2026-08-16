@@ -15,7 +15,7 @@
         <main class="content registry-page">
             <div class="page-heading">
                 <div><h1>Clientes</h1><p class="muted">Pessoas físicas e jurídicas vinculadas à operação comercial.</p></div>
-                <a class="button" th:href="@{/clientes/novo}">Novo cliente</a>
+                <th:block th:replace="~{fragments/buttons :: link(@{/clientes/novo}, 'Novo cliente', null)}"></th:block>
             </div>
             <section class="registry-card">
                 <div class="table-wrapper">

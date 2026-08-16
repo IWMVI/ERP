@@ -17,7 +17,7 @@
             <div class="page-heading">
                 <div>
                     <h1 th:text="${'Pedido de compra #' + pedido.id}"></h1>
-                    <p class="muted" th:text="${pedido.fornecedor.nome + ' · ' + #temporals.format(pedido.dataCriacao, 'dd/MM/yyyy HH:mm')}"></p>
+                    <p class="muted" th:text="${pedido.fornecedorNome + ' · ' + #temporals.format(pedido.dataCriacao, 'dd/MM/yyyy HH:mm')}"></p>
                 </div>
                 <a class="button secondary" th:href="@{/compras}">Voltar</a>
             </div>
@@ -50,10 +50,10 @@
                         <thead><tr><th>Produto</th><th>Quantidade</th><th>Custo unitário</th><th>Subtotal</th></tr></thead>
                         <tbody>
                         <tr th:each="item : ${pedido.itens}">
-                            <td th:text="${item.produto.codigo + ' - ' + item.produto.nome}"></td>
+                            <td th:text="${item.produtoCodigo + ' - ' + item.produtoNome}"></td>
                             <td th:text="${item.quantidade}"></td>
                             <td th:text="${'R$ ' + #numbers.formatDecimal(item.custoUnitario, 1, 2)}"></td>
-                            <td th:text="${'R$ ' + #numbers.formatDecimal(item.subtotal(), 1, 2)}"></td>
+                            <td th:text="${'R$ ' + #numbers.formatDecimal(item.subtotal, 1, 2)}"></td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(pedido.itens)}"><td colspan="4">Nenhum item adicionado.</td></tr>
                         </tbody>

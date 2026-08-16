@@ -1,24 +1,21 @@
 package iwmvi.erp.cliente;
 
-import iwmvi.erp.shared.validation.DocumentoValidator;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(
-        name = "clientes",
-        uniqueConstraints = @UniqueConstraint(name = "uk_cliente_documento", columnNames = "documento"))
+    name = "clientes",
+    uniqueConstraints = @UniqueConstraint(name = "uk_cliente_documento", columnNames = "documento"))
+@Getter
+@Setter(AccessLevel.PACKAGE)
 public class Cliente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     @Enumerated(EnumType.STRING)
@@ -51,54 +48,13 @@ public class Cliente {
     private String observacoes;
 
     @Column(nullable = false)
+    @Setter(AccessLevel.NONE)
     private boolean ativo = true;
 
-    protected Cliente() {}
-
-    public Cliente(ClienteRequest request) {
-        atualizar(request);
-    }
-
-    public void atualizar(ClienteRequest request) {
-        String documentoNormalizado = DocumentoValidator.normalizarDocumento(request.documento());
-        this.tipoPessoa = DocumentoValidator.documentoEhCpf(documentoNormalizado)
-                ? TipoPessoa.FISICA
-                : TipoPessoa.JURIDICA;
-        this.nome = request.nome().trim();
-        this.nomeFantasia = this.tipoPessoa == TipoPessoa.JURIDICA ? request.nomeFantasia() : null;
-        this.documento = documentoNormalizado;
-        this.email = request.email();
-        this.telefone = request.telefone();
-        this.celular = request.celular();
-        this.cep = DocumentoValidator.somenteDigitos(request.cep());
-        this.logradouro = request.logradouro();
-        this.numero = request.numero();
-        this.complemento = request.complemento();
-        this.bairro = request.bairro();
-        this.cidade = request.cidade();
-        this.estado = request.estado();
-        this.observacoes = request.observacoes();
+    protected Cliente() {
     }
 
     public void alternarAtivo() {
         this.ativo = !this.ativo;
     }
-
-    public Long getId() { return id; }
-    public TipoPessoa getTipoPessoa() { return tipoPessoa; }
-    public String getNome() { return nome; }
-    public String getNomeFantasia() { return nomeFantasia; }
-    public String getDocumento() { return documento; }
-    public String getEmail() { return email; }
-    public String getTelefone() { return telefone; }
-    public String getCelular() { return celular; }
-    public String getCep() { return cep; }
-    public String getLogradouro() { return logradouro; }
-    public String getNumero() { return numero; }
-    public String getComplemento() { return complemento; }
-    public String getBairro() { return bairro; }
-    public String getCidade() { return cidade; }
-    public String getEstado() { return estado; }
-    public String getObservacoes() { return observacoes; }
-    public boolean isAtivo() { return ativo; }
 }

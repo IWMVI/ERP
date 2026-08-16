@@ -18,73 +18,73 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class UsuarioController {
 
-  private final UsuarioService usuarioService;
-  private final AuditoriaService auditoriaService;
+    private final UsuarioService usuarioService;
+    private final AuditoriaService auditoriaService;
 
-  public UsuarioController(UsuarioService usuarioService, AuditoriaService auditoriaService) {
-    this.usuarioService = usuarioService;
-    this.auditoriaService = auditoriaService;
-  }
-
-  @GetMapping("/usuarios")
-  public String listar(@RequestParam(defaultValue = "0") int page, Model model) {
-    var usuarios = usuarioService.listar().stream().map(UsuarioMapper::toResponse).toList();
-    PageView<UsuarioResponse> paginacao = PageView.of(usuarios, page, "/usuarios");
-    model.addAttribute("usuarios", paginacao.items());
-    model.addAttribute("paginacao", paginacao);
-    return "usuarios/lista";
-  }
-
-  @GetMapping("/usuarios/novo")
-  public String novo(Model model) {
-    model.addAttribute("usuarioRequest", new UsuarioRequest("", "", "", PerfilUsuario.USUARIO));
-    model.addAttribute("perfis", PerfilUsuario.values());
-    return "usuarios/form";
-  }
-
-  @PostMapping("/usuarios")
-  public String criar(
-      @Valid @ModelAttribute("usuarioRequest") UsuarioRequest request,
-      BindingResult bindingResult,
-      Model model,
-      RedirectAttributes redirectAttributes) {
-    if (bindingResult.hasErrors()) {
-      model.addAttribute("perfis", PerfilUsuario.values());
-      model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o usuário.");
-      return "usuarios/form";
+    public UsuarioController(UsuarioService usuarioService, AuditoriaService auditoriaService) {
+        this.usuarioService = usuarioService;
+        this.auditoriaService = auditoriaService;
     }
 
-    try {
-      Usuario usuario = usuarioService.criar(request);
-      auditoriaService.registrar(
-          "CRIAR", "Usuario", usuario.getId(), usuario.getEmail() + " - " + usuario.getPerfil());
-    } catch (EmailJaCadastradoException exception) {
-      bindingResult.rejectValue("email", "email.duplicado", exception.getMessage());
-      model.addAttribute("perfis", PerfilUsuario.values());
-      model.addAttribute("erroGlobal", exception.getMessage());
-      return "usuarios/form";
+    @GetMapping("/usuarios")
+    public String listar(@RequestParam(defaultValue = "0") int page, Model model) {
+        var usuarios = usuarioService.listar().stream().map(UsuarioMapper::toResponse).toList();
+        PageView<UsuarioResponse> paginacao = PageView.of(usuarios, page, "/usuarios");
+        model.addAttribute("usuarios", paginacao.items());
+        model.addAttribute("paginacao", paginacao);
+        return "usuarios/lista";
     }
 
-    redirectAttributes.addFlashAttribute("sucesso", "Usuário cadastrado com sucesso.");
-    return "redirect:/usuarios";
-  }
-
-  @PostMapping("/usuarios/{id}/status")
-  public String alternarStatus(
-      @PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
-    try {
-      Usuario usuario = usuarioService.alternarAtivo(id, principal.getName());
-      auditoriaService.registrar(
-          usuario.isAtivo() ? "ATIVAR" : "INATIVAR",
-          "Usuario",
-          usuario.getId(),
-          usuario.getEmail());
-      redirectAttributes.addFlashAttribute(
-          "sucesso",
-          usuario.isAtivo() ? "Usuário ativado com sucesso." : "Acesso revogado com sucesso.");
-    } catch (IllegalArgumentException | IllegalStateException exception) {
-      redirectAttributes.addFlashAttribute("erroGlobal", exception.getMessage());
+    @GetMapping("/usuarios/novo")
+    public String novo(Model model) {
+        model.addAttribute("usuarioRequest", new UsuarioRequest("", "", "", PerfilUsuario.USUARIO));
+        model.addAttribute("perfis", PerfilUsuario.values());
+        return "usuarios/form";
     }
-    return "redirect:/usuarios";
-  }
+
+    @PostMapping("/usuarios")
+    public String criar(
+        @Valid @ModelAttribute("usuarioRequest") UsuarioRequest request,
+        BindingResult bindingResult,
+        Model model,
+        RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("perfis", PerfilUsuario.values());
+            model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o usuário.");
+            return "usuarios/form";
+        }
+
+        try {
+            Usuario usuario = usuarioService.criar(request);
+            auditoriaService.registrar(
+                "CRIAR", "Usuario", usuario.getId(), usuario.getEmail() + " - " + usuario.getPerfil());
+        } catch (EmailJaCadastradoException exception) {
+            bindingResult.rejectValue("email", "email.duplicado", exception.getMessage());
+            model.addAttribute("perfis", PerfilUsuario.values());
+            model.addAttribute("erroGlobal", exception.getMessage());
+            return "usuarios/form";
+        }
+
+        redirectAttributes.addFlashAttribute("sucesso", "Usuário cadastrado com sucesso.");
+        return "redirect:/usuarios";
+    }
+
+    @PostMapping("/usuarios/{id}/status")
+    public String alternarStatus(
+        @PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
+        try {
+            Usuario usuario = usuarioService.alternarAtivo(id, principal.getName());
+            auditoriaService.registrar(
+                usuario.isAtivo() ? "ATIVAR" : "INATIVAR",
+                "Usuario",
+                usuario.getId(),
+                usuario.getEmail());
+            redirectAttributes.addFlashAttribute(
+                "sucesso",
+                usuario.isAtivo() ? "Usuário ativado com sucesso." : "Acesso revogado com sucesso.");
+        } catch (IllegalArgumentException | IllegalStateException exception) {
+            redirectAttributes.addFlashAttribute("erroGlobal", exception.getMessage());
+        }
+        return "redirect:/usuarios";
+    }
 }

@@ -15,7 +15,7 @@
         <main class="content registry-page">
             <div class="page-heading">
                 <div><h1>Controle de estoque</h1><p class="muted">Saldos derivados de movimentações rastreáveis.</p></div>
-                <a class="button" th:href="@{/estoque/movimentar}">Nova movimentação</a>
+                <th:block th:replace="~{fragments/buttons :: link(@{/estoque/movimentar}, 'Nova movimentação', null)}"></th:block>
             </div>
 
             <section class="dashboard-grid">
@@ -64,7 +64,7 @@
                         <tbody>
                         <tr th:each="movimentacao : ${movimentacoes}">
                             <td th:text="${movimentacao.dataHora}"></td>
-                            <td th:text="${movimentacao.produto.codigo + ' - ' + movimentacao.produto.nome}"></td>
+                            <td th:text="${movimentacao.produtoCodigo + ' - ' + movimentacao.produtoNome}"></td>
                             <td th:text="${movimentacao.tipo}"></td>
                             <td th:text="${movimentacao.quantidade}"></td>
                             <td th:text="${movimentacao.origem}"></td>

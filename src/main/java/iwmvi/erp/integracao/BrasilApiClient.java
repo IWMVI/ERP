@@ -24,27 +24,24 @@ public class BrasilApiClient {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record CepDados(
-            String cep,
-            String state,
-            String city,
-            String neighborhood,
-            String street,
-            String service) {}
+        String cep, String state, String city, String neighborhood, String street, String service) {
+    }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record CnpjDados(
-            String cnpj,
-            @JsonProperty("razao_social") String razaoSocial,
-            @JsonProperty("nome_fantasia") String nomeFantasia,
-            @JsonProperty("descricao_situacao_cadastral") String situacaoCadastral,
-            @JsonProperty("descricao_tipo_de_logradouro") String tipoLogradouro,
-            String logradouro,
-            String numero,
-            String complemento,
-            String bairro,
-            String cep,
-            String uf,
-            String municipio,
-            String email,
-            @JsonProperty("ddd_telefone_1") String telefone) {}
+        String cnpj,
+        @JsonProperty("razao_social") String razaoSocial,
+        @JsonProperty("nome_fantasia") String nomeFantasia,
+        @JsonProperty("descricao_situacao_cadastral") String situacaoCadastral,
+        @JsonProperty("descricao_tipo_de_logradouro") String tipoLogradouro,
+        String logradouro,
+        String numero,
+        String complemento,
+        String bairro,
+        String cep,
+        String uf,
+        String municipio,
+        String email,
+        @JsonProperty("ddd_telefone_1") String telefone) {
+    }
 }

@@ -9,5 +9,4 @@ class ErpApplicationTests {
     @Test
     void contextLoads() {
     }
-
 }

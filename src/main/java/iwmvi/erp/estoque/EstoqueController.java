@@ -1,22 +1,20 @@
 package iwmvi.erp.estoque;
 
-import iwmvi.erp.produto.Produto;
+import iwmvi.erp.produto.ProdutoMapper;
+import iwmvi.erp.produto.ProdutoResponse;
 import iwmvi.erp.shared.exception.SaldoEstoqueInsuficienteException;
 import iwmvi.erp.shared.web.PageView;
 import jakarta.validation.Valid;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Map;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/estoque")
@@ -30,39 +28,46 @@ public class EstoqueController {
 
     @GetMapping
     public String painel(
-            @RequestParam(required = false) Long produtoId,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fim,
-            @RequestParam(defaultValue = "0") int pageProdutos,
-            @RequestParam(defaultValue = "0") int pageMovimentacoes,
-            Model model) {
-        var produtos = service.produtos();
-        PageView<Produto> paginacaoProdutos = PageView.of(
+        @RequestParam(required = false) Long produtoId,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+        LocalDate inicio,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fim,
+        @RequestParam(defaultValue = "0") int pageProdutos,
+        @RequestParam(defaultValue = "0") int pageMovimentacoes,
+        Model model) {
+        var produtos = service.produtos().stream().map(ProdutoMapper::toResponse).toList();
+        PageView<ProdutoResponse> paginacaoProdutos =
+            PageView.of(
                 produtos,
                 pageProdutos,
                 "/estoque",
                 "pageProdutos",
                 Map.of(
-                        "pageMovimentacoes", pageMovimentacoes,
-                        "produtoId", produtoId == null ? "" : produtoId,
-                        "inicio", inicio == null ? "" : inicio,
-                        "fim", fim == null ? "" : fim));
+                    "pageMovimentacoes", pageMovimentacoes,
+                    "produtoId", produtoId == null ? "" : produtoId,
+                    "inicio", inicio == null ? "" : inicio,
+                    "fim", fim == null ? "" : fim));
 
-        PageView<MovimentacaoEstoque> paginacaoMovimentacoes = PageView.of(
-                service.historico(produtoId, inicio, fim),
+        PageView<MovimentacaoEstoqueResponse> paginacaoMovimentacoes =
+            PageView.of(
+                service.historico(produtoId, inicio, fim).stream()
+                    .map(MovimentacaoEstoqueMapper::toResponse)
+                    .toList(),
                 pageMovimentacoes,
                 "/estoque",
                 "pageMovimentacoes",
                 Map.of(
-                        "pageProdutos", pageProdutos,
-                        "produtoId", produtoId == null ? "" : produtoId,
-                        "inicio", inicio == null ? "" : inicio,
-                        "fim", fim == null ? "" : fim));
+                    "pageProdutos", pageProdutos,
+                    "produtoId", produtoId == null ? "" : produtoId,
+                    "inicio", inicio == null ? "" : inicio,
+                    "fim", fim == null ? "" : fim));
 
         model.addAttribute("produtos", produtos);
         model.addAttribute("produtosPagina", paginacaoProdutos.items());
         model.addAttribute("paginacaoProdutos", paginacaoProdutos);
-        model.addAttribute("abaixoMinimo", service.abaixoDoMinimo());
+        model.addAttribute(
+            "abaixoMinimo",
+            service.abaixoDoMinimo().stream().map(ProdutoMapper::toResponse).toList());
         model.addAttribute("movimentacoes", paginacaoMovimentacoes.items());
         model.addAttribute("paginacaoMovimentacoes", paginacaoMovimentacoes);
         model.addAttribute("produtoId", produtoId);
@@ -73,20 +78,23 @@ public class EstoqueController {
 
     @GetMapping("/movimentar")
     public String movimentar(Model model) {
-        prepararFormulario(model,
-                new MovimentacaoEstoqueRequest(null, TipoMovimentacao.ENTRADA, BigDecimal.ONE, "AJUSTE MANUAL"));
+        prepararFormulario(
+            model,
+            new MovimentacaoEstoqueRequest(
+                null, TipoMovimentacao.ENTRADA, BigDecimal.ONE, "AJUSTE MANUAL"));
         return "estoque/form";
     }
 
     @PostMapping("/movimentacoes")
     public String registrar(
-            @Valid @ModelAttribute("movimentacaoRequest") MovimentacaoEstoqueRequest request,
-            BindingResult result,
-            Model model,
-            RedirectAttributes redirect) {
+        @Valid @ModelAttribute("movimentacaoRequest") MovimentacaoEstoqueRequest request,
+        BindingResult result,
+        Model model,
+        RedirectAttributes redirect) {
         if (result.hasErrors()) {
             prepararFormulario(model, request);
-            model.addAttribute("erroGlobal", "Revise os campos destacados antes de registrar a movimentação.");
+            model.addAttribute(
+                "erroGlobal", "Revise os campos destacados antes de registrar a movimentação.");
             return "estoque/form";
         }
 
@@ -105,7 +113,7 @@ public class EstoqueController {
 
     private void prepararFormulario(Model model, MovimentacaoEstoqueRequest request) {
         model.addAttribute("movimentacaoRequest", request);
-        model.addAttribute("produtos", service.produtos());
+        model.addAttribute("produtos", service.produtos().stream().map(ProdutoMapper::toResponse).toList());
         model.addAttribute("tipos", TipoMovimentacao.values());
     }
 }

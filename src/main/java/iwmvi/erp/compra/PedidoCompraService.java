@@ -8,10 +8,11 @@ import iwmvi.erp.fornecedor.Fornecedor;
 import iwmvi.erp.fornecedor.FornecedorRepository;
 import iwmvi.erp.produto.Produto;
 import iwmvi.erp.produto.ProdutoRepository;
-import java.time.LocalDate;
-import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class PedidoCompraService {
@@ -23,11 +24,11 @@ public class PedidoCompraService {
     private final FinanceiroService financeiroService;
 
     public PedidoCompraService(
-            PedidoCompraRepository pedidoRepository,
-            FornecedorRepository fornecedorRepository,
-            ProdutoRepository produtoRepository,
-            EstoqueService estoqueService,
-            FinanceiroService financeiroService) {
+        PedidoCompraRepository pedidoRepository,
+        FornecedorRepository fornecedorRepository,
+        ProdutoRepository produtoRepository,
+        EstoqueService estoqueService,
+        FinanceiroService financeiroService) {
         this.pedidoRepository = pedidoRepository;
         this.fornecedorRepository = fornecedorRepository;
         this.produtoRepository = produtoRepository;
@@ -37,7 +38,9 @@ public class PedidoCompraService {
 
     @Transactional
     public PedidoCompra criar(CriarPedidoCompraRequest request) {
-        Fornecedor fornecedor = fornecedorRepository.findById(request.fornecedorId())
+        Fornecedor fornecedor =
+            fornecedorRepository
+                .findById(request.fornecedorId())
                 .orElseThrow(() -> new IllegalArgumentException("Fornecedor não encontrado."));
         if (!fornecedor.isAtivo()) {
             throw new IllegalStateException("Não é possível comprar de um fornecedor inativo.");
@@ -48,7 +51,9 @@ public class PedidoCompraService {
     @Transactional
     public PedidoCompra adicionarItem(Long pedidoId, AdicionarItemCompraRequest request) {
         PedidoCompra pedido = buscar(pedidoId);
-        Produto produto = produtoRepository.findById(request.produtoId())
+        Produto produto =
+            produtoRepository
+                .findById(request.produtoId())
                 .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado."));
         if (!produto.isAtivo()) {
             throw new IllegalStateException("Não é possível comprar um produto inativo.");
@@ -63,7 +68,9 @@ public class PedidoCompraService {
         pedido.receber();
 
         for (ItemPedidoCompra item : pedido.getItens()) {
-            estoqueService.movimentar(new MovimentacaoEstoqueRequest(
+            if (!item.getProduto().isControlaEstoque()) continue;
+            estoqueService.movimentar(
+                new MovimentacaoEstoqueRequest(
                     item.getProduto().getId(),
                     TipoMovimentacao.ENTRADA,
                     item.getQuantidade(),
@@ -71,12 +78,12 @@ public class PedidoCompraService {
         }
 
         financeiroService.gerarContasPagar(
-                pedido.getFornecedor(),
-                pedido.getTotal(),
-                parcelas,
-                primeiroVencimento,
-                "COMPRA",
-                pedido.getId());
+            pedido.getFornecedor(),
+            pedido.getTotal(),
+            parcelas,
+            primeiroVencimento,
+            "COMPRA",
+            pedido.getId());
         return pedido;
     }
 
@@ -92,7 +99,9 @@ public class PedidoCompraService {
         PedidoCompra pedido = buscar(pedidoId);
         financeiroService.cancelarPorOrigem("COMPRA", pedido.getId());
         for (ItemPedidoCompra item : pedido.getItens()) {
-            estoqueService.movimentar(new MovimentacaoEstoqueRequest(
+            if (!item.getProduto().isControlaEstoque()) continue;
+            estoqueService.movimentar(
+                new MovimentacaoEstoqueRequest(
                     item.getProduto().getId(),
                     TipoMovimentacao.SAIDA,
                     item.getQuantidade(),
@@ -109,7 +118,8 @@ public class PedidoCompraService {
 
     @Transactional(readOnly = true)
     public PedidoCompra buscar(Long id) {
-        return pedidoRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Pedido de compra não encontrado."));
+        return pedidoRepository
+            .findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Pedido de compra não encontrado."));
     }
 }

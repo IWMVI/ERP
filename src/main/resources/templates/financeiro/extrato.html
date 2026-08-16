@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Extrato financeiro | ERP</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
+    <link rel="stylesheet" th:href="@{/css/financeiro.css}">
+</head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('financeiro-extrato')}"></aside>
+    <div class="app-main">
+        <header th:replace="~{fragments/topbar :: topbar('Financeiro / Extrato')}"></header>
+        <main class="content registry-page">
+            <div th:replace="~{fragments/alerts :: alerts}"></div>
+            <div class="page-heading">
+                <div><h1>Extrato financeiro</h1><p class="muted">Lançamentos de contas a receber e a pagar com saldo acumulado, ordenados pelo vencimento.</p></div>
+            </div>
+
+            <div class="finance-summary">
+                <div class="finance-card receber">
+                    <span class="finance-card-label">Total a receber</span>
+                    <strong class="finance-card-value" th:text="${'R$ ' + #numbers.formatDecimal(extrato.totalReceber, 1, 2)}"></strong>
+                    <small class="finance-card-count">Títulos de recebimento</small>
+                </div>
+                <div class="finance-card pagar">
+                    <span class="finance-card-label">Total a pagar</span>
+                    <strong class="finance-card-value" th:text="${'R$ ' + #numbers.formatDecimal(extrato.totalPagar, 1, 2)}"></strong>
+                    <small class="finance-card-count">Títulos de pagamento</small>
+                </div>
+                <div class="finance-card saldo">
+                    <span class="finance-card-label">Saldo</span>
+                    <strong class="finance-card-value" th:text="${'R$ ' + #numbers.formatDecimal(extrato.saldo, 1, 2)}"></strong>
+                    <small class="finance-card-count">Receber menos pagar</small>
+                </div>
+            </div>
+
+            <section class="registry-card">
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Data</th><th>Descrição</th><th>Cliente/Fornecedor</th><th>Parcela</th><th>Tipo</th><th>Status</th><th>Valor</th><th>Saldo</th></tr></thead>
+                        <tbody>
+                        <tr th:each="lancamento : ${extrato.lancamentos}">
+                            <td th:text="${lancamento.titulo.dataPagamento != null ? #temporals.format(lancamento.titulo.dataPagamento, 'dd/MM/yyyy') : #temporals.format(lancamento.titulo.dataVencimento, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${lancamento.titulo.descricao}"></td>
+                            <td th:text="${lancamento.titulo.pessoaNome}"></td>
+                            <td th:text="${lancamento.titulo.parcela + '/' + lancamento.titulo.totalParcelas}"></td>
+                            <td><span class="badge" th:classappend="${lancamento.titulo.tipo.name() == 'RECEBER'} ? ' success'" th:text="${lancamento.titulo.tipo.name() == 'RECEBER'} ? 'Receber' : 'Pagar'"></span></td>
+                            <td><span class="badge" th:classappend="${lancamento.categoria == 'EM_ATRASO'} ? ' danger' : ${lancamento.categoria == 'VENCENDO'} ? ' warning' : ${lancamento.categoria == 'PAGO'} ? ' success' : ''" th:text="${categorias[lancamento.categoria]}"></span></td>
+                            <td th:text="${'R$ ' + #numbers.formatDecimal(lancamento.titulo.valor, 1, 2)}"></td>
+                            <td><strong th:text="${'R$ ' + #numbers.formatDecimal(lancamento.saldo, 1, 2)}" th:classappend="${lancamento.saldo.signum() < 0} ? ' muted'"></strong></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(extrato.lancamentos)}"><td colspan="8">Nenhum lançamento encontrado.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+</body>
+</html>

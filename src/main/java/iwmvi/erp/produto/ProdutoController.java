@@ -5,19 +5,15 @@ import iwmvi.erp.shared.exception.DocumentoInvalidoException;
 import iwmvi.erp.shared.storage.ImagemStorageService;
 import iwmvi.erp.shared.web.PageView;
 import jakarta.validation.Valid;
-import java.math.BigDecimal;
-import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.math.BigDecimal;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/produtos")
@@ -33,10 +29,15 @@ public class ProdutoController {
 
     @GetMapping
     public String listar(
-            @RequestParam(required = false) String q,
-            @RequestParam(defaultValue = "0") int page,
-            Model model) {
-        PageView<Produto> paginacao = PageView.of(service.listar(q), page, "/produtos", Map.of("q", q == null ? "" : q));
+        @RequestParam(required = false) String q,
+        @RequestParam(defaultValue = "0") int page,
+        Model model) {
+        PageView<ProdutoResponse> paginacao =
+            PageView.of(
+                service.listar(q).stream().map(ProdutoMapper::toResponse).toList(),
+                page,
+                "/produtos",
+                Map.of("q", q == null ? "" : q));
         model.addAttribute("produtos", paginacao.items());
         model.addAttribute("paginacao", paginacao);
         model.addAttribute("q", q);
@@ -51,20 +52,17 @@ public class ProdutoController {
 
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable Long id, Model model) {
-        Produto produto = service.buscar(id);
-        preparar(model,
-                new ProdutoRequest(produto.getCodigo(), produto.getGtin(), produto.getNome(), produto.getDescricao(),
-                        produto.getMarca(), produto.getCategoria(), produto.getSubcategoria(), produto.getUnidadeMedida(),
-                        produto.getPrecoVenda(), produto.getCusto(), produto.getEstoqueMinimo(),
-                        produto.getEstoqueMaximo(), produto.getLocalizacao()),
-                id);
+        preparar(model, ProdutoMapper.toRequest(service.buscar(id)), id);
         return "produtos/form";
     }
 
     @PostMapping
-    public String criar(@Valid @ModelAttribute("produtoRequest") ProdutoRequest request,
-            BindingResult result, @RequestParam(required = false) MultipartFile foto,
-            Model model, RedirectAttributes redirect) {
+    public String criar(
+        @Valid @ModelAttribute("produtoRequest") ProdutoRequest request,
+        BindingResult result,
+        @RequestParam(required = false) MultipartFile foto,
+        Model model,
+        RedirectAttributes redirect) {
         if (result.hasErrors()) {
             preparar(model, request, null);
             model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o produto.");
@@ -94,10 +92,13 @@ public class ProdutoController {
     }
 
     @PostMapping("/{id}")
-    public String atualizar(@PathVariable Long id,
-            @Valid @ModelAttribute("produtoRequest") ProdutoRequest request,
-            BindingResult result, @RequestParam(required = false) MultipartFile foto,
-            Model model, RedirectAttributes redirect) {
+    public String atualizar(
+        @PathVariable Long id,
+        @Valid @ModelAttribute("produtoRequest") ProdutoRequest request,
+        BindingResult result,
+        @RequestParam(required = false) MultipartFile foto,
+        Model model,
+        RedirectAttributes redirect) {
         if (result.hasErrors()) {
             preparar(model, request, id);
             model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o produto.");
@@ -148,12 +149,42 @@ public class ProdutoController {
     private void preparar(Model model, ProdutoRequest request, Long id) {
         model.addAttribute("produtoRequest", request);
         model.addAttribute("unidades", UnidadeMedida.values());
+        model.addAttribute("tiposProduto", TipoProduto.values());
+        model.addAttribute("origens", OrigemMercadoria.values());
+        model.addAttribute("tiposItemSped", TipoItemSped.values());
         model.addAttribute("id", id);
         model.addAttribute("fotoAtual", id == null ? null : service.buscar(id).getFotoArquivo());
     }
 
     private ProdutoRequest vazio() {
-        return new ProdutoRequest("", "", "", "", "", "", "", UnidadeMedida.UNIDADE,
-                BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "");
+        return new ProdutoRequest(
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            TipoProduto.PRODUTO,
+            UnidadeMedida.UNIDADE,
+            BigDecimal.ZERO,
+            BigDecimal.ZERO,
+            BigDecimal.ZERO,
+            BigDecimal.ZERO,
+            "",
+            true,
+            "",
+            "",
+            null,
+            UnidadeMedida.UNIDADE,
+            BigDecimal.ONE,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
     }
 }

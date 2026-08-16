@@ -28,8 +28,8 @@
                         <input name="desconto" type="number" min="0" step="0.01" value="0">
                     </label>
                     <div class="form-actions">
-                        <a class="button secondary" th:href="@{/vendas}">Cancelar</a>
-                        <button type="submit">Criar pedido</button>
+                        <th:block th:replace="~{fragments/buttons :: link(@{/vendas}, 'Cancelar', 'secondary')}"></th:block>
+                        <th:block th:replace="~{fragments/buttons :: action('Criar pedido', 'submit', null, null, null)}"></th:block>
                     </div>
                 </form>
             </section>

@@ -1,13 +1,14 @@
 package iwmvi.erp.venda;
 
+import iwmvi.erp.cliente.Cliente;
+import iwmvi.erp.produto.Produto;
+import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
-
-import iwmvi.erp.cliente.Cliente;
-import iwmvi.erp.produto.Produto;
-import java.math.BigDecimal;
-import org.junit.jupiter.api.Test;
 
 class PedidoVendaTest {
 
@@ -24,8 +25,8 @@ class PedidoVendaTest {
         assertEquals(new BigDecimal("90.00000"), pedido.getTotal());
         assertEquals(StatusPedidoVenda.CONCLUIDO, pedido.getStatus());
         assertThrows(
-                IllegalStateException.class,
-                () -> pedido.adicionarItem(produto, BigDecimal.ONE, BigDecimal.TEN));
+            IllegalStateException.class,
+            () -> pedido.adicionarItem(produto, BigDecimal.ONE, BigDecimal.TEN));
     }
 
     @Test

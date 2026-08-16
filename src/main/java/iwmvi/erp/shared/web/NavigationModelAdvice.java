@@ -2,10 +2,11 @@ package iwmvi.erp.shared.web;
 
 import iwmvi.erp.usuario.Usuario;
 import iwmvi.erp.usuario.UsuarioRepository;
-import java.util.Optional;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
+
+import java.util.Optional;
 
 @ControllerAdvice
 public class NavigationModelAdvice {
@@ -19,8 +20,8 @@ public class NavigationModelAdvice {
     @ModelAttribute("admin")
     public boolean admin(Authentication authentication) {
         return authentication != null
-                && authentication.getAuthorities().stream()
-                        .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+            && authentication.getAuthorities().stream()
+            .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
     }
 
     @ModelAttribute("usuarioAtualNome")

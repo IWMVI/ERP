@@ -32,8 +32,8 @@
 
                 <div class="registry-form-actions">
                     <div class="registry-actions-buttons">
-                        <a class="button secondary" th:href="@{/usuarios}">Cancelar</a>
-                        <button type="submit">Salvar</button>
+                        <th:block th:replace="~{fragments/buttons :: link(@{/usuarios}, 'Cancelar', 'secondary')}"></th:block>
+                        <th:block th:replace="~{fragments/buttons :: action('Salvar', 'submit', null, null, null)}"></th:block>
                     </div>
                 </div>
             </form>

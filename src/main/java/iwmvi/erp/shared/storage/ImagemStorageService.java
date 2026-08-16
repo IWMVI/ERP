@@ -1,6 +1,15 @@
 package iwmvi.erp.shared.storage;
 
-import java.awt.Graphics2D;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -12,14 +21,6 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ImagemStorageService {
@@ -58,7 +59,8 @@ public class ImagemStorageService {
             Files.createDirectories(diretorio);
             Path temporario = Files.createTempFile(diretorio, ".upload-", ".tmp");
             try {
-                boolean gravou = ImageIO.write(
+                boolean gravou =
+                    ImageIO.write(
                         prepararParaGravacao(imagemValidada.imagem(), imagemValidada.formato()),
                         imagemValidada.formato(),
                         temporario.toFile());
@@ -164,12 +166,14 @@ public class ImagemStorageService {
     }
 
     private void validarAssinatura(byte[] bytes) {
-        boolean jpeg = bytes.length >= 3
+        boolean jpeg =
+            bytes.length >= 3
                 && (bytes[0] & 0xFF) == 0xFF
                 && (bytes[1] & 0xFF) == 0xD8
                 && (bytes[2] & 0xFF) == 0xFF;
 
-        boolean png = bytes.length >= 8
+        boolean png =
+            bytes.length >= 8
                 && (bytes[0] & 0xFF) == 0x89
                 && bytes[1] == 0x50
                 && bytes[2] == 0x4E
@@ -180,12 +184,14 @@ public class ImagemStorageService {
                 && bytes[7] == 0x0A;
 
         if (!jpeg && !png) {
-            throw new IllegalArgumentException("O conteúdo enviado não corresponde a uma imagem JPG ou PNG válida.");
+            throw new IllegalArgumentException(
+                "O conteúdo enviado não corresponde a uma imagem JPG ou PNG válida.");
         }
     }
 
     private ImagemValidada decodificarEValidar(byte[] bytes) {
-        try (ImageInputStream stream = ImageIO.createImageInputStream(new ByteArrayInputStream(bytes))) {
+        try (ImageInputStream stream =
+                 ImageIO.createImageInputStream(new ByteArrayInputStream(bytes))) {
             if (stream == null) {
                 throw new IllegalArgumentException("Imagem inválida.");
             }
@@ -223,10 +229,10 @@ public class ImagemStorageService {
 
     private void validarDimensoes(int largura, int altura) {
         if (largura <= 0
-                || altura <= 0
-                || largura > DIMENSAO_MAXIMA
-                || altura > DIMENSAO_MAXIMA
-                || (long) largura * altura > PIXELS_MAXIMOS) {
+            || altura <= 0
+            || largura > DIMENSAO_MAXIMA
+            || altura > DIMENSAO_MAXIMA
+            || (long) largura * altura > PIXELS_MAXIMOS) {
             throw new IllegalArgumentException("As dimensões da imagem excedem o limite permitido.");
         }
     }
@@ -236,8 +242,8 @@ public class ImagemStorageService {
             return original;
         }
 
-        BufferedImage rgb = new BufferedImage(
-                original.getWidth(), original.getHeight(), BufferedImage.TYPE_INT_RGB);
+        BufferedImage rgb =
+            new BufferedImage(original.getWidth(), original.getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = rgb.createGraphics();
         try {
             graphics.drawImage(original, 0, 0, null);
@@ -268,7 +274,9 @@ public class ImagemStorageService {
         }
     }
 
-    private record ImagemValidada(BufferedImage imagem, String formato) {}
+    private record ImagemValidada(BufferedImage imagem, String formato) {
+    }
 
-    public record RecursoImagem(Resource resource, String contentType) {}
+    public record RecursoImagem(Resource resource, String contentType) {
+    }
 }

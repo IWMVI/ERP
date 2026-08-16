@@ -1,9 +1,9 @@
 package iwmvi.erp.shared.validation;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import org.junit.jupiter.api.Test;
 
 class DocumentoValidatorTest {
 

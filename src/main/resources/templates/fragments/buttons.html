@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+
+<!--
+  Botões padrão das telas de cadastro.
+  Uso (sempre informar todos os parâmetros, na ordem):
+    Link:   ~{fragments/buttons :: link(@{/vendas/novo}, 'Nova venda', null)}
+            ~{fragments/buttons :: link(@{/produtos}, 'Cancelar', 'secondary')}
+    Ação:   ~{fragments/buttons :: action('Salvar', 'submit', null, null, null)}
+            ~{fragments/buttons :: action('Nova conta a pagar', 'button', 'nova-conta-modal', null, null)}
+            ~{fragments/buttons :: action('Continuar', 'submit', null, null, true)}
+-->
+<th:block th:fragment="link(href, label, class)">
+    <a class="button" th:classappend="${class}" th:href="${href}" th:text="${label}"></a>
+</th:block>
+
+<th:block th:fragment="action(label, type, modal, class, disabled)">
+    <button class="button"
+            th:classappend="${class}"
+            th:disabled="${disabled == true}"
+            th:attr="type=${type}, data-modal-open=${modal}, aria-disabled=${disabled == true ? 'true' : null}"
+            th:text="${label}"></button>
+</th:block>
+
+</body>
+</html>

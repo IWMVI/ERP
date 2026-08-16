@@ -16,7 +16,7 @@
             <div th:replace="~{fragments/alerts :: alerts}"></div>
             <div class="page-heading">
                 <div><h1>Pedidos de compra</h1><p class="muted">Controle compras de fornecedores e seus recebimentos.</p></div>
-                <a class="button" th:href="@{/compras/novo}">Nova compra</a>
+                <th:block th:replace="~{fragments/buttons :: link(@{/compras/novo}, 'Nova compra', null)}"></th:block>
             </div>
             <section class="registry-card">
                 <div class="table-wrapper">
@@ -25,7 +25,7 @@
                         <tbody>
                         <tr th:each="pedido : ${pedidos}">
                             <td th:text="${'#' + pedido.id}"></td>
-                            <td th:text="${pedido.fornecedor.nome}"></td>
+                            <td th:text="${pedido.fornecedorNome}"></td>
                             <td th:text="${#temporals.format(pedido.dataCriacao, 'dd/MM/yyyy HH:mm')}"></td>
                             <td th:text="${'R$ ' + #numbers.formatDecimal(pedido.total, 1, 2)}"></td>
                             <td><span class="badge" th:classappend="${pedido.status.name() == 'RECEBIDO'} ? ' success'" th:text="${pedido.status}"></span></td>

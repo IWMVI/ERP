@@ -16,7 +16,7 @@
         <main class="content registry-page">
             <div class="page-heading">
                 <div><h1>Produtos</h1><p class="muted">Catálogo, preços e posição de estoque.</p></div>
-                <a class="button" th:href="@{/produtos/novo}">Novo produto</a>
+                <th:block th:replace="~{fragments/buttons :: link(@{/produtos/novo}, 'Novo produto', null)}"></th:block>
             </div>
             <div class="registry-toolbar">
                 <form class="form-grid panel panel-body" method="get">

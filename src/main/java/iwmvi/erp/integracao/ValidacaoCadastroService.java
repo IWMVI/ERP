@@ -39,7 +39,7 @@ public class ValidacaoCadastroService {
         }
 
         throw new DocumentoInvalidoException(
-                "Informe um CPF com 11 dígitos ou um CNPJ válido com 14 posições.");
+            "Informe um CPF com 11 dígitos ou um CNPJ válido com 14 posições.");
     }
 
     public void validarCep(String cep) {

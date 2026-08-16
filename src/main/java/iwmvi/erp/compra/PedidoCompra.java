@@ -2,19 +2,10 @@ package iwmvi.erp.compra;
 
 import iwmvi.erp.fornecedor.Fornecedor;
 import iwmvi.erp.produto.Produto;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,6 +14,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "pedidos_compra")
+@Getter
 public class PedidoCompra {
 
     @Id
@@ -41,9 +33,11 @@ public class PedidoCompra {
     private StatusPedidoCompra status;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemPedidoCompra> itens = new ArrayList<>();
+    @Getter(AccessLevel.NONE)
+    private final List<ItemPedidoCompra> itens = new ArrayList<>();
 
-    protected PedidoCompra() {}
+    protected PedidoCompra() {
+    }
 
     public PedidoCompra(Fornecedor fornecedor) {
         this.fornecedor = fornecedor;
@@ -95,9 +89,7 @@ public class PedidoCompra {
         }
     }
 
-    public Long getId() { return id; }
-    public Fornecedor getFornecedor() { return fornecedor; }
-    public LocalDateTime getDataCriacao() { return dataCriacao; }
-    public StatusPedidoCompra getStatus() { return status; }
-    public List<ItemPedidoCompra> getItens() { return Collections.unmodifiableList(itens); }
+    public List<ItemPedidoCompra> getItens() {
+        return Collections.unmodifiableList(itens);
+    }
 }

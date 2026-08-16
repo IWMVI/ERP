@@ -61,6 +61,7 @@
 }
 
 .registry-form-section label {
+    min-height: 19px;
     margin-bottom: 6px;
     color: #3b4954;
     font-size: 12px;
@@ -236,6 +237,94 @@ textarea {
 
 .registry-fields-after-media {
     margin-top: 18px;
+}
+
+.field-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    width: fit-content;
+    min-height: 19px;
+    margin: 0 0 6px;
+}
+
+.field-label label {
+    margin: 0;
+}
+
+.info-help {
+    position: relative;
+    display: inline-grid;
+    width: 19px;
+    height: 19px;
+    min-height: 0;
+    padding: 0;
+    place-items: center;
+    border: 1px solid #8a99a5;
+    border-radius: 50%;
+    background: transparent;
+    color: #60717e;
+    font: 700 12px/1 Georgia,
+    serif;
+    cursor: help;
+}
+
+.info-help:hover,
+.info-help:focus-visible {
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 9%, white);
+    color: var(--color-primary);
+}
+
+.info-help::after {
+    position: absolute;
+    z-index: 30;
+    bottom: calc(100% + 9px);
+    left: 50%;
+    width: max-content;
+    max-width: min(300px, 75vw);
+    padding: 9px 11px;
+    border-radius: 7px;
+    background: #26343d;
+    color: #fff;
+    box-shadow: 0 6px 20px rgb(23 35 43 / 20%);
+    content: attr(data-tooltip);
+    font: 400 12px/1.45 system-ui,
+    sans-serif;
+    opacity: 0;
+    pointer-events: none;
+    text-align: left;
+    transform: translate(-50%, 4px);
+    transition: opacity 120ms ease,
+    transform 120ms ease;
+}
+
+.info-help:hover::after,
+.info-help:focus-visible::after {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+.checkbox-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 13px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: #f8fafb;
+}
+
+.checkbox-field input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    accent-color: var(--color-primary);
+}
+
+.checkbox-field small {
+    display: block;
+    margin-top: 4px;
 }
 
 .photo-cell {

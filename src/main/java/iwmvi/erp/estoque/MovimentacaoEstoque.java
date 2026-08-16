@@ -1,22 +1,15 @@
 package iwmvi.erp.estoque;
 
 import iwmvi.erp.produto.Produto;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.Getter;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "movimentacoes_estoque")
+@Getter
 public class MovimentacaoEstoque {
 
     @Id
@@ -43,48 +36,21 @@ public class MovimentacaoEstoque {
     @Column(nullable = false)
     private String usuario;
 
-    protected MovimentacaoEstoque() {}
+    protected MovimentacaoEstoque() {
+    }
 
     public MovimentacaoEstoque(
-            Produto produto,
-            TipoMovimentacao tipo,
-            BigDecimal quantidade,
-            LocalDateTime dataHora,
-            String origem,
-            String usuario) {
+        Produto produto,
+        TipoMovimentacao tipo,
+        BigDecimal quantidade,
+        LocalDateTime dataHora,
+        String origem,
+        String usuario) {
         this.produto = produto;
         this.tipo = tipo;
         this.quantidade = quantidade;
         this.dataHora = dataHora;
         this.origem = origem;
         this.usuario = usuario;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Produto getProduto() {
-        return produto;
-    }
-
-    public TipoMovimentacao getTipo() {
-        return tipo;
-    }
-
-    public BigDecimal getQuantidade() {
-        return quantidade;
-    }
-
-    public LocalDateTime getDataHora() {
-        return dataHora;
-    }
-
-    public String getOrigem() {
-        return origem;
-    }
-
-    public String getUsuario() {
-        return usuario;
     }
 }

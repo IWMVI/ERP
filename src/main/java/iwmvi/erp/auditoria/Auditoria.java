@@ -1,15 +1,13 @@
 package iwmvi.erp.auditoria;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "auditoria")
+@Getter
 public class Auditoria {
 
     @Id
@@ -34,48 +32,21 @@ public class Auditoria {
     @Column(length = 500)
     private String descricao;
 
-    protected Auditoria() {}
+    protected Auditoria() {
+    }
 
     public Auditoria(
-            String usuario,
-            LocalDateTime dataHora,
-            String operacao,
-            String entidade,
-            String entidadeId,
-            String descricao) {
+        String usuario,
+        LocalDateTime dataHora,
+        String operacao,
+        String entidade,
+        String entidadeId,
+        String descricao) {
         this.usuario = usuario;
         this.dataHora = dataHora;
         this.operacao = operacao;
         this.entidade = entidade;
         this.entidadeId = entidadeId;
         this.descricao = descricao;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public LocalDateTime getDataHora() {
-        return dataHora;
-    }
-
-    public String getOperacao() {
-        return operacao;
-    }
-
-    public String getEntidade() {
-        return entidade;
-    }
-
-    public String getEntidadeId() {
-        return entidadeId;
-    }
-
-    public String getDescricao() {
-        return descricao;
     }
 }

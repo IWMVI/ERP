@@ -16,7 +16,7 @@
         <main class="content registry-page">
             <div class="page-heading">
                 <div><h1>Funcionários</h1><p class="muted">Cadastro interno de colaboradores.</p></div>
-                <a class="button" th:href="@{/funcionarios/novo}">Novo funcionário</a>
+                <th:block th:replace="~{fragments/buttons :: link(@{/funcionarios/novo}, 'Novo funcionário', null)}"></th:block>
             </div>
             <section class="registry-card">
                 <div class="table-wrapper">

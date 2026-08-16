@@ -1,18 +1,18 @@
 package iwmvi.erp.integracao;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.json.JsonMapper;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BrasilApiClientMappingTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final JsonMapper objectMapper = JsonMapper.builder().build();
 
     @Test
     void deveMapearDadosPrincipaisDoCnpj() throws Exception {
         String json =
-                """
+            """
                 {
                   "cnpj": "19131243000197",
                   "razao_social": "OPEN KNOWLEDGE BRASIL",
@@ -31,8 +31,7 @@ class BrasilApiClientMappingTest {
                 }
                 """;
 
-        BrasilApiClient.CnpjDados dados =
-                objectMapper.readValue(json, BrasilApiClient.CnpjDados.class);
+        BrasilApiClient.CnpjDados dados = objectMapper.readValue(json, BrasilApiClient.CnpjDados.class);
 
         assertEquals("19131243000197", dados.cnpj());
         assertEquals("OPEN KNOWLEDGE BRASIL", dados.razaoSocial());
