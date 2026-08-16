@@ -261,7 +261,8 @@ textarea {
     border-radius: 50%;
     background: transparent;
     color: #60717e;
-    font: 700 12px/1 Georgia, serif;
+    font: 700 12px/1 Georgia,
+    serif;
     cursor: help;
 }
 
@@ -285,12 +286,14 @@ textarea {
     color: #fff;
     box-shadow: 0 6px 20px rgb(23 35 43 / 20%);
     content: attr(data-tooltip);
-    font: 400 12px/1.45 system-ui, sans-serif;
+    font: 400 12px/1.45 system-ui,
+    sans-serif;
     opacity: 0;
     pointer-events: none;
     text-align: left;
     transform: translate(-50%, 4px);
-    transition: opacity 120ms ease, transform 120ms ease;
+    transition: opacity 120ms ease,
+    transform 120ms ease;
 }
 
 .info-help:hover::after,
