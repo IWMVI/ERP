@@ -1,12 +1,12 @@
 package iwmvi.erp.cliente;
 
+import iwmvi.erp.shared.validation.DocumentoValidator;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record ClienteRequest(
-        @NotNull(message = "O tipo de pessoa é obrigatório.") TipoPessoa tipoPessoa,
+        TipoPessoa tipoPessoa,
         @NotBlank(message = "O nome é obrigatório.") String nome,
         String nomeFantasia,
         @NotBlank(message = "O CPF/CNPJ é obrigatório.") @Size(max = 20) String documento,
@@ -21,6 +21,18 @@ public record ClienteRequest(
         String cidade,
         @Size(max = 2, message = "Informe a UF com 2 caracteres.") String estado,
         @Size(max = 1000, message = "As observações devem ter no máximo 1000 caracteres.") String observacoes) {
+
+    @Override
+    public TipoPessoa tipoPessoa() {
+        String digits = DocumentoValidator.somenteDigitos(documento);
+        if (digits.length() == 11) {
+            return TipoPessoa.FISICA;
+        }
+        if (digits.length() == 14) {
+            return TipoPessoa.JURIDICA;
+        }
+        return tipoPessoa;
+    }
 
     public ClienteRequest(
             TipoPessoa tipoPessoa,
