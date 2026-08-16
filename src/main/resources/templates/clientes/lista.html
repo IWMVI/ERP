@@ -11,35 +11,29 @@
 <div class="app-shell">
     <aside th:replace="~{fragments/sidebar :: sidebar('clientes')}"></aside>
     <div class="app-main">
-        <header class="topbar"><span class="topbar-title">Cadastros / Clientes</span></header>
-        <main class="content">
+        <header th:replace="~{fragments/topbar :: topbar('Cadastros / Clientes')}"></header>
+        <main class="content registry-page">
             <div class="page-heading">
-                <div><h1>Clientes</h1><p class="muted">Cadastro de pessoas físicas e jurídicas.</p></div>
+                <div><h1>Clientes</h1><p class="muted">Pessoas físicas e jurídicas vinculadas à operação comercial.</p></div>
                 <a class="button" th:href="@{/clientes/novo}">Novo cliente</a>
             </div>
             <div class="alert success" th:if="${sucesso}" th:text="${sucesso}"></div>
-            <div class="table-wrapper">
-                <table>
-                    <thead><tr><th>Nome</th><th>CPF/CNPJ</th><th>Contato</th><th>Status</th><th>Ações</th></tr></thead>
-                    <tbody>
-                    <tr th:each="cliente : ${clientes}">
-                        <td th:text="${cliente.nome}"></td>
-                        <td th:text="${cliente.documento}"></td>
-                        <td th:text="${cliente.email}"></td>
-                        <td><span class="badge" th:text="${cliente.ativo ? 'Ativo' : 'Inativo'}"></span></td>
-                        <td>
-                            <div class="user-menu">
-                                <a th:href="@{/clientes/{id}/editar(id=${cliente.id})}">Editar</a>
-                                <form th:action="@{/clientes/{id}/status(id=${cliente.id})}" method="post">
-                                    <button class="link-button" type="submit" th:text="${cliente.ativo ? 'Inativar' : 'Ativar'}"></button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(clientes)}"><td colspan="5">Nenhum cliente cadastrado.</td></tr>
-                    </tbody>
-                </table>
-            </div>
+            <section class="registry-card">
+                <div class="registry-card-header"><h2>Clientes cadastrados</h2><span class="muted" th:text="${#lists.size(clientes) + ' registro(s)'}"></span></div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Nome</th><th>CPF/CNPJ</th><th>Contato</th><th>Status</th><th>Ações</th></tr></thead>
+                        <tbody>
+                        <tr th:each="cliente : ${clientes}">
+                            <td th:text="${cliente.nome}"></td><td th:text="${cliente.documento}"></td><td th:text="${cliente.email}"></td>
+                            <td><span class="badge" th:classappend="${cliente.ativo} ? ' success'" th:text="${cliente.ativo ? 'Ativo' : 'Inativo'}"></span></td>
+                            <td><div class="user-menu"><a th:href="@{/clientes/{id}/editar(id=${cliente.id})}">Editar</a><form th:action="@{/clientes/{id}/status(id=${cliente.id})}" method="post"><button class="link-button" type="submit" th:text="${cliente.ativo ? 'Inativar' : 'Ativar'}"></button></form></div></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(clientes)}"><td colspan="5">Nenhum cliente cadastrado.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
         </main>
     </div>
 </div>
