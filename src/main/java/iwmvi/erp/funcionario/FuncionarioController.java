@@ -74,6 +74,7 @@ public class FuncionarioController {
             RedirectAttributes redirect) {
         if (result.hasErrors()) {
             preparar(model, request, null);
+            model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o funcionário.");
             return "funcionarios/form";
         }
 
@@ -83,10 +84,12 @@ public class FuncionarioController {
         } catch (DocumentoJaCadastradoException exception) {
             result.rejectValue("cpf", "duplicado", exception.getMessage());
             preparar(model, request, null);
+            model.addAttribute("erroGlobal", exception.getMessage());
             return "funcionarios/form";
         } catch (IllegalArgumentException | IllegalStateException exception) {
             result.reject("funcionario.invalido", exception.getMessage());
             preparar(model, request, null);
+            model.addAttribute("erroGlobal", exception.getMessage());
             return "funcionarios/form";
         }
 
@@ -104,6 +107,7 @@ public class FuncionarioController {
             RedirectAttributes redirect) {
         if (result.hasErrors()) {
             preparar(model, request, id);
+            model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o funcionário.");
             return "funcionarios/form";
         }
 
@@ -119,10 +123,12 @@ public class FuncionarioController {
         } catch (DocumentoJaCadastradoException exception) {
             result.rejectValue("cpf", "duplicado", exception.getMessage());
             preparar(model, request, id);
+            model.addAttribute("erroGlobal", exception.getMessage());
             return "funcionarios/form";
         } catch (IllegalArgumentException | IllegalStateException exception) {
             result.reject("funcionario.invalido", exception.getMessage());
             preparar(model, request, id);
+            model.addAttribute("erroGlobal", exception.getMessage());
             return "funcionarios/form";
         }
 
@@ -131,8 +137,9 @@ public class FuncionarioController {
     }
 
     @PostMapping("/{id}/status")
-    public String status(@PathVariable Long id) {
+    public String status(@PathVariable Long id, RedirectAttributes redirect) {
         service.alternarAtivo(id);
+        redirect.addFlashAttribute("sucesso", "Status do funcionário atualizado.");
         return "redirect:/funcionarios";
     }
 
