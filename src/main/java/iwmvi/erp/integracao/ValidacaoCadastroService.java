@@ -21,23 +21,25 @@ public class ValidacaoCadastroService {
     }
 
     public void validarDocumento(String documento) {
-        String digits = DocumentoValidator.somenteDigitos(documento);
-        if (digits.length() == 11) {
-            if (!DocumentoValidator.cpfValido(digits)) {
+        String normalizado = DocumentoValidator.normalizarDocumento(documento);
+
+        if (DocumentoValidator.documentoEhCpf(normalizado)) {
+            if (!DocumentoValidator.cpfValido(normalizado)) {
                 throw new DocumentoInvalidoException("CPF inválido.");
             }
             return;
         }
 
-        if (digits.length() == 14) {
-            if (!DocumentoValidator.cnpjValido(digits)) {
+        if (DocumentoValidator.documentoEhCnpj(normalizado)) {
+            if (!DocumentoValidator.cnpjValido(normalizado)) {
                 throw new DocumentoInvalidoException("CNPJ inválido.");
             }
-            validarExistenciaCnpj(digits);
+            validarExistenciaCnpj(normalizado);
             return;
         }
 
-        throw new DocumentoInvalidoException("Informe um CPF com 11 dígitos ou CNPJ com 14 dígitos.");
+        throw new DocumentoInvalidoException(
+                "Informe um CPF com 11 dígitos ou um CNPJ válido com 14 posições.");
     }
 
     public void validarCep(String cep) {
