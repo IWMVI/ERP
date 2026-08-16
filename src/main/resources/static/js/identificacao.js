@@ -4,8 +4,7 @@
     if (!input) return;
 
     const form = input.closest("form");
-    let timer = null;
-    let submittedValue = "";
+    const continueButton = form?.querySelector("button[type='submit']");
 
     const rawValue = () =>
         (input.value || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 14);
@@ -17,22 +16,18 @@
     };
 
     const update = () => {
-        const raw = rawValue();
-        const type = detectType(raw);
+        const type = detectType(rawValue());
 
         if (typeLabel) {
             typeLabel.textContent = type
-                ? `${type} identificado. Consultando...`
-                : "Informe CPF ou CNPJ";
+                ? `${type} identificado. Clique em Continuar para validar.`
+                : "Informe um CPF ou CNPJ completo.";
         }
 
-        window.clearTimeout(timer);
-        if (!type || raw === submittedValue || !form) return;
-
-        timer = window.setTimeout(() => {
-            submittedValue = raw;
-            form.requestSubmit();
-        }, 450);
+        if (continueButton) {
+            continueButton.disabled = !type;
+            continueButton.setAttribute("aria-disabled", String(!type));
+        }
     };
 
     input.addEventListener("input", update);
