@@ -3,6 +3,7 @@ package iwmvi.erp.cliente;
 import iwmvi.erp.auditoria.AuditoriaService;
 import iwmvi.erp.integracao.ValidacaoCadastroService;
 import iwmvi.erp.shared.exception.DocumentoJaCadastradoException;
+import iwmvi.erp.shared.validation.DocumentoValidator;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,9 +65,10 @@ public class ClienteService {
     }
 
     private void validarDocumentoDuplicado(String documento, Long id) {
+        String documentoNormalizado = DocumentoValidator.somenteDigitos(documento);
         boolean duplicado = id == null
-                ? repository.existsByDocumento(documento)
-                : repository.existsByDocumentoAndIdNot(documento, id);
+                ? repository.existsByDocumento(documentoNormalizado)
+                : repository.existsByDocumentoAndIdNot(documentoNormalizado, id);
         if (duplicado) {
             throw new DocumentoJaCadastradoException(documento);
         }
