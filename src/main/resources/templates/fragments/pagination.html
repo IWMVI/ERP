@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav th:fragment="pagination(paginacao)" class="pagination-bar" aria-label="Paginação">
+    <div class="pagination-summary">
+        <strong th:text="${paginacao.totalItems()}">0</strong>
+        <span>registro(s)</span>
+        <span class="pagination-size">10 por página</span>
+    </div>
+
+    <div class="pagination-controls">
+        <a class="pagination-button"
+           th:classappend="${!paginacao.hasPrevious()} ? ' disabled'"
+           th:href="${paginacao.hasPrevious() ? paginacao.previousUrl() : paginacao.url(paginacao.page())}"
+           th:attr="aria-disabled=${!paginacao.hasPrevious()}"
+           aria-label="Página anterior">‹</a>
+
+        <span class="pagination-current">
+            Página <strong th:text="${paginacao.displayPage()}">1</strong>
+            de <strong th:text="${paginacao.totalPages()}">1</strong>
+        </span>
+
+        <a class="pagination-button"
+           th:classappend="${!paginacao.hasNext()} ? ' disabled'"
+           th:href="${paginacao.hasNext() ? paginacao.nextUrl() : paginacao.url(paginacao.page())}"
+           th:attr="aria-disabled=${!paginacao.hasNext()}"
+           aria-label="Próxima página">›</a>
+    </div>
+</nav>
+</body>
+</html>
