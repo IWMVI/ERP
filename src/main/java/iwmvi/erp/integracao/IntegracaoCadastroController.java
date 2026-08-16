@@ -47,13 +47,13 @@ public class IntegracaoCadastroController {
 
     @GetMapping("/cnpj/{cnpj}")
     public CnpjResponse cnpj(@PathVariable String cnpj) {
-        String digits = DocumentoValidator.somenteDigitos(cnpj);
-        if (!DocumentoValidator.cnpjValido(digits)) {
+        String normalizado = DocumentoValidator.normalizarDocumento(cnpj);
+        if (!DocumentoValidator.cnpjValido(normalizado)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CNPJ inválido.");
         }
 
         try {
-            BrasilApiClient.CnpjDados dados = brasilApiClient.consultarCnpj(digits);
+            BrasilApiClient.CnpjDados dados = brasilApiClient.consultarCnpj(normalizado);
             if (dados == null) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "CNPJ não encontrado.");
             }
