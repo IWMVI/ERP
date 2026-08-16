@@ -20,6 +20,8 @@
     <properties>
         <java.version>21</java.version>
         <spotless.version>3.9.0</spotless.version>
+        <jacoco.version>0.8.15</jacoco.version>
+        <pitest.version>1.25.3</pitest.version>
     </properties>
 
     <dependencies>
@@ -147,6 +149,101 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>iwmvi/erp/ErpApplication.class</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>jacoco-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.45</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>${pitest.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>1.2.3</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <targetClasses>
+                        <param>iwmvi.erp.*Service</param>
+                        <param>iwmvi.erp.shared.validation.*</param>
+                        <param>iwmvi.erp.financeiro.TituloFinanceiroMapper</param>
+                        <param>iwmvi.erp.usuario.UsuarioMapper</param>
+                    </targetClasses>
+                    <excludedClasses>
+                        <param>iwmvi.erp.funcionario.FuncionarioService</param>
+                        <param>iwmvi.erp.integracao.*Service</param>
+                        <param>iwmvi.erp.shared.storage.ImagemStorageService</param>
+                    </excludedClasses>
+                    <targetTests>
+                        <param>iwmvi.erp.*</param>
+                        <param>!iwmvi.erp.*IntegrationTest</param>
+                        <param>!iwmvi.erp.*RenderingTest</param>
+                        <param>!iwmvi.erp.*SmokeTest</param>
+                        <param>!iwmvi.erp.*CoverageTest</param>
+                        <param>!iwmvi.erp.ErpApplicationTests</param>
+                    </targetTests>
+                    <mutationThreshold>50</mutationThreshold>
+                    <outputFormats>
+                        <param>XML</param>
+                        <param>HTML</param>
+                    </outputFormats>
+                    <timestampedReports>false</timestampedReports>
+                    <verbose>false</verbose>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>pitest-mutation-coverage</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>mutationCoverage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
