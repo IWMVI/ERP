@@ -65,7 +65,7 @@ public class FornecedorService {
     }
 
     private void validarDocumentoDuplicado(String documento, Long id) {
-        String documentoNormalizado = DocumentoValidator.somenteDigitos(documento);
+        String documentoNormalizado = DocumentoValidator.normalizarDocumento(documento);
         boolean duplicado = id == null
                 ? repository.existsByDocumento(documentoNormalizado)
                 : repository.existsByDocumentoAndIdNot(documentoNormalizado, id);
