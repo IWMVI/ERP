@@ -1,6 +1,7 @@
 package iwmvi.erp.produto;
 
 import iwmvi.erp.shared.exception.CodigoProdutoJaCadastradoException;
+import iwmvi.erp.shared.exception.DocumentoInvalidoException;
 import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import org.springframework.stereotype.Controller;
@@ -33,17 +34,7 @@ public class ProdutoController {
 
     @GetMapping("/novo")
     public String novo(Model model) {
-        preparar(
-                model,
-                new ProdutoRequest(
-                        "",
-                        "",
-                        "",
-                        UnidadeMedida.UNIDADE,
-                        BigDecimal.ZERO,
-                        BigDecimal.ZERO,
-                        BigDecimal.ZERO),
-                null);
+        preparar(model, vazio(), null);
         return "produtos/form";
     }
 
@@ -54,12 +45,18 @@ public class ProdutoController {
                 model,
                 new ProdutoRequest(
                         produto.getCodigo(),
+                        produto.getGtin(),
                         produto.getNome(),
+                        produto.getDescricao(),
+                        produto.getMarca(),
                         produto.getCategoria(),
+                        produto.getSubcategoria(),
                         produto.getUnidadeMedida(),
                         produto.getPrecoVenda(),
                         produto.getCusto(),
-                        produto.getEstoqueMinimo()),
+                        produto.getEstoqueMinimo(),
+                        produto.getEstoqueMaximo(),
+                        produto.getLocalizacao()),
                 id);
         return "produtos/form";
     }
@@ -79,6 +76,10 @@ public class ProdutoController {
             service.criar(request);
         } catch (CodigoProdutoJaCadastradoException exception) {
             result.rejectValue("codigo", "duplicado", exception.getMessage());
+            preparar(model, request, null);
+            return "produtos/form";
+        } catch (DocumentoInvalidoException exception) {
+            result.rejectValue("gtin", "gtin.invalido", exception.getMessage());
             preparar(model, request, null);
             return "produtos/form";
         }
@@ -105,6 +106,10 @@ public class ProdutoController {
             result.rejectValue("codigo", "duplicado", exception.getMessage());
             preparar(model, request, id);
             return "produtos/form";
+        } catch (DocumentoInvalidoException exception) {
+            result.rejectValue("gtin", "gtin.invalido", exception.getMessage());
+            preparar(model, request, id);
+            return "produtos/form";
         }
 
         redirect.addFlashAttribute("sucesso", "Produto atualizado com sucesso.");
@@ -121,5 +126,22 @@ public class ProdutoController {
         model.addAttribute("produtoRequest", request);
         model.addAttribute("unidades", UnidadeMedida.values());
         model.addAttribute("id", id);
+    }
+
+    private ProdutoRequest vazio() {
+        return new ProdutoRequest(
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                UnidadeMedida.UNIDADE,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                "");
     }
 }
