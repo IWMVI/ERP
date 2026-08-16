@@ -36,7 +36,8 @@
                                        data-mask="documento"
                                        data-documento-pessoa
                                        data-lookup-cnpj
-                                       inputmode="numeric"
+                                       inputmode="text"
+                                       maxlength="18"
                                        autocomplete="off">
                                 <button type="button"
                                         class="button secondary lookup-button"
@@ -50,8 +51,15 @@
                             <small data-lookup-status class="field-hint"></small>
                             <small class="field-error" th:errors="*{documento}"></small>
                         </div>
-                        <div><label for="nome">Nome / Razão social</label><input id="nome" th:field="*{nome}" autocomplete="name"><small class="field-error" th:errors="*{nome}"></small></div>
-                        <div><label for="nomeFantasia">Nome fantasia</label><input id="nomeFantasia" th:field="*{nomeFantasia}"></div>
+                        <div>
+                            <label for="nome" data-label-nome-pessoa>Nome / Razão social</label>
+                            <input id="nome" th:field="*{nome}" autocomplete="name">
+                            <small class="field-error" th:errors="*{nome}"></small>
+                        </div>
+                        <div data-pessoa-juridica hidden>
+                            <label for="nomeFantasia">Nome fantasia</label>
+                            <input id="nomeFantasia" th:field="*{nomeFantasia}">
+                        </div>
                     </div>
                 </section>
 
