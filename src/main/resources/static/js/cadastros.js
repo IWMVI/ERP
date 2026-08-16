@@ -1,16 +1,21 @@
 (() => {
     const digits = (value) => (value || "").replace(/\D/g, "");
-    const documentChars = (value) => (value || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 14);
+    const documentChars = (value) =>
+        (value || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 14);
+
+    const maskCpf = (value) =>
+        digits(value)
+            .slice(0, 11)
+            .replace(/(\d{3})(\d)/, "$1.$2")
+            .replace(/(\d{3})(\d)/, "$1.$2")
+            .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
 
     const maskCpfCnpj = (value) => {
         const raw = documentChars(value);
         const isCnpj = /[A-Z]/.test(raw) || raw.length > 11;
 
         if (!isCnpj) {
-            return raw
-                .replace(/(\d{3})(\d)/, "$1.$2")
-                .replace(/(\d{3})(\d)/, "$1.$2")
-                .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            return maskCpf(raw);
         }
 
         return raw
@@ -33,6 +38,7 @@
     const maskGtin = (value) => digits(value).slice(0, 14);
 
     const formatters = {
+        cpf: maskCpf,
         documento: maskCpfCnpj,
         cep: maskCep,
         telefone: maskPhone,
@@ -53,6 +59,27 @@
     document.querySelectorAll("[data-format]").forEach((element) => {
         const formatter = formatters[element.dataset.format];
         if (formatter) element.textContent = formatter(element.textContent ?? "");
+    });
+
+    document.querySelectorAll("[data-image-input]").forEach((input) => {
+        input.addEventListener("change", () => {
+            const file = input.files?.[0];
+            if (!file) return;
+
+            const panel = input.closest(".entity-photo-panel");
+            const previewContainer = panel?.querySelector(".entity-photo-preview");
+            if (!previewContainer) return;
+
+            const oldPreview = previewContainer.querySelector("[data-image-preview]");
+            const placeholder = previewContainer.querySelector("[data-image-placeholder]");
+            const image = oldPreview || document.createElement("img");
+            image.dataset.imagePreview = "";
+            image.alt = "Pré-visualização da imagem";
+            image.src = URL.createObjectURL(file);
+
+            if (!oldPreview) previewContainer.appendChild(image);
+            if (placeholder) placeholder.hidden = true;
+        });
     });
 
     const setIfPresent = (name, value, formatter) => {
@@ -102,7 +129,12 @@
             element.hidden = tipo !== "FISICA";
         });
         if (nomeLabel) {
-            nomeLabel.textContent = tipo === "JURIDICA" ? "Razão social" : tipo === "FISICA" ? "Nome completo" : "Nome / Razão social";
+            nomeLabel.textContent =
+                tipo === "JURIDICA"
+                    ? "Razão social"
+                    : tipo === "FISICA"
+                      ? "Nome completo"
+                      : "Nome / Razão social";
         }
     };
 
@@ -143,7 +175,9 @@
 
         showLookupState(cepInput, "Consultando CEP...");
         try {
-            const response = await fetch(`/integracoes/cep/${cep}`, { headers: { Accept: "application/json" } });
+            const response = await fetch(`/integracoes/cep/${cep}`, {
+                headers: { Accept: "application/json" },
+            });
             if (!response.ok) throw new Error(await readError(response, "CEP não encontrado."));
             const data = await response.json();
             setIfPresent("logradouro", data.logradouro);
@@ -164,7 +198,9 @@
         if (!documentoInput) return;
         const cnpj = documentChars(documentoInput.value);
         if (!/^[A-Z0-9]{12}\d{2}$/.test(cnpj)) {
-            if (force) showLookupState(documentoInput, "Informe um CNPJ válido com 14 posições.", "error");
+            if (force) {
+                showLookupState(documentoInput, "Informe um CNPJ válido com 14 posições.", "error");
+            }
             return;
         }
         if (!force && cnpj === ultimoCnpjConsultado) return;
@@ -172,7 +208,9 @@
         setLoading(consultarCnpjButton, true);
         showLookupState(documentoInput, "Consultando dados do CNPJ...");
         try {
-            const response = await fetch(`/integracoes/cnpj/${cnpj}`, { headers: { Accept: "application/json" } });
+            const response = await fetch(`/integracoes/cnpj/${cnpj}`, {
+                headers: { Accept: "application/json" },
+            });
             if (!response.ok) throw new Error(await readError(response, "CNPJ não encontrado."));
             const data = await response.json();
             setIfPresent("nome", data.razaoSocial);
