@@ -30,8 +30,6 @@
 
             <div class="alert error" th:if="${param.error}">E-mail ou senha inválidos.</div>
             <div class="alert success" th:if="${param.logout}">Sessão encerrada com sucesso.</div>
-            <div class="alert success" th:if="${param.cadastrado}">Usuário criado. Faça login para continuar.</div>
-
             <form th:action="@{/login}" method="post" class="form-stack">
                 <div class="form-group">
                     <label for="username">E-mail</label>
@@ -47,8 +45,8 @@
             </form>
 
             <p class="auth-link-row">
-                Ainda não possui acesso?
-                <a th:href="@{/cadastro}">Criar usuário</a>
+                O acesso é concedido por um administrador.
+                <a th:href="@{/privacidade}">Privacidade e proteção de dados</a>
             </p>
         </div>
     </section>

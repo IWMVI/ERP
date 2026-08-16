@@ -19,9 +19,13 @@ import iwmvi.erp.auditoria.AuditoriaService;
 import iwmvi.erp.cliente.ClienteService;
 import iwmvi.erp.estoque.EstoqueService;
 import iwmvi.erp.fornecedor.FornecedorService;
+import iwmvi.erp.funcionario.FuncionarioService;
 import iwmvi.erp.integracao.BrasilApiClient;
+import iwmvi.erp.integracao.PessoaCadastroLookupService;
+import iwmvi.erp.integracao.ValidacaoCadastroService;
 import iwmvi.erp.produto.ProdutoService;
 import iwmvi.erp.security.SecurityConfig;
+import iwmvi.erp.shared.storage.ImagemStorageService;
 import iwmvi.erp.usuario.UsuarioRepository;
 import iwmvi.erp.usuario.UsuarioService;
 import java.util.List;
@@ -45,10 +49,14 @@ class PageRenderingSmokeTest {
     @MockitoBean private FornecedorService fornecedorService;
     @MockitoBean private ProdutoService produtoService;
     @MockitoBean private EstoqueService estoqueService;
+    @MockitoBean private FuncionarioService funcionarioService;
     @MockitoBean private UsuarioService usuarioService;
     @MockitoBean private UsuarioRepository usuarioRepository;
     @MockitoBean private AuditoriaService auditoriaService;
     @MockitoBean private BrasilApiClient brasilApiClient;
+    @MockitoBean private PessoaCadastroLookupService pessoaCadastroLookupService;
+    @MockitoBean private ValidacaoCadastroService validacaoCadastroService;
+    @MockitoBean private ImagemStorageService imagemStorageService;
 
     @BeforeEach
     void setUp() {
