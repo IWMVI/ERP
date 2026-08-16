@@ -8,13 +8,64 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class FornecedorService {
+
     private final FornecedorRepository repository;
-    private final AuditoriaService auditoria;
-    public FornecedorService(FornecedorRepository repository, AuditoriaService auditoria){this.repository=repository;this.auditoria=auditoria;}
-    @Transactional(readOnly=true) public List<Fornecedor> listar(){return repository.findAllByOrderByNomeAsc();}
-    @Transactional(readOnly=true) public Fornecedor buscar(Long id){return repository.findById(id).orElseThrow(()->new IllegalArgumentException("Fornecedor não encontrado."));}
-    @Transactional public Fornecedor criar(FornecedorRequest r){validar(r.documento(),null);Fornecedor f=repository.save(new Fornecedor(r));auditoria.registrar("CRIAR","Fornecedor",f.getId(),f.getNome());return f;}
-    @Transactional public Fornecedor atualizar(Long id,FornecedorRequest r){validar(r.documento(),id);Fornecedor f=buscar(id);f.atualizar(r);auditoria.registrar("ATUALIZAR","Fornecedor",id,f.getNome());return f;}
-    @Transactional public void alternarAtivo(Long id){Fornecedor f=buscar(id);f.alternarAtivo();auditoria.registrar(f.isAtivo()?"ATIVAR":"INATIVAR","Fornecedor",id,f.getNome());}
-    private void validar(String documento,Long id){boolean duplicado=id==null?repository.existsByDocumento(documento):repository.existsByDocumentoAndIdNot(documento,id);if(duplicado)throw new DocumentoJaCadastradoException(documento);}
+    private final AuditoriaService auditoriaService;
+
+    public FornecedorService(
+            FornecedorRepository repository, AuditoriaService auditoriaService) {
+        this.repository = repository;
+        this.auditoriaService = auditoriaService;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Fornecedor> listar() {
+        return repository.findAllByOrderByNomeAsc();
+    }
+
+    @Transactional(readOnly = true)
+    public Fornecedor buscar(Long id) {
+        return repository
+                .findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Fornecedor não encontrado."));
+    }
+
+    @Transactional
+    public Fornecedor criar(FornecedorRequest request) {
+        validarDocumento(request.documento(), null);
+        Fornecedor fornecedor = repository.save(new Fornecedor(request));
+        auditoriaService.registrar(
+                "CRIAR", "Fornecedor", fornecedor.getId(), fornecedor.getNome());
+        return fornecedor;
+    }
+
+    @Transactional
+    public Fornecedor atualizar(Long id, FornecedorRequest request) {
+        validarDocumento(request.documento(), id);
+        Fornecedor fornecedor = buscar(id);
+        fornecedor.atualizar(request);
+        auditoriaService.registrar("ATUALIZAR", "Fornecedor", id, fornecedor.getNome());
+        return fornecedor;
+    }
+
+    @Transactional
+    public void alternarAtivo(Long id) {
+        Fornecedor fornecedor = buscar(id);
+        fornecedor.alternarAtivo();
+        auditoriaService.registrar(
+                fornecedor.isAtivo() ? "ATIVAR" : "INATIVAR",
+                "Fornecedor",
+                id,
+                fornecedor.getNome());
+    }
+
+    private void validarDocumento(String documento, Long id) {
+        boolean duplicado =
+                id == null
+                        ? repository.existsByDocumento(documento)
+                        : repository.existsByDocumentoAndIdNot(documento, id);
+        if (duplicado) {
+            throw new DocumentoJaCadastradoException(documento);
+        }
+    }
 }

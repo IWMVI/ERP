@@ -1,9 +1,19 @@
 package iwmvi.erp.cliente;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "clientes", uniqueConstraints = @UniqueConstraint(name = "uk_cliente_documento", columnNames = "documento"))
+@Table(
+        name = "clientes",
+        uniqueConstraints = @UniqueConstraint(name = "uk_cliente_documento", columnNames = "documento"))
 public class Cliente {
 
     @Id
@@ -57,16 +67,51 @@ public class Cliente {
         this.ativo = !this.ativo;
     }
 
-    public Long getId() { return id; }
-    public TipoPessoa getTipoPessoa() { return tipoPessoa; }
-    public String getNome() { return nome; }
-    public String getDocumento() { return documento; }
-    public String getEmail() { return email; }
-    public String getTelefone() { return telefone; }
-    public String getLogradouro() { return logradouro; }
-    public String getNumero() { return numero; }
-    public String getCidade() { return cidade; }
-    public String getEstado() { return estado; }
-    public String getCep() { return cep; }
-    public boolean isAtivo() { return ativo; }
+    public Long getId() {
+        return id;
+    }
+
+    public TipoPessoa getTipoPessoa() {
+        return tipoPessoa;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public String getLogradouro() {
+        return logradouro;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public String getCidade() {
+        return cidade;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public String getCep() {
+        return cep;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
 }

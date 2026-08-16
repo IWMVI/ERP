@@ -18,10 +18,16 @@ public class ClienteService {
     }
 
     @Transactional(readOnly = true)
-    public List<Cliente> listar() { return repository.findAllByOrderByNomeAsc(); }
+    public List<Cliente> listar() {
+        return repository.findAllByOrderByNomeAsc();
+    }
 
     @Transactional(readOnly = true)
-    public Cliente buscar(Long id) { return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado.")); }
+    public Cliente buscar(Long id) {
+        return repository
+                .findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado."));
+    }
 
     @Transactional
     public Cliente criar(ClienteRequest request) {
@@ -44,11 +50,20 @@ public class ClienteService {
     public void alternarAtivo(Long id) {
         Cliente cliente = buscar(id);
         cliente.alternarAtivo();
-        auditoriaService.registrar(cliente.isAtivo() ? "ATIVAR" : "INATIVAR", "Cliente", id, cliente.getNome());
+        auditoriaService.registrar(
+                cliente.isAtivo() ? "ATIVAR" : "INATIVAR",
+                "Cliente",
+                id,
+                cliente.getNome());
     }
 
     private void validarDocumento(String documento, Long id) {
-        boolean duplicado = id == null ? repository.existsByDocumento(documento) : repository.existsByDocumentoAndIdNot(documento, id);
-        if (duplicado) throw new DocumentoJaCadastradoException(documento);
+        boolean duplicado =
+                id == null
+                        ? repository.existsByDocumento(documento)
+                        : repository.existsByDocumentoAndIdNot(documento, id);
+        if (duplicado) {
+            throw new DocumentoJaCadastradoException(documento);
+        }
     }
 }
