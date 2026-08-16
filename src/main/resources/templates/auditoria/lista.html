@@ -12,8 +12,10 @@
     <aside th:replace="~{fragments/sidebar :: sidebar('auditoria')}"></aside>
     <div class="app-main">
         <header th:replace="~{fragments/topbar :: topbar('Administração / Auditoria')}"></header>
-        <main class="content">
-            <div class="page-heading"><div><h1>Auditoria de ações</h1><p class="muted">Consulte operações realizadas no sistema.</p></div></div>
+        <main class="content registry-page">
+            <div class="page-heading">
+                <div><h1>Auditoria de ações</h1><p class="muted">Consulte operações realizadas no sistema.</p></div>
+            </div>
             <div class="registry-toolbar">
                 <form method="get" th:action="@{/auditoria}" class="form-grid panel panel-body">
                     <input type="text" name="usuario" th:value="${usuario}" placeholder="Usuário">
@@ -24,16 +26,23 @@
                 </form>
             </div>
             <section class="registry-card">
-                <div class="registry-card-header"><h2>Registros de auditoria</h2><span class="muted" th:text="${#lists.size(registros) + ' registro(s)'}"></span></div>
                 <div class="table-wrapper">
                     <table>
                         <thead><tr><th>Data/hora</th><th>Usuário</th><th>Operação</th><th>Entidade</th><th>ID</th><th>Descrição</th></tr></thead>
                         <tbody>
-                        <tr th:each="registro : ${registros}"><td th:text="${registro.dataHora}"></td><td th:text="${registro.usuario}"></td><td th:text="${registro.operacao}"></td><td th:text="${registro.entidade}"></td><td th:text="${registro.entidadeId}"></td><td th:text="${registro.descricao}"></td></tr>
+                        <tr th:each="registro : ${registros}">
+                            <td th:text="${registro.dataHora}"></td>
+                            <td th:text="${registro.usuario}"></td>
+                            <td th:text="${registro.operacao}"></td>
+                            <td th:text="${registro.entidade}"></td>
+                            <td th:text="${registro.entidadeId}"></td>
+                            <td th:text="${registro.descricao}"></td>
+                        </tr>
                         <tr th:if="${#lists.isEmpty(registros)}"><td colspan="6">Nenhum registro encontrado.</td></tr>
                         </tbody>
                     </table>
                 </div>
+                <nav th:replace="~{fragments/pagination :: pagination(${paginacao})}"></nav>
             </section>
         </main>
     </div>
