@@ -57,7 +57,7 @@ public class Fornecedor {
     public void atualizar(FornecedorRequest request) {
         this.nome = request.nome().trim();
         this.nomeFantasia = request.nomeFantasia();
-        this.documento = DocumentoValidator.somenteDigitos(request.documento());
+        this.documento = DocumentoValidator.normalizarDocumento(request.documento());
         this.email = request.email();
         this.telefone = request.telefone();
         this.celular = request.celular();
@@ -68,11 +68,12 @@ public class Fornecedor {
         this.bairro = request.bairro();
         this.cidade = request.cidade();
         this.estado = request.estado();
-        this.observacoes = DocumentoValidator.somenteDigitos(request.observacoes());
+        this.observacoes = request.observacoes();
     }
 
-    public void alternarAtivo() { this.ativo = !this.ativo; }
-
+    public void alternarAtivo() {
+        this.ativo = !this.ativo;
+    }
 
     public Long getId() { return id; }
     public String getNome() { return nome; }
