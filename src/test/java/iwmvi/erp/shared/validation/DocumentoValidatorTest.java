@@ -15,10 +15,24 @@ class DocumentoValidatorTest {
     }
 
     @Test
-    void deveValidarCnpj() {
+    void deveValidarCnpjNumerico() {
         assertTrue(DocumentoValidator.cnpjValido("11.222.333/0001-81"));
         assertFalse(DocumentoValidator.cnpjValido("11.222.333/0001-82"));
         assertFalse(DocumentoValidator.cnpjValido("11.111.111/1111-11"));
+    }
+
+    @Test
+    void deveValidarCnpjAlfanumerico() {
+        assertTrue(DocumentoValidator.cnpjValido("12.ABC.345/01DE-35"));
+        assertTrue(DocumentoValidator.cnpjValido("A1.B2C.3D4/E5F6-68"));
+        assertFalse(DocumentoValidator.cnpjValido("12.ABC.345/01DE-36"));
+        assertFalse(DocumentoValidator.cnpjValido("12.ABC.345/01DE-AA"));
+    }
+
+    @Test
+    void deveIdentificarTipoDeDocumento() {
+        assertTrue(DocumentoValidator.documentoEhCpf("529.982.247-25"));
+        assertTrue(DocumentoValidator.documentoEhCnpj("12.ABC.345/01DE-35"));
     }
 
     @Test
