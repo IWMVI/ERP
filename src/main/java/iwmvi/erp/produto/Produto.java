@@ -1,7 +1,9 @@
 package iwmvi.erp.produto;
 
-import iwmvi.erp.shared.validation.DocumentoValidator;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
@@ -9,10 +11,13 @@ import java.math.BigDecimal;
 @Table(
     name = "produtos",
     uniqueConstraints = @UniqueConstraint(name = "uk_produto_codigo", columnNames = "codigo"))
+@Getter
+@Setter(AccessLevel.PACKAGE)
 public class Produto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     @Column(nullable = false, unique = true, length = 80)
@@ -52,6 +57,7 @@ public class Produto {
     private BigDecimal estoqueMaximo = BigDecimal.ZERO;
 
     @Column(name = "saldo_estoque", nullable = false, precision = 19, scale = 3)
+    @Setter(AccessLevel.NONE)
     private BigDecimal saldoEstoque = BigDecimal.ZERO;
 
     private String localizacao;
@@ -104,59 +110,14 @@ public class Produto {
     private String fotoArquivo;
 
     @Column(nullable = false)
+    @Setter(AccessLevel.NONE)
     private boolean ativo = true;
 
     @Version
+    @Setter(AccessLevel.NONE)
     private long version;
 
     protected Produto() {
-    }
-
-    public Produto(ProdutoRequest request) {
-        atualizar(request);
-    }
-
-    public void atualizar(ProdutoRequest request) {
-        this.codigo = request.codigo().trim();
-        this.gtin =
-            request.gtin() == null || request.gtin().isBlank()
-                ? null
-                : DocumentoValidator.somenteDigitos(request.gtin());
-        this.nome = request.nome().trim();
-        this.descricao = textoOpcional(request.descricao());
-        this.marca = textoOpcional(request.marca());
-        this.categoria = textoOpcional(request.categoria());
-        this.subcategoria = textoOpcional(request.subcategoria());
-        this.tipo = request.tipo();
-        this.unidadeMedida = request.unidadeMedida();
-        this.precoVenda = request.precoVenda();
-        this.custo = request.custo();
-        this.estoqueMinimo = request.estoqueMinimo();
-        this.estoqueMaximo = request.estoqueMaximo();
-        this.localizacao = textoOpcional(request.localizacao());
-        this.controlaEstoque = request.controlaEstoque();
-        this.ncm = digitosOpcionais(request.ncm());
-        this.cest = digitosOpcionais(request.cest());
-        this.origem = request.origem();
-        this.unidadeTributavel =
-            request.unidadeTributavel() == null ? request.unidadeMedida() : request.unidadeTributavel();
-        this.fatorConversaoTributavel = request.fatorConversaoTributavel();
-        this.tipoItemSped = request.tipoItemSped();
-        this.pesoLiquido = request.pesoLiquido();
-        this.pesoBruto = request.pesoBruto();
-        this.largura = request.largura();
-        this.altura = request.altura();
-        this.comprimento = request.comprimento();
-        this.volumes = request.volumes();
-        this.prazoPreparacaoDias = request.prazoPreparacaoDias();
-    }
-
-    private String textoOpcional(String valor) {
-        return valor == null || valor.isBlank() ? null : valor.trim();
-    }
-
-    private String digitosOpcionais(String valor) {
-        return valor == null || valor.isBlank() ? null : DocumentoValidator.somenteDigitos(valor);
     }
 
     public void definirFotoArquivo(String fotoArquivo) {
@@ -169,137 +130,5 @@ public class Produto {
 
     public void definirSaldo(BigDecimal saldo) {
         this.saldoEstoque = saldo;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public String getGtin() {
-        return gtin;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public String getMarca() {
-        return marca;
-    }
-
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public String getSubcategoria() {
-        return subcategoria;
-    }
-
-    public TipoProduto getTipo() {
-        return tipo;
-    }
-
-    public UnidadeMedida getUnidadeMedida() {
-        return unidadeMedida;
-    }
-
-    public BigDecimal getPrecoVenda() {
-        return precoVenda;
-    }
-
-    public BigDecimal getCusto() {
-        return custo;
-    }
-
-    public BigDecimal getEstoqueMinimo() {
-        return estoqueMinimo;
-    }
-
-    public BigDecimal getEstoqueMaximo() {
-        return estoqueMaximo;
-    }
-
-    public BigDecimal getSaldoEstoque() {
-        return saldoEstoque;
-    }
-
-    public String getLocalizacao() {
-        return localizacao;
-    }
-
-    public boolean isControlaEstoque() {
-        return controlaEstoque;
-    }
-
-    public String getNcm() {
-        return ncm;
-    }
-
-    public String getCest() {
-        return cest;
-    }
-
-    public OrigemMercadoria getOrigem() {
-        return origem;
-    }
-
-    public UnidadeMedida getUnidadeTributavel() {
-        return unidadeTributavel;
-    }
-
-    public BigDecimal getFatorConversaoTributavel() {
-        return fatorConversaoTributavel;
-    }
-
-    public TipoItemSped getTipoItemSped() {
-        return tipoItemSped;
-    }
-
-    public BigDecimal getPesoLiquido() {
-        return pesoLiquido;
-    }
-
-    public BigDecimal getPesoBruto() {
-        return pesoBruto;
-    }
-
-    public BigDecimal getLargura() {
-        return largura;
-    }
-
-    public BigDecimal getAltura() {
-        return altura;
-    }
-
-    public BigDecimal getComprimento() {
-        return comprimento;
-    }
-
-    public Integer getVolumes() {
-        return volumes;
-    }
-
-    public Integer getPrazoPreparacaoDias() {
-        return prazoPreparacaoDias;
-    }
-
-    public String getFotoArquivo() {
-        return fotoArquivo;
-    }
-
-    public boolean isAtivo() {
-        return ativo;
-    }
-
-    public long getVersion() {
-        return version;
     }
 }

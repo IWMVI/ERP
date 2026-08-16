@@ -1,6 +1,8 @@
 package iwmvi.erp.venda;
 
+import iwmvi.erp.cliente.ClienteMapper;
 import iwmvi.erp.cliente.ClienteRepository;
+import iwmvi.erp.produto.ProdutoMapper;
 import iwmvi.erp.produto.ProdutoRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,14 +31,19 @@ public class PedidoVendaController {
 
     @GetMapping
     public String listar(Model model) {
-        model.addAttribute("pedidos", service.listar());
+        model.addAttribute(
+            "pedidos", service.listar().stream().map(PedidoVendaMapper::toResumo).toList());
         model.addAttribute("activePage", "vendas");
         return "vendas/lista";
     }
 
     @GetMapping("/novo")
     public String novo(Model model) {
-        model.addAttribute("clientes", clienteRepository.findAllByOrderByNomeAsc());
+        model.addAttribute(
+            "clientes",
+            clienteRepository.findAllByOrderByNomeAsc().stream()
+                .map(ClienteMapper::toResponse)
+                .toList());
         model.addAttribute("activePage", "vendas");
         return "vendas/novo";
     }
@@ -58,8 +65,12 @@ public class PedidoVendaController {
 
     @GetMapping("/{id}")
     public String detalhe(@PathVariable Long id, Model model) {
-        model.addAttribute("pedido", service.buscar(id));
-        model.addAttribute("produtos", produtoRepository.findAllByOrderByNomeAsc());
+        model.addAttribute("pedido", PedidoVendaMapper.toResponse(service.buscar(id)));
+        model.addAttribute(
+            "produtos",
+            produtoRepository.findAllByOrderByNomeAsc().stream()
+                .map(ProdutoMapper::toResponse)
+                .toList());
         model.addAttribute("vencimentoPadrao", LocalDate.now().plusDays(30));
         model.addAttribute("activePage", "vendas");
         return "vendas/detalhe";

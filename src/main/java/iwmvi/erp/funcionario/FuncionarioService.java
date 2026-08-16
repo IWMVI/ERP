@@ -40,7 +40,7 @@ public class FuncionarioService {
     @Transactional
     public Funcionario criar(FuncionarioRequest request) {
         validar(request, null);
-        Funcionario funcionario = repository.save(new Funcionario(request));
+        Funcionario funcionario = repository.save(FuncionarioMapper.toEntity(request));
         auditoriaService.registrar("CRIAR", "Funcionario", funcionario.getId(), funcionario.getNome());
         return funcionario;
     }
@@ -49,7 +49,7 @@ public class FuncionarioService {
     public Funcionario atualizar(Long id, FuncionarioRequest request) {
         validar(request, id);
         Funcionario funcionario = buscar(id);
-        funcionario.atualizar(request);
+        FuncionarioMapper.atualizar(funcionario, request);
         auditoriaService.registrar("ATUALIZAR", "Funcionario", id, funcionario.getNome());
         return funcionario;
     }

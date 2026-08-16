@@ -1,6 +1,7 @@
 package iwmvi.erp.venda;
 
 import iwmvi.erp.cliente.Cliente;
+import iwmvi.erp.cliente.ClienteMapper;
 import iwmvi.erp.cliente.ClienteRepository;
 import iwmvi.erp.cliente.ClienteRequest;
 import iwmvi.erp.cliente.TipoPessoa;
@@ -11,6 +12,7 @@ import iwmvi.erp.estoque.TipoMovimentacao;
 import iwmvi.erp.financeiro.StatusTituloFinanceiro;
 import iwmvi.erp.financeiro.TituloFinanceiroRepository;
 import iwmvi.erp.produto.Produto;
+import iwmvi.erp.produto.ProdutoMapper;
 import iwmvi.erp.produto.ProdutoRepository;
 import iwmvi.erp.produto.ProdutoRequest;
 import iwmvi.erp.produto.UnidadeMedida;
@@ -57,7 +59,7 @@ class VendaFluxoIntegrationTest {
     void deveConcluirEEstornarVendaMantendoEstoqueEFinanceiroConsistentes() {
         Cliente cliente =
             clienteRepository.save(
-                new Cliente(
+                ClienteMapper.toEntity(
                     new ClienteRequest(
                         TipoPessoa.FISICA,
                         "Cliente teste",
@@ -72,7 +74,7 @@ class VendaFluxoIntegrationTest {
 
         Produto produto =
             produtoRepository.save(
-                new Produto(
+                ProdutoMapper.toEntity(
                     new ProdutoRequest(
                         "VENDA-INT-1",
                         "Produto integração",

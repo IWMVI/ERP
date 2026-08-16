@@ -1,17 +1,22 @@
 package iwmvi.erp.fornecedor;
 
-import iwmvi.erp.shared.validation.DocumentoValidator;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(
     name = "fornecedores",
     uniqueConstraints =
     @UniqueConstraint(name = "uk_fornecedor_documento", columnNames = "documento"))
+@Getter
+@Setter(AccessLevel.PACKAGE)
 public class Fornecedor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     @Column(nullable = false)
@@ -40,97 +45,13 @@ public class Fornecedor {
     private String observacoes;
 
     @Column(nullable = false)
+    @Setter(AccessLevel.NONE)
     private boolean ativo = true;
 
     protected Fornecedor() {
     }
 
-    public Fornecedor(FornecedorRequest request) {
-        atualizar(request);
-    }
-
-    public void atualizar(FornecedorRequest request) {
-        this.nome = request.nome().trim();
-        this.nomeFantasia = request.nomeFantasia();
-        this.documento = DocumentoValidator.normalizarDocumento(request.documento());
-        this.email = request.email();
-        this.telefone = request.telefone();
-        this.celular = request.celular();
-        this.cep = DocumentoValidator.somenteDigitos(request.cep());
-        this.logradouro = request.logradouro();
-        this.numero = request.numero();
-        this.complemento = request.complemento();
-        this.bairro = request.bairro();
-        this.cidade = request.cidade();
-        this.estado = request.estado();
-        this.observacoes = request.observacoes();
-    }
-
     public void alternarAtivo() {
         this.ativo = !this.ativo;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public String getNomeFantasia() {
-        return nomeFantasia;
-    }
-
-    public String getDocumento() {
-        return documento;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public String getCelular() {
-        return celular;
-    }
-
-    public String getCep() {
-        return cep;
-    }
-
-    public String getLogradouro() {
-        return logradouro;
-    }
-
-    public String getNumero() {
-        return numero;
-    }
-
-    public String getComplemento() {
-        return complemento;
-    }
-
-    public String getBairro() {
-        return bairro;
-    }
-
-    public String getCidade() {
-        return cidade;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public String getObservacoes() {
-        return observacoes;
-    }
-
-    public boolean isAtivo() {
-        return ativo;
     }
 }

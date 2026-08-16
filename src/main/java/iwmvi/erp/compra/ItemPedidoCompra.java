@@ -2,11 +2,14 @@ package iwmvi.erp.compra;
 
 import iwmvi.erp.produto.Produto;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "itens_pedido_compra")
+@Getter
 public class ItemPedidoCompra {
 
     @Id
@@ -15,6 +18,7 @@ public class ItemPedidoCompra {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "pedido_id", nullable = false)
+    @Getter(AccessLevel.NONE)
     private PedidoCompra pedido;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -40,21 +44,5 @@ public class ItemPedidoCompra {
 
     public BigDecimal subtotal() {
         return custoUnitario.multiply(quantidade);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Produto getProduto() {
-        return produto;
-    }
-
-    public BigDecimal getQuantidade() {
-        return quantidade;
-    }
-
-    public BigDecimal getCustoUnitario() {
-        return custoUnitario;
     }
 }

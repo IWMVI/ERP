@@ -2,6 +2,7 @@ package iwmvi.erp.estoque;
 
 import iwmvi.erp.auditoria.AuditoriaService;
 import iwmvi.erp.produto.Produto;
+import iwmvi.erp.produto.ProdutoMapper;
 import iwmvi.erp.produto.ProdutoRepository;
 import iwmvi.erp.produto.ProdutoRequest;
 import iwmvi.erp.produto.UnidadeMedida;
@@ -37,7 +38,7 @@ class EstoqueServiceTest {
     void setUp() {
         service = new EstoqueService(produtoRepository, movimentacaoRepository, auditoriaService);
         produto =
-            new Produto(
+            ProdutoMapper.toEntity(
                 new ProdutoRequest(
                     "P1",
                     "Produto",

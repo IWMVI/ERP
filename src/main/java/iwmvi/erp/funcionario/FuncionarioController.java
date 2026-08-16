@@ -28,7 +28,11 @@ public class FuncionarioController {
 
     @GetMapping
     public String listar(@RequestParam(defaultValue = "0") int page, Model model) {
-        PageView<Funcionario> paginacao = PageView.of(service.listar(), page, "/funcionarios");
+        PageView<FuncionarioResponse> paginacao =
+            PageView.of(
+                service.listar().stream().map(FuncionarioMapper::toResponse).toList(),
+                page,
+                "/funcionarios");
         model.addAttribute("funcionarios", paginacao.items());
         model.addAttribute("paginacao", paginacao);
         return "funcionarios/lista";
@@ -42,25 +46,7 @@ public class FuncionarioController {
 
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable Long id, Model model) {
-        Funcionario funcionario = service.buscar(id);
-        preparar(
-            model,
-            new FuncionarioRequest(
-                funcionario.getNome(),
-                funcionario.getCpf(),
-                funcionario.getEmail(),
-                funcionario.getTelefone(),
-                funcionario.getCargo(),
-                funcionario.getDataNascimento(),
-                funcionario.getDataAdmissao(),
-                funcionario.getCep(),
-                funcionario.getLogradouro(),
-                funcionario.getNumero(),
-                funcionario.getComplemento(),
-                funcionario.getBairro(),
-                funcionario.getCidade(),
-                funcionario.getEstado()),
-            id);
+        preparar(model, FuncionarioMapper.toRequest(service.buscar(id)), id);
         return "funcionarios/form";
     }
 

@@ -1,6 +1,7 @@
 package iwmvi.erp.estoque;
 
-import iwmvi.erp.produto.Produto;
+import iwmvi.erp.produto.ProdutoMapper;
+import iwmvi.erp.produto.ProdutoResponse;
 import iwmvi.erp.shared.exception.SaldoEstoqueInsuficienteException;
 import iwmvi.erp.shared.web.PageView;
 import jakarta.validation.Valid;
@@ -34,8 +35,8 @@ public class EstoqueController {
         @RequestParam(defaultValue = "0") int pageProdutos,
         @RequestParam(defaultValue = "0") int pageMovimentacoes,
         Model model) {
-        var produtos = service.produtos();
-        PageView<Produto> paginacaoProdutos =
+        var produtos = service.produtos().stream().map(ProdutoMapper::toResponse).toList();
+        PageView<ProdutoResponse> paginacaoProdutos =
             PageView.of(
                 produtos,
                 pageProdutos,
@@ -47,9 +48,11 @@ public class EstoqueController {
                     "inicio", inicio == null ? "" : inicio,
                     "fim", fim == null ? "" : fim));
 
-        PageView<MovimentacaoEstoque> paginacaoMovimentacoes =
+        PageView<MovimentacaoEstoqueResponse> paginacaoMovimentacoes =
             PageView.of(
-                service.historico(produtoId, inicio, fim),
+                service.historico(produtoId, inicio, fim).stream()
+                    .map(MovimentacaoEstoqueMapper::toResponse)
+                    .toList(),
                 pageMovimentacoes,
                 "/estoque",
                 "pageMovimentacoes",
@@ -62,7 +65,9 @@ public class EstoqueController {
         model.addAttribute("produtos", produtos);
         model.addAttribute("produtosPagina", paginacaoProdutos.items());
         model.addAttribute("paginacaoProdutos", paginacaoProdutos);
-        model.addAttribute("abaixoMinimo", service.abaixoDoMinimo());
+        model.addAttribute(
+            "abaixoMinimo",
+            service.abaixoDoMinimo().stream().map(ProdutoMapper::toResponse).toList());
         model.addAttribute("movimentacoes", paginacaoMovimentacoes.items());
         model.addAttribute("paginacaoMovimentacoes", paginacaoMovimentacoes);
         model.addAttribute("produtoId", produtoId);
@@ -108,7 +113,7 @@ public class EstoqueController {
 
     private void prepararFormulario(Model model, MovimentacaoEstoqueRequest request) {
         model.addAttribute("movimentacaoRequest", request);
-        model.addAttribute("produtos", service.produtos());
+        model.addAttribute("produtos", service.produtos().stream().map(ProdutoMapper::toResponse).toList());
         model.addAttribute("tipos", TipoMovimentacao.values());
     }
 }

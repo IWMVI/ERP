@@ -40,7 +40,7 @@ public class FornecedorService {
     @Transactional
     public Fornecedor criar(FornecedorRequest request) {
         validarCadastro(request, null);
-        Fornecedor fornecedor = repository.save(new Fornecedor(request));
+        Fornecedor fornecedor = repository.save(FornecedorMapper.toEntity(request));
         auditoriaService.registrar("CRIAR", "Fornecedor", fornecedor.getId(), fornecedor.getNome());
         return fornecedor;
     }
@@ -49,7 +49,7 @@ public class FornecedorService {
     public Fornecedor atualizar(Long id, FornecedorRequest request) {
         validarCadastro(request, id);
         Fornecedor fornecedor = buscar(id);
-        fornecedor.atualizar(request);
+        FornecedorMapper.atualizar(fornecedor, request);
         auditoriaService.registrar("ATUALIZAR", "Fornecedor", id, fornecedor.getNome());
         return fornecedor;
     }

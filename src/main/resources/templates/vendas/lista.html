@@ -25,7 +25,7 @@
                         <tbody>
                         <tr th:each="pedido : ${pedidos}">
                             <td th:text="${'#' + pedido.id}"></td>
-                            <td th:text="${pedido.cliente.nome}"></td>
+                            <td th:text="${pedido.clienteNome}"></td>
                             <td th:text="${#temporals.format(pedido.dataCriacao, 'dd/MM/yyyy HH:mm')}"></td>
                             <td th:text="${'R$ ' + #numbers.formatDecimal(pedido.total, 1, 2)}"></td>
                             <td><span class="badge" th:classappend="${pedido.status.name() == 'CONCLUIDO'} ? ' success'" th:text="${pedido.status}"></span></td>

@@ -28,7 +28,9 @@ public class ClienteController {
 
     @GetMapping
     public String listar(@RequestParam(defaultValue = "0") int page, Model model) {
-        PageView<Cliente> paginacao = PageView.of(service.listar(), page, "/clientes");
+        PageView<ClienteResponse> paginacao =
+            PageView.of(
+                service.listar().stream().map(ClienteMapper::toResponse).toList(), page, "/clientes");
         model.addAttribute("clientes", paginacao.items());
         model.addAttribute("paginacao", paginacao);
         return "clientes/lista";
@@ -77,26 +79,7 @@ public class ClienteController {
 
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable Long id, Model model) {
-        Cliente cliente = service.buscar(id);
-        preparar(
-            model,
-            new ClienteRequest(
-                cliente.getTipoPessoa(),
-                cliente.getNome(),
-                cliente.getNomeFantasia(),
-                cliente.getDocumento(),
-                cliente.getEmail(),
-                cliente.getTelefone(),
-                cliente.getCelular(),
-                cliente.getCep(),
-                cliente.getLogradouro(),
-                cliente.getNumero(),
-                cliente.getComplemento(),
-                cliente.getBairro(),
-                cliente.getCidade(),
-                cliente.getEstado(),
-                cliente.getObservacoes()),
-            id);
+        preparar(model, ClienteMapper.toRequest(service.buscar(id)), id);
         return "clientes/form";
     }
 

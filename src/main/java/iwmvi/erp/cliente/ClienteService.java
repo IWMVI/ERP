@@ -40,7 +40,7 @@ public class ClienteService {
     @Transactional
     public Cliente criar(ClienteRequest request) {
         validarCadastro(request, null);
-        Cliente cliente = repository.save(new Cliente(request));
+        Cliente cliente = repository.save(ClienteMapper.toEntity(request));
         auditoriaService.registrar("CRIAR", "Cliente", cliente.getId(), cliente.getNome());
         return cliente;
     }
@@ -49,7 +49,7 @@ public class ClienteService {
     public Cliente atualizar(Long id, ClienteRequest request) {
         validarCadastro(request, id);
         Cliente cliente = buscar(id);
-        cliente.atualizar(request);
+        ClienteMapper.atualizar(cliente, request);
         auditoriaService.registrar("ATUALIZAR", "Cliente", id, cliente.getNome());
         return cliente;
     }

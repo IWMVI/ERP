@@ -1,6 +1,7 @@
 package iwmvi.erp.estoque;
 
 import iwmvi.erp.produto.Produto;
+import iwmvi.erp.produto.ProdutoMapper;
 import iwmvi.erp.produto.ProdutoRepository;
 import iwmvi.erp.produto.ProdutoRequest;
 import iwmvi.erp.produto.UnidadeMedida;
@@ -39,7 +40,7 @@ class EstoqueConcorrenciaIntegrationTest {
     void deveSerializarMovimentacoesConcorrentesDoMesmoProduto() throws Exception {
         Produto produto =
                 produtoRepository.saveAndFlush(
-                        new Produto(
+                        ProdutoMapper.toEntity(
                                 new ProdutoRequest(
                                         "CONC-1",
                                         "Produto concorrente",

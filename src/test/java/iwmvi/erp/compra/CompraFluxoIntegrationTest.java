@@ -4,9 +4,11 @@ import iwmvi.erp.estoque.MovimentacaoEstoqueRepository;
 import iwmvi.erp.financeiro.StatusTituloFinanceiro;
 import iwmvi.erp.financeiro.TituloFinanceiroRepository;
 import iwmvi.erp.fornecedor.Fornecedor;
+import iwmvi.erp.fornecedor.FornecedorMapper;
 import iwmvi.erp.fornecedor.FornecedorRepository;
 import iwmvi.erp.fornecedor.FornecedorRequest;
 import iwmvi.erp.produto.Produto;
+import iwmvi.erp.produto.ProdutoMapper;
 import iwmvi.erp.produto.ProdutoRepository;
 import iwmvi.erp.produto.ProdutoRequest;
 import iwmvi.erp.produto.UnidadeMedida;
@@ -51,7 +53,7 @@ class CompraFluxoIntegrationTest {
     void deveReceberEEstornarCompraMantendoEstoqueEFinanceiroConsistentes() {
         Fornecedor fornecedor =
                 fornecedorRepository.save(
-                        new Fornecedor(
+                        FornecedorMapper.toEntity(
                                 new FornecedorRequest(
                                         "Fornecedor teste",
                                         "11222333000181",
@@ -65,7 +67,7 @@ class CompraFluxoIntegrationTest {
 
         Produto produto =
                 produtoRepository.save(
-                        new Produto(
+                        ProdutoMapper.toEntity(
                                 new ProdutoRequest(
                                         "COMPRA-INT-1",
                                         "Produto integração compra",

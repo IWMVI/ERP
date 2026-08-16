@@ -29,7 +29,11 @@ public class FornecedorController {
 
     @GetMapping
     public String listar(@RequestParam(defaultValue = "0") int page, Model model) {
-        PageView<Fornecedor> paginacao = PageView.of(service.listar(), page, "/fornecedores");
+        PageView<FornecedorResponse> paginacao =
+            PageView.of(
+                service.listar().stream().map(FornecedorMapper::toResponse).toList(),
+                page,
+                "/fornecedores");
         model.addAttribute("fornecedores", paginacao.items());
         model.addAttribute("paginacao", paginacao);
         return "fornecedores/lista";
@@ -77,25 +81,7 @@ public class FornecedorController {
 
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable Long id, Model model) {
-        Fornecedor fornecedor = service.buscar(id);
-        preparar(
-            model,
-            new FornecedorRequest(
-                fornecedor.getNome(),
-                fornecedor.getNomeFantasia(),
-                fornecedor.getDocumento(),
-                fornecedor.getEmail(),
-                fornecedor.getTelefone(),
-                fornecedor.getCelular(),
-                fornecedor.getCep(),
-                fornecedor.getLogradouro(),
-                fornecedor.getNumero(),
-                fornecedor.getComplemento(),
-                fornecedor.getBairro(),
-                fornecedor.getCidade(),
-                fornecedor.getEstado(),
-                fornecedor.getObservacoes()),
-            id);
+        preparar(model, FornecedorMapper.toRequest(service.buscar(id)), id);
         return "fornecedores/form";
     }
 

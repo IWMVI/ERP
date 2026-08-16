@@ -32,8 +32,12 @@ public class ProdutoController {
         @RequestParam(required = false) String q,
         @RequestParam(defaultValue = "0") int page,
         Model model) {
-        PageView<Produto> paginacao =
-            PageView.of(service.listar(q), page, "/produtos", Map.of("q", q == null ? "" : q));
+        PageView<ProdutoResponse> paginacao =
+            PageView.of(
+                service.listar(q).stream().map(ProdutoMapper::toResponse).toList(),
+                page,
+                "/produtos",
+                Map.of("q", q == null ? "" : q));
         model.addAttribute("produtos", paginacao.items());
         model.addAttribute("paginacao", paginacao);
         model.addAttribute("q", q);
@@ -48,39 +52,7 @@ public class ProdutoController {
 
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable Long id, Model model) {
-        Produto produto = service.buscar(id);
-        preparar(
-            model,
-            new ProdutoRequest(
-                produto.getCodigo(),
-                produto.getGtin(),
-                produto.getNome(),
-                produto.getDescricao(),
-                produto.getMarca(),
-                produto.getCategoria(),
-                produto.getSubcategoria(),
-                produto.getTipo(),
-                produto.getUnidadeMedida(),
-                produto.getPrecoVenda(),
-                produto.getCusto(),
-                produto.getEstoqueMinimo(),
-                produto.getEstoqueMaximo(),
-                produto.getLocalizacao(),
-                produto.isControlaEstoque(),
-                produto.getNcm(),
-                produto.getCest(),
-                produto.getOrigem(),
-                produto.getUnidadeTributavel(),
-                produto.getFatorConversaoTributavel(),
-                produto.getTipoItemSped(),
-                produto.getPesoLiquido(),
-                produto.getPesoBruto(),
-                produto.getLargura(),
-                produto.getAltura(),
-                produto.getComprimento(),
-                produto.getVolumes(),
-                produto.getPrazoPreparacaoDias()),
-            id);
+        preparar(model, ProdutoMapper.toRequest(service.buscar(id)), id);
         return "produtos/form";
     }
 

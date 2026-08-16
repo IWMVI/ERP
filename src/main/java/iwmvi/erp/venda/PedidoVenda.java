@@ -3,6 +3,8 @@ package iwmvi.erp.venda;
 import iwmvi.erp.cliente.Cliente;
 import iwmvi.erp.produto.Produto;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -12,6 +14,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "pedidos_venda")
+@Getter
 public class PedidoVenda {
 
     @Id
@@ -33,6 +36,7 @@ public class PedidoVenda {
     private BigDecimal desconto = BigDecimal.ZERO;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Getter(AccessLevel.NONE)
     private final List<ItemPedidoVenda> itens = new ArrayList<>();
 
     protected PedidoVenda() {
@@ -92,26 +96,6 @@ public class PedidoVenda {
         if (status != StatusPedidoVenda.RASCUNHO) {
             throw new IllegalStateException("O pedido não pode mais ser alterado.");
         }
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    public LocalDateTime getDataCriacao() {
-        return dataCriacao;
-    }
-
-    public StatusPedidoVenda getStatus() {
-        return status;
-    }
-
-    public BigDecimal getDesconto() {
-        return desconto;
     }
 
     public List<ItemPedidoVenda> getItens() {

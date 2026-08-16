@@ -43,7 +43,7 @@ public class ProdutoService {
     @Transactional
     public Produto criar(ProdutoRequest request) {
         validarCadastro(request, null);
-        Produto produto = repository.save(new Produto(request));
+        Produto produto = repository.save(ProdutoMapper.toEntity(request));
         auditoriaService.registrar(
             "CRIAR", "Produto", produto.getId(), produto.getCodigo() + " - " + produto.getNome());
         return produto;
@@ -53,7 +53,7 @@ public class ProdutoService {
     public Produto atualizar(Long id, ProdutoRequest request) {
         validarCadastro(request, id);
         Produto produto = buscar(id);
-        produto.atualizar(request);
+        ProdutoMapper.atualizar(produto, request);
         auditoriaService.registrar(
             "ATUALIZAR", "Produto", id, produto.getCodigo() + " - " + produto.getNome());
         return produto;

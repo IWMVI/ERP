@@ -2,12 +2,14 @@ package iwmvi.erp.estoque;
 
 import iwmvi.erp.produto.Produto;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "movimentacoes_estoque")
+@Getter
 public class MovimentacaoEstoque {
 
     @Id
@@ -50,33 +52,5 @@ public class MovimentacaoEstoque {
         this.dataHora = dataHora;
         this.origem = origem;
         this.usuario = usuario;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Produto getProduto() {
-        return produto;
-    }
-
-    public TipoMovimentacao getTipo() {
-        return tipo;
-    }
-
-    public BigDecimal getQuantidade() {
-        return quantidade;
-    }
-
-    public LocalDateTime getDataHora() {
-        return dataHora;
-    }
-
-    public String getOrigem() {
-        return origem;
-    }
-
-    public String getUsuario() {
-        return usuario;
     }
 }

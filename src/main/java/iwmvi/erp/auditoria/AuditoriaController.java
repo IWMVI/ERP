@@ -28,9 +28,11 @@ public class AuditoriaController {
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fim,
         @RequestParam(defaultValue = "0") int page,
         Model model) {
-        PageView<Auditoria> paginacao =
+        PageView<AuditoriaResponse> paginacao =
             PageView.of(
-                auditoriaService.buscar(usuario, entidade, inicio, fim),
+                auditoriaService.buscar(usuario, entidade, inicio, fim).stream()
+                    .map(AuditoriaMapper::toResponse)
+                    .toList(),
                 page,
                 "/auditoria",
                 Map.of(
