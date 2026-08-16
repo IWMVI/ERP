@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -87,10 +89,25 @@ public class EstoqueService {
     @Transactional(readOnly = true)
     public List<MovimentacaoEstoque> historico(
             Long produtoId, LocalDate inicio, LocalDate fim) {
-        return movimentacaoRepository.buscar(
-                produtoId,
-                inicio == null ? null : inicio.atStartOfDay(),
-                fim == null ? null : fim.atTime(LocalTime.MAX));
+        Specification<MovimentacaoEstoque> spec = Specification.where(null);
+
+        if (produtoId != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("produto").get("id"), produtoId));
+        }
+
+        if (inicio != null) {
+            LocalDateTime inicioDataHora = inicio.atStartOfDay();
+            spec = spec.and((root, query, cb) ->
+                    cb.greaterThanOrEqualTo(root.get("dataHora"), inicioDataHora));
+        }
+
+        if (fim != null) {
+            LocalDateTime fimDataHora = fim.atTime(LocalTime.MAX);
+            spec = spec.and((root, query, cb) ->
+                    cb.lessThanOrEqualTo(root.get("dataHora"), fimDataHora));
+        }
+
+        return movimentacaoRepository.findAll(spec, Sort.by(Sort.Direction.DESC, "dataHora"));
     }
 
     private String usuarioAtual() {
