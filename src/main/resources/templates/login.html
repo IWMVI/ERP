@@ -3,26 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login | ERP</title>
+    <title>Acesso ao sistema | ERP</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
-<body class="auth-page">
-<main class="auth-card">
-    <h1>ERP</h1>
-    <p class="muted">Entre para acessar o sistema.</p>
+<body>
+<main class="auth-page">
+    <section class="auth-brand-panel">
+        <div class="auth-brand">
+            <span class="brand-mark">ERP</span>
+            <span>Gestão Empresarial</span>
+        </div>
 
-    <div class="alert error" th:if="${param.error}">E-mail ou senha inválidos.</div>
-    <div class="alert success" th:if="${param.logout}">Sessão encerrada com sucesso.</div>
+        <div class="auth-brand-content">
+            <h1>Informação organizada para uma operação mais eficiente.</h1>
+            <p>Centralize cadastros, processos e controles administrativos em um único sistema.</p>
+        </div>
 
-    <form th:action="@{/login}" method="post" class="form-stack">
-        <label for="username">E-mail</label>
-        <input id="username" name="username" type="email" autocomplete="username" required autofocus>
+        <span class="auth-footer-note">Ambiente de gestão empresarial</span>
+    </section>
 
-        <label for="password">Senha</label>
-        <input id="password" name="password" type="password" autocomplete="current-password" required>
+    <section class="auth-form-panel">
+        <div class="auth-card">
+            <h2>Entrar no sistema</h2>
+            <p class="muted">Informe suas credenciais para continuar.</p>
 
-        <button type="submit">Entrar</button>
-    </form>
+            <div class="alert error" th:if="${param.error}">E-mail ou senha inválidos.</div>
+            <div class="alert success" th:if="${param.logout}">Sessão encerrada com sucesso.</div>
+            <div class="alert success" th:if="${param.cadastro}">
+                Usuário cadastrado. Você já pode entrar no sistema.
+            </div>
+
+            <form th:action="@{/login}" method="post" class="form-stack">
+                <div class="form-group">
+                    <label for="username">E-mail</label>
+                    <input id="username" name="username" type="email" autocomplete="username" required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input id="password" name="password" type="password" autocomplete="current-password" required>
+                </div>
+
+                <button type="submit">Entrar</button>
+            </form>
+
+            <p class="auth-link-row">
+                Ainda não possui acesso?
+                <a th:href="@{/cadastro}">Criar usuário</a>
+            </p>
+        </div>
+    </section>
 </main>
 </body>
 </html>

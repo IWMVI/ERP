@@ -1,10 +1,9 @@
 package iwmvi.erp.usuario;
 
 import iwmvi.erp.shared.exception.EmailJaCadastradoException;
+import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UsuarioService {
@@ -18,20 +17,24 @@ public class UsuarioService {
     }
 
     public Usuario criar(UsuarioRequest request) {
-        if (usuarioRepository.existsByEmail(request.email())) {
-            throw new EmailJaCadastradoException(request.email());
-        }
+        return criar(
+                request.nome(), request.email(), request.senha(), request.perfil());
+    }
 
-        Usuario usuario = new Usuario(
-                request.nome(),
-                request.email(),
-                passwordEncoder.encode(request.senha()),
-                request.perfil());
-
-        return usuarioRepository.save(usuario);
+    public Usuario criarPublico(CadastroUsuarioRequest request) {
+        return criar(request.nome(), request.email(), request.senha(), PerfilUsuario.USUARIO);
     }
 
     public List<Usuario> listar() {
         return usuarioRepository.findAllByOrderByNomeAsc();
+    }
+
+    private Usuario criar(String nome, String email, String senha, PerfilUsuario perfil) {
+        if (usuarioRepository.existsByEmail(email)) {
+            throw new EmailJaCadastradoException(email);
+        }
+
+        Usuario usuario = new Usuario(nome, email, passwordEncoder.encode(senha), perfil);
+        return usuarioRepository.save(usuario);
     }
 }

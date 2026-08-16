@@ -7,32 +7,75 @@
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<header class="topbar">
-    <a th:href="@{/}" class="brand">ERP</a>
-    <form th:action="@{/logout}" method="post"><button class="link-button" type="submit">Sair</button></form>
-</header>
-<main class="container">
-    <div class="page-heading">
-        <div><h1>Usuários</h1><p class="muted">Gerencie quem pode acessar o sistema.</p></div>
-        <a class="button" th:href="@{/usuarios/novo}">Novo usuário</a>
-    </div>
+<div class="app-shell">
+    <aside class="sidebar">
+        <a th:href="@{/}" class="sidebar-brand">
+            <span class="brand-mark">ERP</span>
+            <span>Gestão Empresarial</span>
+        </a>
+        <nav class="sidebar-nav">
+            <span class="sidebar-section-title">Principal</span>
+            <a th:href="@{/}" class="nav-item">
+                <span class="nav-symbol">IN</span>
+                <span>Início</span>
+            </a>
+            <span class="sidebar-section-title">Administração</span>
+            <a th:href="@{/usuarios}" class="nav-item active">
+                <span class="nav-symbol">US</span>
+                <span>Usuários</span>
+            </a>
+        </nav>
+        <div class="sidebar-spacer"></div>
+        <div class="sidebar-footer">ERP · Ambiente de gestão</div>
+    </aside>
 
-    <div class="alert success" th:if="${sucesso}" th:text="${sucesso}"></div>
+    <div class="app-main">
+        <header class="topbar">
+            <span class="topbar-title">Administração / Usuários</span>
+            <form th:action="@{/logout}" method="post">
+                <button class="link-button" type="submit">Sair</button>
+            </form>
+        </header>
 
-    <div class="table-wrapper">
-        <table>
-            <thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Status</th></tr></thead>
-            <tbody>
-            <tr th:each="usuario : ${usuarios}">
-                <td th:text="${usuario.nome}"></td>
-                <td th:text="${usuario.email}"></td>
-                <td th:text="${usuario.perfil}"></td>
-                <td><span class="badge" th:text="${usuario.ativo ? 'Ativo' : 'Inativo'}"></span></td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(usuarios)}"><td colspan="4">Nenhum usuário cadastrado.</td></tr>
-            </tbody>
-        </table>
+        <main class="content">
+            <div class="page-heading">
+                <div>
+                    <h1>Usuários</h1>
+                    <p class="muted">Controle de acessos, perfis e situação dos usuários cadastrados.</p>
+                </div>
+                <a class="button" th:href="@{/usuarios/novo}">Novo usuário</a>
+            </div>
+
+            <div class="alert success" th:if="${sucesso}" th:text="${sucesso}"></div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Perfil</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="usuario : ${usuarios}">
+                        <td th:text="${usuario.nome}"></td>
+                        <td th:text="${usuario.email}"></td>
+                        <td th:text="${usuario.perfil}"></td>
+                        <td>
+                            <span class="badge success" th:if="${usuario.ativo}">Ativo</span>
+                            <span class="badge" th:unless="${usuario.ativo}">Inativo</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(usuarios)}">
+                        <td colspan="4">Nenhum usuário cadastrado.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
     </div>
-</main>
+</div>
 </body>
 </html>

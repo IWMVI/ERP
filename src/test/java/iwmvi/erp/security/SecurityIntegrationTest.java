@@ -1,5 +1,17 @@
 package iwmvi.erp.security;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import iwmvi.erp.usuario.PerfilUsuario;
 import iwmvi.erp.usuario.Usuario;
 import iwmvi.erp.usuario.UsuarioRepository;
@@ -10,13 +22,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
-
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
-import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -29,23 +34,43 @@ class SecurityIntegrationTest {
     @BeforeEach
     void prepararUsuarios() {
         usuarioRepository.deleteAll();
-        usuarioRepository.save(new Usuario(
-                "Administrador",
-                "admin@erp.local",
-                passwordEncoder.encode("123456"),
-                PerfilUsuario.ADMIN));
+        usuarioRepository.save(
+                new Usuario(
+                        "Administrador",
+                        "admin@erp.local",
+                        passwordEncoder.encode("123456"),
+                        PerfilUsuario.ADMIN));
     }
 
     @Test
     void devePermitirAcessoPublicoAoLogin() throws Exception {
-        mockMvc.perform(get("/login"))
-                .andExpect(status().isOk());
+        mockMvc.perform(get("/login")).andExpect(status().isOk());
+    }
+
+    @Test
+    void devePermitirAcessoPublicoAoCadastro() throws Exception {
+        mockMvc.perform(get("/cadastro")).andExpect(status().isOk());
+    }
+
+    @Test
+    void deveCadastrarUsuarioComumSemAutenticacao() throws Exception {
+        mockMvc.perform(
+                        post("/cadastro")
+                                .with(csrf())
+                                .param("nome", "Novo Usuário")
+                                .param("email", "novo@erp.local")
+                                .param("senha", "123456"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login?cadastro"));
+
+        Usuario usuario = usuarioRepository.findByEmail("novo@erp.local").orElseThrow();
+        assertEquals(PerfilUsuario.USUARIO, usuario.getPerfil());
+        assertTrue(passwordEncoder.matches("123456", usuario.getSenha()));
     }
 
     @Test
     void deveExigirAutenticacaoParaTelaDeUsuarios() throws Exception {
-        mockMvc.perform(get("/usuarios"))
-                .andExpect(status().is3xxRedirection());
+        mockMvc.perform(get("/usuarios")).andExpect(status().is3xxRedirection());
     }
 
     @Test
