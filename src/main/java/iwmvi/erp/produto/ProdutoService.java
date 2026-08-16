@@ -54,6 +54,13 @@ public class ProdutoService {
     }
 
     @Transactional
+    public void atualizarFoto(Long id, String fotoArquivo) {
+        Produto produto = buscar(id);
+        produto.definirFotoArquivo(fotoArquivo);
+        auditoriaService.registrar("ATUALIZAR_FOTO", "Produto", id, produto.getNome());
+    }
+
+    @Transactional
     public void alternarAtivo(Long id) {
         Produto produto = buscar(id);
         produto.alternarAtivo();

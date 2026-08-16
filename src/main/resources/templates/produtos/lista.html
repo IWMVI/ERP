@@ -6,6 +6,7 @@
     <title>Produtos | ERP</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
     <link rel="stylesheet" th:href="@{/css/navigation.css}">
+    <link rel="stylesheet" th:href="@{/css/cadastros.css}">
 </head>
 <body>
 <div class="app-shell">
@@ -14,7 +15,7 @@
         <header th:replace="~{fragments/topbar :: topbar('Cadastros / Produtos')}"></header>
         <main class="content registry-page">
             <div class="page-heading">
-                <div><h1>Produtos</h1><p class="muted">Catálogo, classificação, preços e parâmetros de estoque.</p></div>
+                <div><h1>Produtos</h1><p class="muted">Catálogo, preços e posição de estoque.</p></div>
                 <a class="button" th:href="@{/produtos/novo}">Novo produto</a>
             </div>
             <div class="registry-toolbar">
@@ -28,11 +29,16 @@
                 <div class="registry-card-header"><h2>Produtos cadastrados</h2><span class="muted" th:text="${#lists.size(produtos) + ' registro(s)'}"></span></div>
                 <div class="table-wrapper">
                     <table>
-                        <thead><tr><th>Código</th><th>GTIN</th><th>Produto</th><th>Classificação</th><th>Venda</th><th>Saldo</th><th>Status</th><th>Ações</th></tr></thead>
+                        <thead><tr><th></th><th>Código</th><th>Produto</th><th>Classificação</th><th>Venda</th><th>Saldo</th><th>Status</th><th>Ações</th></tr></thead>
                         <tbody>
                         <tr th:each="produto : ${produtos}">
-                            <td th:text="${produto.codigo}"></td>
-                            <td th:text="${produto.gtin != null ? produto.gtin : '-'}"></td>
+                            <td class="photo-cell">
+                                <img th:if="${produto.fotoArquivo != null}" th:src="${'/uploads/' + produto.fotoArquivo}" class="table-product-photo" alt="">
+                                <span th:unless="${produto.fotoArquivo != null}" class="table-product-photo table-photo-placeholder">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 8-9 5-9-5"></path><path d="m3 8 9-5 9 5v8l-9 5-9-5Z"></path></svg>
+                                </span>
+                            </td>
+                            <td><strong th:text="${produto.codigo}"></strong><div class="muted" th:text="${produto.gtin != null ? produto.gtin : '-'}"></div></td>
                             <td><strong th:text="${produto.nome}"></strong><div class="muted" th:if="${produto.marca != null and !produto.marca.isBlank()}" th:text="${produto.marca}"></div></td>
                             <td><span th:text="${produto.categoria != null ? produto.categoria : '-'}"></span><div class="muted" th:if="${produto.subcategoria != null and !produto.subcategoria.isBlank()}" th:text="${produto.subcategoria}"></div></td>
                             <td th:text="${'R$ ' + #numbers.formatDecimal(produto.precoVenda, 1, 2)}"></td>
