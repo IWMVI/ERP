@@ -1,5 +1,6 @@
 package iwmvi.erp.cliente;
 
+import iwmvi.erp.shared.validation.DocumentoValidator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -62,11 +63,11 @@ public class Cliente {
         this.tipoPessoa = request.tipoPessoa();
         this.nome = request.nome().trim();
         this.nomeFantasia = request.nomeFantasia();
-        this.documento = request.documento().trim();
+        this.documento = DocumentoValidator.somenteDigitos(request.documento());
         this.email = request.email();
         this.telefone = request.telefone();
         this.celular = request.celular();
-        this.cep = request.cep();
+        this.cep = DocumentoValidator.somenteDigitos(request.cep());
         this.logradouro = request.logradouro();
         this.numero = request.numero();
         this.complemento = request.complemento();
