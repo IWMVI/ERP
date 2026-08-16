@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,11 +37,33 @@ public class AuditoriaService {
     @Transactional(readOnly = true)
     public List<Auditoria> buscar(
             String usuario, String entidade, LocalDate inicio, LocalDate fim) {
-        return auditoriaRepository.buscar(
-                normalizar(usuario),
-                normalizar(entidade),
-                inicio == null ? null : inicio.atStartOfDay(),
-                fim == null ? null : fim.atTime(LocalTime.MAX));
+        Specification<Auditoria> spec = Specification.where(null);
+
+        String usuarioNormalizado = normalizar(usuario);
+        if (usuarioNormalizado != null) {
+            spec = spec.and((root, query, cb) -> cb.like(
+                    cb.lower(root.get("usuario")), "%" + usuarioNormalizado.toLowerCase() + "%"));
+        }
+
+        String entidadeNormalizada = normalizar(entidade);
+        if (entidadeNormalizada != null) {
+            spec = spec.and((root, query, cb) -> cb.like(
+                    cb.lower(root.get("entidade")), "%" + entidadeNormalizada.toLowerCase() + "%"));
+        }
+
+        if (inicio != null) {
+            LocalDateTime inicioDataHora = inicio.atStartOfDay();
+            spec = spec.and((root, query, cb) ->
+                    cb.greaterThanOrEqualTo(root.get("dataHora"), inicioDataHora));
+        }
+
+        if (fim != null) {
+            LocalDateTime fimDataHora = fim.atTime(LocalTime.MAX);
+            spec = spec.and((root, query, cb) ->
+                    cb.lessThanOrEqualTo(root.get("dataHora"), fimDataHora));
+        }
+
+        return auditoriaRepository.findAll(spec, Sort.by(Sort.Direction.DESC, "dataHora"));
     }
 
     private String usuarioAtual() {
