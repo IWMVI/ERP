@@ -60,10 +60,13 @@ public class Cliente {
     }
 
     public void atualizar(ClienteRequest request) {
-        this.tipoPessoa = request.tipoPessoa();
+        String documentoNormalizado = DocumentoValidator.normalizarDocumento(request.documento());
+        this.tipoPessoa = DocumentoValidator.documentoEhCpf(documentoNormalizado)
+                ? TipoPessoa.FISICA
+                : TipoPessoa.JURIDICA;
         this.nome = request.nome().trim();
-        this.nomeFantasia = request.nomeFantasia();
-        this.documento = DocumentoValidator.somenteDigitos(request.documento());
+        this.nomeFantasia = this.tipoPessoa == TipoPessoa.JURIDICA ? request.nomeFantasia() : null;
+        this.documento = documentoNormalizado;
         this.email = request.email();
         this.telefone = request.telefone();
         this.celular = request.celular();
