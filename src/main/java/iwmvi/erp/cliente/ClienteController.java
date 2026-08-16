@@ -66,6 +66,9 @@ public class ClienteController {
             model.addAttribute("cadastroNovo", true);
             model.addAttribute("avisoConsulta", dados.aviso());
             model.addAttribute("situacaoCadastral", dados.situacaoCadastral());
+            if (dados.aviso() != null && !dados.aviso().isBlank()) {
+                model.addAttribute("warning", dados.aviso());
+            }
             return "clientes/form";
         } catch (DocumentoInvalidoException exception) {
             prepararIdentificacao(model, documento, exception.getMessage());
@@ -106,6 +109,7 @@ public class ClienteController {
             RedirectAttributes redirect) {
         if (result.hasErrors()) {
             preparar(model, request, null);
+            model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o cliente.");
             return "clientes/form";
         }
 
@@ -114,10 +118,12 @@ public class ClienteController {
         } catch (DocumentoJaCadastradoException | DocumentoInvalidoException exception) {
             result.rejectValue("documento", "documento.invalido", exception.getMessage());
             preparar(model, request, null);
+            model.addAttribute("erroGlobal", exception.getMessage());
             return "clientes/form";
         } catch (CepInvalidoException exception) {
             result.rejectValue("cep", "cep.invalido", exception.getMessage());
             preparar(model, request, null);
+            model.addAttribute("erroGlobal", exception.getMessage());
             return "clientes/form";
         }
 
@@ -134,6 +140,7 @@ public class ClienteController {
             RedirectAttributes redirect) {
         if (result.hasErrors()) {
             preparar(model, request, id);
+            model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o cliente.");
             return "clientes/form";
         }
 
@@ -142,10 +149,12 @@ public class ClienteController {
         } catch (DocumentoJaCadastradoException | DocumentoInvalidoException exception) {
             result.rejectValue("documento", "documento.invalido", exception.getMessage());
             preparar(model, request, id);
+            model.addAttribute("erroGlobal", exception.getMessage());
             return "clientes/form";
         } catch (CepInvalidoException exception) {
             result.rejectValue("cep", "cep.invalido", exception.getMessage());
             preparar(model, request, id);
+            model.addAttribute("erroGlobal", exception.getMessage());
             return "clientes/form";
         }
 
@@ -154,8 +163,9 @@ public class ClienteController {
     }
 
     @PostMapping("/{id}/status")
-    public String status(@PathVariable Long id) {
+    public String status(@PathVariable Long id, RedirectAttributes redirect) {
         service.alternarAtivo(id);
+        redirect.addFlashAttribute("sucesso", "Status do cliente atualizado.");
         return "redirect:/clientes";
     }
 
@@ -167,6 +177,9 @@ public class ClienteController {
         model.addAttribute("voltarUrl", "/clientes");
         model.addAttribute("documento", documento);
         model.addAttribute("erro", erro);
+        if (erro != null && !erro.isBlank()) {
+            model.addAttribute("erroGlobal", erro);
+        }
     }
 
     private void preparar(Model model, ClienteRequest request, Long id) {
