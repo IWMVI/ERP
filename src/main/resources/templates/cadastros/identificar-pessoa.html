@@ -16,7 +16,7 @@
         <main class="content registry-page">
             <div class="registry-page-header">
                 <h1 th:text="${titulo}"></h1>
-                <p>Informe o documento para identificar o tipo de pessoa antes de continuar.</p>
+                <p>Informe o documento. Assim que ele for identificado, o sistema continua automaticamente.</p>
             </div>
 
             <section class="registry-form-stack identification-step">
@@ -49,5 +49,6 @@
     </div>
 </div>
 <script th:src="@{/js/cadastros.js}" defer></script>
+<script th:src="@{/js/identificacao.js}" defer></script>
 </body>
 </html>
