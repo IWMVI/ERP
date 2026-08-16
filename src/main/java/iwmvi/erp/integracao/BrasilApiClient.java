@@ -37,6 +37,7 @@ public class BrasilApiClient {
             @JsonProperty("razao_social") String razaoSocial,
             @JsonProperty("nome_fantasia") String nomeFantasia,
             @JsonProperty("descricao_situacao_cadastral") String situacaoCadastral,
+            @JsonProperty("descricao_tipo_de_logradouro") String tipoLogradouro,
             String logradouro,
             String numero,
             String complemento,
