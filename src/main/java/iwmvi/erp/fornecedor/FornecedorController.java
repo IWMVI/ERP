@@ -66,6 +66,9 @@ public class FornecedorController {
             model.addAttribute("cadastroNovo", true);
             model.addAttribute("avisoConsulta", dados.aviso());
             model.addAttribute("situacaoCadastral", dados.situacaoCadastral());
+            if (dados.aviso() != null && !dados.aviso().isBlank()) {
+                model.addAttribute("warning", dados.aviso());
+            }
             return "fornecedores/form";
         } catch (DocumentoInvalidoException exception) {
             prepararIdentificacao(model, documento, exception.getMessage());
@@ -105,6 +108,7 @@ public class FornecedorController {
             RedirectAttributes redirect) {
         if (result.hasErrors()) {
             preparar(model, request, null);
+            model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o fornecedor.");
             return "fornecedores/form";
         }
 
@@ -113,10 +117,12 @@ public class FornecedorController {
         } catch (DocumentoJaCadastradoException | DocumentoInvalidoException exception) {
             result.rejectValue("documento", "documento.invalido", exception.getMessage());
             preparar(model, request, null);
+            model.addAttribute("erroGlobal", exception.getMessage());
             return "fornecedores/form";
         } catch (CepInvalidoException exception) {
             result.rejectValue("cep", "cep.invalido", exception.getMessage());
             preparar(model, request, null);
+            model.addAttribute("erroGlobal", exception.getMessage());
             return "fornecedores/form";
         }
 
@@ -133,6 +139,7 @@ public class FornecedorController {
             RedirectAttributes redirect) {
         if (result.hasErrors()) {
             preparar(model, request, id);
+            model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o fornecedor.");
             return "fornecedores/form";
         }
 
@@ -141,10 +148,12 @@ public class FornecedorController {
         } catch (DocumentoJaCadastradoException | DocumentoInvalidoException exception) {
             result.rejectValue("documento", "documento.invalido", exception.getMessage());
             preparar(model, request, id);
+            model.addAttribute("erroGlobal", exception.getMessage());
             return "fornecedores/form";
         } catch (CepInvalidoException exception) {
             result.rejectValue("cep", "cep.invalido", exception.getMessage());
             preparar(model, request, id);
+            model.addAttribute("erroGlobal", exception.getMessage());
             return "fornecedores/form";
         }
 
@@ -153,8 +162,9 @@ public class FornecedorController {
     }
 
     @PostMapping("/{id}/status")
-    public String status(@PathVariable Long id) {
+    public String status(@PathVariable Long id, RedirectAttributes redirect) {
         service.alternarAtivo(id);
+        redirect.addFlashAttribute("sucesso", "Status do fornecedor atualizado.");
         return "redirect:/fornecedores";
     }
 
@@ -166,6 +176,9 @@ public class FornecedorController {
         model.addAttribute("voltarUrl", "/fornecedores");
         model.addAttribute("documento", documento);
         model.addAttribute("erro", erro);
+        if (erro != null && !erro.isBlank()) {
+            model.addAttribute("erroGlobal", erro);
+        }
     }
 
     private void preparar(Model model, FornecedorRequest request, Long id) {
