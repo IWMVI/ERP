@@ -58,7 +58,7 @@ public class PedidoVendaService {
     }
 
     @Transactional
-    public PedidoVenda concluir(Long pedidoId) {
+    public PedidoVenda concluir(Long pedidoId, int parcelas, LocalDate primeiroVencimento) {
         PedidoVenda pedido = buscar(pedidoId);
         pedido.concluir();
 
@@ -73,8 +73,8 @@ public class PedidoVendaService {
         financeiroService.gerarContasReceber(
                 pedido.getCliente(),
                 pedido.getTotal(),
-                1,
-                LocalDate.now().plusDays(30),
+                parcelas,
+                primeiroVencimento,
                 "VENDA",
                 pedido.getId());
         return pedido;
@@ -84,6 +84,21 @@ public class PedidoVendaService {
     public PedidoVenda cancelar(Long pedidoId) {
         PedidoVenda pedido = buscar(pedidoId);
         pedido.cancelar();
+        return pedido;
+    }
+
+    @Transactional
+    public PedidoVenda estornar(Long pedidoId) {
+        PedidoVenda pedido = buscar(pedidoId);
+        financeiroService.cancelarPorOrigem("VENDA", pedido.getId());
+        for (ItemPedidoVenda item : pedido.getItens()) {
+            estoqueService.movimentar(new MovimentacaoEstoqueRequest(
+                    item.getProduto().getId(),
+                    TipoMovimentacao.ENTRADA,
+                    item.getQuantidade(),
+                    "ESTORNO_VENDA:" + pedido.getId() + ":ITEM:" + item.getId()));
+        }
+        pedido.estornar();
         return pedido;
     }
 

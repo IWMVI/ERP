@@ -80,12 +80,22 @@ public class PedidoVenda {
         if (itens.isEmpty()) {
             throw new IllegalStateException("O pedido deve possuir ao menos um item.");
         }
+        if (getTotal().signum() <= 0) {
+            throw new IllegalStateException("O total da venda deve ser maior que zero.");
+        }
         status = StatusPedidoVenda.CONCLUIDO;
     }
 
     public void cancelar() {
         exigirRascunho();
         status = StatusPedidoVenda.CANCELADO;
+    }
+
+    public void estornar() {
+        if (status != StatusPedidoVenda.CONCLUIDO) {
+            throw new IllegalStateException("Apenas vendas concluídas podem ser estornadas.");
+        }
+        status = StatusPedidoVenda.ESTORNADO;
     }
 
     private void exigirRascunho() {

@@ -13,4 +13,6 @@ public interface TituloFinanceiroRepository extends JpaRepository<TituloFinancei
 
     List<TituloFinanceiro> findByStatusAndDataVencimentoBeforeOrderByDataVencimentoAsc(
             StatusTituloFinanceiro status, LocalDate data);
+
+    List<TituloFinanceiro> findByOrigemTipoAndOrigemId(String origemTipo, Long origemId);
 }

@@ -3,6 +3,7 @@ package iwmvi.erp.compra;
 import iwmvi.erp.fornecedor.FornecedorRepository;
 import iwmvi.erp.produto.ProdutoRepository;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,15 +46,21 @@ public class PedidoCompraController {
 
     @PostMapping
     public String criar(@RequestParam Long fornecedorId, RedirectAttributes redirectAttributes) {
-        PedidoCompra pedido = service.criar(new CriarPedidoCompraRequest(fornecedorId));
-        redirectAttributes.addFlashAttribute("sucesso", "Pedido de compra criado com sucesso.");
-        return "redirect:/compras/" + pedido.getId();
+        try {
+            PedidoCompra pedido = service.criar(new CriarPedidoCompraRequest(fornecedorId));
+            redirectAttributes.addFlashAttribute("sucesso", "Pedido de compra criado com sucesso.");
+            return "redirect:/compras/" + pedido.getId();
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("erroGlobal", e.getMessage());
+            return "redirect:/compras/novo";
+        }
     }
 
     @GetMapping("/{id}")
     public String detalhe(@PathVariable Long id, Model model) {
         model.addAttribute("pedido", service.buscar(id));
         model.addAttribute("produtos", produtoRepository.findAllByOrderByNomeAsc());
+        model.addAttribute("vencimentoPadrao", LocalDate.now().plusDays(30));
         model.addAttribute("activePage", "compras");
         return "compras/detalhe";
     }
@@ -65,22 +72,51 @@ public class PedidoCompraController {
             @RequestParam BigDecimal quantidade,
             @RequestParam BigDecimal custoUnitario,
             RedirectAttributes redirectAttributes) {
-        service.adicionarItem(id, new AdicionarItemCompraRequest(produtoId, quantidade, custoUnitario));
-        redirectAttributes.addFlashAttribute("sucesso", "Item adicionado ao pedido.");
+        try {
+            service.adicionarItem(id, new AdicionarItemCompraRequest(produtoId, quantidade, custoUnitario));
+            redirectAttributes.addFlashAttribute("sucesso", "Item adicionado ao pedido.");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("erroGlobal", e.getMessage());
+        }
         return "redirect:/compras/" + id;
     }
 
     @PostMapping("/{id}/receber")
-    public String receber(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        service.receber(id);
-        redirectAttributes.addFlashAttribute("sucesso", "Compra recebida e estoque atualizado.");
+    public String receber(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "1") int parcelas,
+            @RequestParam LocalDate primeiroVencimento,
+            RedirectAttributes redirectAttributes) {
+        try {
+            service.receber(id, parcelas, primeiroVencimento);
+            redirectAttributes.addFlashAttribute(
+                    "sucesso", "Compra recebida. Estoque e financeiro foram atualizados.");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("erroGlobal", e.getMessage());
+        }
         return "redirect:/compras/" + id;
     }
 
     @PostMapping("/{id}/cancelar")
     public String cancelar(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        service.cancelar(id);
-        redirectAttributes.addFlashAttribute("sucesso", "Pedido cancelado.");
+        try {
+            service.cancelar(id);
+            redirectAttributes.addFlashAttribute("sucesso", "Pedido cancelado.");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("erroGlobal", e.getMessage());
+        }
+        return "redirect:/compras/" + id;
+    }
+
+    @PostMapping("/{id}/estornar")
+    public String estornar(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            service.estornar(id);
+            redirectAttributes.addFlashAttribute(
+                    "sucesso", "Compra estornada. Estoque revertido e títulos cancelados.");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("erroGlobal", e.getMessage());
+        }
         return "redirect:/compras/" + id;
     }
 }

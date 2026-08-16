@@ -58,7 +58,7 @@ public class PedidoCompraService {
     }
 
     @Transactional
-    public PedidoCompra receber(Long pedidoId) {
+    public PedidoCompra receber(Long pedidoId, int parcelas, LocalDate primeiroVencimento) {
         PedidoCompra pedido = buscar(pedidoId);
         pedido.receber();
 
@@ -73,8 +73,8 @@ public class PedidoCompraService {
         financeiroService.gerarContasPagar(
                 pedido.getFornecedor(),
                 pedido.getTotal(),
-                1,
-                LocalDate.now().plusDays(30),
+                parcelas,
+                primeiroVencimento,
                 "COMPRA",
                 pedido.getId());
         return pedido;
@@ -84,6 +84,21 @@ public class PedidoCompraService {
     public PedidoCompra cancelar(Long pedidoId) {
         PedidoCompra pedido = buscar(pedidoId);
         pedido.cancelar();
+        return pedido;
+    }
+
+    @Transactional
+    public PedidoCompra estornar(Long pedidoId) {
+        PedidoCompra pedido = buscar(pedidoId);
+        financeiroService.cancelarPorOrigem("COMPRA", pedido.getId());
+        for (ItemPedidoCompra item : pedido.getItens()) {
+            estoqueService.movimentar(new MovimentacaoEstoqueRequest(
+                    item.getProduto().getId(),
+                    TipoMovimentacao.SAIDA,
+                    item.getQuantidade(),
+                    "ESTORNO_COMPRA:" + pedido.getId() + ":ITEM:" + item.getId()));
+        }
+        pedido.estornar();
         return pedido;
     }
 

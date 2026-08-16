@@ -97,6 +97,13 @@ public class TituloFinanceiro {
         this.dataPagamento = dataPagamento;
     }
 
+    public void cancelar() {
+        if (status == StatusTituloFinanceiro.PAGO) {
+            throw new IllegalStateException("Não é possível cancelar um título já pago.");
+        }
+        this.status = StatusTituloFinanceiro.CANCELADO;
+    }
+
     public boolean isVencido(LocalDate hoje) {
         return status == StatusTituloFinanceiro.ABERTO && dataVencimento.isBefore(hoje);
     }

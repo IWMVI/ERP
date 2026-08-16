@@ -71,12 +71,22 @@ public class PedidoCompra {
         if (itens.isEmpty()) {
             throw new IllegalStateException("O pedido deve possuir ao menos um item.");
         }
+        if (getTotal().signum() <= 0) {
+            throw new IllegalStateException("O total da compra deve ser maior que zero.");
+        }
         status = StatusPedidoCompra.RECEBIDO;
     }
 
     public void cancelar() {
         exigirRascunho();
         status = StatusPedidoCompra.CANCELADO;
+    }
+
+    public void estornar() {
+        if (status != StatusPedidoCompra.RECEBIDO) {
+            throw new IllegalStateException("Apenas compras recebidas podem ser estornadas.");
+        }
+        status = StatusPedidoCompra.ESTORNADO;
     }
 
     private void exigirRascunho() {

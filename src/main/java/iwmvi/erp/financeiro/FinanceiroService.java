@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class FinanceiroService {
 
+    private static final int MAX_PARCELAS = 24;
+
     private final TituloFinanceiroRepository repository;
 
     public FinanceiroService(TituloFinanceiroRepository repository) {
@@ -67,6 +69,18 @@ public class FinanceiroService {
         return titulo;
     }
 
+    @Transactional
+    public void cancelarPorOrigem(String origemTipo, Long origemId) {
+        List<TituloFinanceiro> titulos = repository.findByOrigemTipoAndOrigemId(origemTipo, origemId);
+        if (titulos.stream().anyMatch(titulo -> titulo.getStatus() == StatusTituloFinanceiro.PAGO)) {
+            throw new IllegalStateException(
+                    "Não é possível estornar a operação porque há título financeiro já pago.");
+        }
+        titulos.stream()
+                .filter(titulo -> titulo.getStatus() == StatusTituloFinanceiro.ABERTO)
+                .forEach(TituloFinanceiro::cancelar);
+    }
+
     @Transactional(readOnly = true)
     public List<TituloFinanceiro> emAberto() {
         return repository.findByStatusOrderByDataVencimentoAsc(StatusTituloFinanceiro.ABERTO);
@@ -88,11 +102,14 @@ public class FinanceiroService {
             String origemTipo,
             Long origemId,
             String descricao) {
-        if (parcelas <= 0) {
-            throw new IllegalArgumentException("A quantidade de parcelas deve ser maior que zero.");
+        if (parcelas <= 0 || parcelas > MAX_PARCELAS) {
+            throw new IllegalArgumentException("A quantidade de parcelas deve estar entre 1 e 24.");
         }
         if (valorTotal == null || valorTotal.signum() <= 0) {
             throw new IllegalArgumentException("O valor total deve ser maior que zero.");
+        }
+        if (primeiroVencimento == null || primeiroVencimento.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("O primeiro vencimento não pode estar no passado.");
         }
         if (repository.existsByTipoAndOrigemTipoAndOrigemId(tipo, origemTipo, origemId)) {
             throw new IllegalStateException("Já existem títulos financeiros para esta operação.");
