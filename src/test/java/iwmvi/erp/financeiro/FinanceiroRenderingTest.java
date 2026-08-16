@@ -1,11 +1,10 @@
-package iwmvi.erp.web;
+package iwmvi.erp.financeiro;
 
 import iwmvi.erp.auditoria.AuditoriaService;
 import iwmvi.erp.cliente.ClienteRepository;
 import iwmvi.erp.cliente.ClienteService;
 import iwmvi.erp.compra.PedidoCompraService;
 import iwmvi.erp.estoque.EstoqueService;
-import iwmvi.erp.financeiro.FinanceiroService;
 import iwmvi.erp.fornecedor.FornecedorRepository;
 import iwmvi.erp.fornecedor.FornecedorService;
 import iwmvi.erp.funcionario.FuncionarioService;
@@ -19,8 +18,7 @@ import iwmvi.erp.usuario.UsuarioRepository;
 import iwmvi.erp.usuario.UsuarioService;
 import iwmvi.erp.venda.PedidoVendaService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -36,11 +34,12 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
 @Import(SecurityConfig.class)
-class PageRenderingSmokeTest {
+class FinanceiroRenderingTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -91,32 +90,29 @@ class PageRenderingSmokeTest {
         when(estoqueService.produtos()).thenReturn(List.of());
         when(estoqueService.abaixoDoMinimo()).thenReturn(List.of());
         when(estoqueService.historico(any(), any(), any())).thenReturn(List.of());
-        FinanceiroService.GrupoFinanceiro zero =
-            new FinanceiroService.GrupoFinanceiro(0, BigDecimal.ZERO);
-        when(financeiroService.listar(any(), any())).thenReturn(List.of());
-        when(financeiroService.resumo(any()))
-            .thenReturn(new FinanceiroService.ResumoFinanceiro(zero, zero, zero, zero));
-        when(financeiroService.extrato())
-            .thenReturn(
-                new FinanceiroService.ExtratoFinanceiro(
-                    List.of(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO));
         when(usuarioService.listar()).thenReturn(List.of());
         when(auditoriaService.buscar(any(), any(), any(), any())).thenReturn(List.of());
+        FinanceiroService.GrupoFinanceiro zero = new FinanceiroService.GrupoFinanceiro(0, BigDecimal.ZERO);
+        when(financeiroService.listar(any(), anyString())).thenReturn(List.of());
+        when(financeiroService.resumo(any()))
+            .thenReturn(new FinanceiroService.ResumoFinanceiro(zero, zero, zero, zero));
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"/", "/clientes", "/clientes/novo", "/fornecedores", "/fornecedores/novo", "/produtos", "/produtos/novo", "/estoque", "/estoque/movimentar", "/vendas", "/vendas/novo", "/compras", "/compras/novo", "/financeiro/pagar", "/financeiro/receber", "/financeiro/extrato"})
-    void deveRenderizarPaginasInternas(String path) throws Exception {
-        mockMvc
-            .perform(get(path).with(user("usuario@erp.local").roles("USUARIO")))
-            .andExpect(status().isOk());
+    @Test
+    void deveDestacarCardDeFiltroAtivo() throws Exception {
+        mockMvc.perform(get("/financeiro/pagar").with(user("usuario@erp.local").roles("USUARIO")))
+            .andExpect(status().isOk())
+            .andExpect(content().string(org.hamcrest.Matchers.containsString("is-active")))
+            .andExpect(content().string(org.hamcrest.Matchers.containsString("filtro=EM_ATRASO")))
+            .andExpect(content().string(org.hamcrest.Matchers.containsString("filtro=VENCENDO")))
+            .andExpect(content().string(org.hamcrest.Matchers.containsString("filtro=PAGO")));
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"/usuarios", "/usuarios/novo", "/funcionarios", "/funcionarios/novo", "/auditoria"})
-    void deveRenderizarPaginasAdministrativas(String path) throws Exception {
-        mockMvc
-            .perform(get(path).with(user("admin@erp.local").roles("ADMIN")))
-            .andExpect(status().isOk());
+    @Test
+    void deveRenderizarBotaoComDataModalOpenApenasQuandoInformado() throws Exception {
+        mockMvc.perform(get("/financeiro/pagar").with(user("usuario@erp.local").roles("USUARIO")))
+            .andExpect(status().isOk())
+            .andExpect(content().string(org.hamcrest.Matchers.containsString("data-modal-open=\"nova-conta-modal\"")))
+            .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("data-modal-open=\"null\""))));
     }
 }

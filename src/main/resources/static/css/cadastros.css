@@ -61,6 +61,7 @@
 }
 
 .registry-form-section label {
+    min-height: 19px;
     margin-bottom: 6px;
     color: #3b4954;
     font-size: 12px;
@@ -243,6 +244,8 @@ textarea {
     align-items: center;
     gap: 7px;
     width: fit-content;
+    min-height: 19px;
+    margin: 0 0 6px;
 }
 
 .field-label label {

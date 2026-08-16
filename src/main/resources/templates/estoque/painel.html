@@ -15,7 +15,7 @@
         <main class="content registry-page">
             <div class="page-heading">
                 <div><h1>Controle de estoque</h1><p class="muted">Saldos derivados de movimentações rastreáveis.</p></div>
-                <a class="button" th:href="@{/estoque/movimentar}">Nova movimentação</a>
+                <th:block th:replace="~{fragments/buttons :: link(@{/estoque/movimentar}, 'Nova movimentação', null)}"></th:block>
             </div>
 
             <section class="dashboard-grid">

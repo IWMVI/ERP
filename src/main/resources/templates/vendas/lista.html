@@ -16,7 +16,7 @@
             <div th:replace="~{fragments/alerts :: alerts}"></div>
             <div class="page-heading">
                 <div><h1>Pedidos de venda</h1><p class="muted">Acompanhe os pedidos, seus valores e o status da operação.</p></div>
-                <a class="button" th:href="@{/vendas/novo}">Nova venda</a>
+                <th:block th:replace="~{fragments/buttons :: link(@{/vendas/novo}, 'Nova venda', null)}"></th:block>
             </div>
             <section class="registry-card">
                 <div class="table-wrapper">

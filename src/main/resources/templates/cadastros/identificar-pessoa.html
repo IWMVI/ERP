@@ -39,8 +39,8 @@
                     </div>
                     <div class="registry-form-actions">
                         <div class="registry-actions-buttons">
-                            <a class="button secondary" th:href="${voltarUrl}">Cancelar</a>
-                            <button type="submit" disabled aria-disabled="true">Continuar</button>
+                            <th:block th:replace="~{fragments/buttons :: link(${voltarUrl}, 'Cancelar', 'secondary')}"></th:block>
+                            <th:block th:replace="~{fragments/buttons :: action('Continuar', 'submit', null, null, true)}"></th:block>
                         </div>
                     </div>
                 </form>

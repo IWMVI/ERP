@@ -3,52 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Financeiro | ERP</title>
+    <title th:text="${tituloPagina + ' | ERP'}"></title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
     <link rel="stylesheet" th:href="@{/css/navigation.css}">
+    <link rel="stylesheet" th:href="@{/css/financeiro.css}">
 </head>
 <body>
 <div class="app-shell">
-    <aside th:replace="~{fragments/sidebar :: sidebar('financeiro')}"></aside>
+    <aside th:replace="~{fragments/sidebar :: sidebar(${activePage})}"></aside>
     <div class="app-main">
-        <header th:replace="~{fragments/topbar :: topbar('Operação / Financeiro')}"></header>
+        <header th:replace="~{fragments/topbar :: topbar('Financeiro / ' + ${tituloPagina})}"></header>
         <main class="content registry-page">
             <div th:replace="~{fragments/alerts :: alerts}"></div>
             <div class="page-heading">
-                <div><h1>Financeiro</h1><p class="muted">Contas a receber e a pagar geradas pelas operações comerciais.</p></div>
+                <div><h1 th:text="${tituloPagina}"></h1><p class="muted" th:text="${tipo.name() == 'RECEBER'} ? 'Recebimentos gerados pelas vendas, com visão por situação.' : 'Pagamentos gerados pelas compras, com visão por situação.'"></p></div>
+                <th:block th:replace="~{fragments/buttons :: action(${tipo.name() == 'RECEBER' ? 'Nova conta a receber' : 'Nova conta a pagar'}, 'button', 'nova-conta-modal', null, null)}"></th:block>
             </div>
 
-            <div class="registry-toolbar">
-                <a class="button" th:classappend="${filtro == 'abertos'} ? ' active'" th:href="@{/financeiro(filtro='abertos')}">Em aberto</a>
-                <a class="button secondary" th:href="@{/financeiro(filtro='vencidos')}">Vencidos</a>
+            <div class="finance-summary">
+                <a class="finance-card" th:classappend="${filtro == 'ABERTO'} ? ' is-active'" th:href="@{${basePath}(filtro='ABERTO')}">
+                    <span class="finance-card-label">Em aberto</span>
+                    <strong class="finance-card-value" th:text="${'R$ ' + #numbers.formatDecimal(resumo.emAberto.valor, 1, 2)}"></strong>
+                    <small class="finance-card-count" th:text="${resumo.emAberto.quantidade} + ' ' + ${resumo.emAberto.quantidade == 1 ? 'título' : 'títulos'}"></small>
+                </a>
+                <a class="finance-card atraso" th:classappend="${filtro == 'EM_ATRASO'} ? ' is-active'" th:href="@{${basePath}(filtro='EM_ATRASO')}">
+                    <span class="finance-card-label">Em atraso</span>
+                    <strong class="finance-card-value" th:text="${'R$ ' + #numbers.formatDecimal(resumo.emAtraso.valor, 1, 2)}"></strong>
+                    <small class="finance-card-count" th:text="${resumo.emAtraso.quantidade} + ' ' + ${resumo.emAtraso.quantidade == 1 ? 'título' : 'títulos'}"></small>
+                </a>
+                <a class="finance-card vencendo" th:classappend="${filtro == 'VENCENDO'} ? ' is-active'" th:href="@{${basePath}(filtro='VENCENDO')}">
+                    <span class="finance-card-label">Vencendo</span>
+                    <strong class="finance-card-value" th:text="${'R$ ' + #numbers.formatDecimal(resumo.vencendo.valor, 1, 2)}"></strong>
+                    <small class="finance-card-count" th:text="${resumo.vencendo.quantidade} + ' ' + ${resumo.vencendo.quantidade == 1 ? 'título' : 'títulos'}"></small>
+                </a>
+                <a class="finance-card pago" th:classappend="${filtro == 'PAGO'} ? ' is-active'" th:href="@{${basePath}(filtro='PAGO')}">
+                    <span class="finance-card-label">Pago</span>
+                    <strong class="finance-card-value" th:text="${'R$ ' + #numbers.formatDecimal(resumo.pago.valor, 1, 2)}"></strong>
+                    <small class="finance-card-count" th:text="${resumo.pago.quantidade} + ' ' + ${resumo.pago.quantidade == 1 ? 'título' : 'títulos'}"></small>
+                </a>
             </div>
 
             <section class="registry-card">
                 <div class="table-wrapper">
                     <table>
-                        <thead><tr><th>Tipo</th><th>Descrição</th><th>Cliente/Fornecedor</th><th>Parcela</th><th>Vencimento</th><th>Valor</th><th>Status</th><th></th></tr></thead>
+                        <thead><tr><th>Descrição</th><th th:text="${tipo.name() == 'RECEBER'} ? 'Cliente' : 'Fornecedor'"></th><th>Parcela</th><th>Vencimento</th><th>Valor</th><th>Status</th><th></th></tr></thead>
                         <tbody>
-                        <tr th:each="titulo : ${titulos}">
-                            <td th:text="${titulo.tipo}"></td>
-                            <td th:text="${titulo.descricao}"></td>
-                            <td th:text="${titulo.cliente != null ? titulo.cliente.nome : titulo.fornecedor.nome}"></td>
-                            <td th:text="${titulo.parcela + '/' + titulo.totalParcelas}"></td>
-                            <td th:text="${#temporals.format(titulo.dataVencimento, 'dd/MM/yyyy')}"></td>
-                            <td th:text="${'R$ ' + #numbers.formatDecimal(titulo.valor, 1, 2)}"></td>
-                            <td><span class="badge" th:text="${titulo.status}"></span></td>
+                        <tr th:each="linha : ${linhas}">
+                            <td th:text="${linha.titulo.descricao}"></td>
+                            <td th:text="${linha.titulo.pessoaNome}"></td>
+                            <td th:text="${linha.titulo.parcela + '/' + linha.titulo.totalParcelas}"></td>
+                            <td th:text="${#temporals.format(linha.titulo.dataVencimento, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${'R$ ' + #numbers.formatDecimal(linha.titulo.valor, 1, 2)}"></td>
+                            <td><span class="badge" th:classappend="${linha.categoria == 'EM_ATRASO'} ? ' danger' : ${linha.categoria == 'VENCENDO'} ? ' warning' : ${linha.categoria == 'PAGO'} ? ' success' : ''" th:text="${categorias[linha.categoria]}"></span></td>
                             <td>
-                                <form th:if="${titulo.status.name() == 'ABERTO'}" th:action="@{/financeiro/{id}/pagar(id=${titulo.id})}" method="post">
+                                <form th:if="${linha.titulo.status.name() == 'ABERTO'}" th:action="@{/financeiro/{id}/pagar(id=${linha.titulo.id})}" method="post">
                                     <button type="submit">Dar baixa</button>
                                 </form>
                             </td>
                         </tr>
-                        <tr th:if="${#lists.isEmpty(titulos)}"><td colspan="8">Nenhum título encontrado.</td></tr>
+                        <tr th:if="${#lists.isEmpty(linhas)}"><td colspan="7">Nenhum título encontrado para esta situação.</td></tr>
                         </tbody>
                     </table>
                 </div>
             </section>
+
+            <dialog class="finance-modal" id="nova-conta-modal" data-modal-backdrop-close>
+                <div class="finance-modal-panel">
+                    <div class="finance-modal-header">
+                        <h2 th:text="${tipo.name() == 'RECEBER'} ? 'Nova conta a receber' : 'Nova conta a pagar'"></h2>
+                        <button type="button" class="finance-modal-close" data-modal-close aria-label="Fechar">×</button>
+                    </div>
+                    <div class="finance-modal-body">
+                        <p class="muted">Os campos do lançamento manual serão definidos em breve.</p>
+                    </div>
+                </div>
+            </dialog>
         </main>
     </div>
 </div>
+<script th:src="@{/js/financeiro.js}" defer></script>
 </body>
 </html>

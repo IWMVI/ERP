@@ -87,8 +87,8 @@
 
                 <div class="registry-form-actions">
                     <div class="registry-actions-buttons">
-                        <a class="button secondary" th:href="${id == null ? '/clientes/novo' : '/clientes'}">Voltar</a>
-                        <button type="submit">Salvar cliente</button>
+                        <th:block th:replace="~{fragments/buttons :: link(${id == null ? '/clientes/novo' : '/clientes'}, 'Voltar', 'secondary')}"></th:block>
+                        <th:block th:replace="~{fragments/buttons :: action('Salvar cliente', 'submit', null, null, null)}"></th:block>
                     </div>
                 </div>
             </form>

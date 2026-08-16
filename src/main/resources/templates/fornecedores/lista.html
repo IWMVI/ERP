@@ -15,7 +15,7 @@
         <main class="content registry-page">
             <div class="page-heading">
                 <div><h1>Fornecedores</h1><p class="muted">Parceiros comerciais, contatos e dados de fornecimento.</p></div>
-                <a class="button" th:href="@{/fornecedores/novo}">Novo fornecedor</a>
+                <th:block th:replace="~{fragments/buttons :: link(@{/fornecedores/novo}, 'Novo fornecedor', null)}"></th:block>
             </div>
             <section class="registry-card">
                 <div class="table-wrapper">

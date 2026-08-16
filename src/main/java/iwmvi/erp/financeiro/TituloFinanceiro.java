@@ -3,12 +3,14 @@ package iwmvi.erp.financeiro;
 import iwmvi.erp.cliente.Cliente;
 import iwmvi.erp.fornecedor.Fornecedor;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "titulos_financeiros")
+@Getter
 public class TituloFinanceiro {
 
     @Id
@@ -98,57 +100,5 @@ public class TituloFinanceiro {
 
     public boolean isVencido(LocalDate hoje) {
         return status == StatusTituloFinanceiro.ABERTO && dataVencimento.isBefore(hoje);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public TipoTituloFinanceiro getTipo() {
-        return tipo;
-    }
-
-    public StatusTituloFinanceiro getStatus() {
-        return status;
-    }
-
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    public Fornecedor getFornecedor() {
-        return fornecedor;
-    }
-
-    public BigDecimal getValor() {
-        return valor;
-    }
-
-    public LocalDate getDataVencimento() {
-        return dataVencimento;
-    }
-
-    public LocalDate getDataPagamento() {
-        return dataPagamento;
-    }
-
-    public int getParcela() {
-        return parcela;
-    }
-
-    public int getTotalParcelas() {
-        return totalParcelas;
-    }
-
-    public String getOrigemTipo() {
-        return origemTipo;
-    }
-
-    public Long getOrigemId() {
-        return origemId;
-    }
-
-    public String getDescricao() {
-        return descricao;
     }
 }

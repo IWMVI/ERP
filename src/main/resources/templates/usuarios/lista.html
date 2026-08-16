@@ -15,7 +15,7 @@
         <main class="content registry-page">
             <div class="page-heading">
                 <div><h1>Usuários</h1><p class="muted">Controle de acessos, perfis e situação dos usuários cadastrados.</p></div>
-                <a class="button" th:href="@{/usuarios/novo}">Novo usuário</a>
+                <th:block th:replace="~{fragments/buttons :: link(@{/usuarios/novo}, 'Novo usuário', null)}"></th:block>
             </div>
             <section class="registry-card">
                 <div class="table-wrapper">
