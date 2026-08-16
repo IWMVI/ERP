@@ -6,6 +6,7 @@
     <title>Produto | ERP</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
     <link rel="stylesheet" th:href="@{/css/navigation.css}">
+    <link rel="stylesheet" th:href="@{/css/cadastros.css}">
 </head>
 <body>
 <div class="app-shell">
@@ -13,26 +14,48 @@
     <div class="app-main">
         <header th:replace="~{fragments/topbar :: topbar('Cadastros / Produtos')}"></header>
         <main class="content registry-page">
-            <div class="page-heading"><div><h1 th:text="${id == null ? 'Novo produto' : 'Editar produto'}"></h1><p class="muted">Informações comerciais e parâmetros de estoque.</p></div></div>
-            <section class="panel registry-form">
-                <div class="panel-header"><h2>Dados do produto</h2></div>
-                <div class="panel-body">
-                    <form th:action="${id == null} ? @{/produtos} : @{/produtos/{id}(id=${id})}" th:object="${produtoRequest}" method="post">
-                        <div class="form-grid">
-                            <div><label for="codigo">Código/SKU</label><input id="codigo" th:field="*{codigo}"><small class="field-error" th:errors="*{codigo}"></small></div>
-                            <div><label for="nome">Nome</label><input id="nome" th:field="*{nome}"><small class="field-error" th:errors="*{nome}"></small></div>
-                            <div><label for="categoria">Categoria</label><input id="categoria" th:field="*{categoria}"></div>
-                            <div><label for="unidadeMedida">Unidade</label><select id="unidadeMedida" th:field="*{unidadeMedida}"><option th:each="unidade : ${unidades}" th:value="${unidade}" th:text="${unidade}"></option></select></div>
-                            <div><label for="precoVenda">Preço de venda</label><input id="precoVenda" type="number" step="0.01" th:field="*{precoVenda}"></div>
-                            <div><label for="custo">Custo</label><input id="custo" type="number" step="0.01" th:field="*{custo}"></div>
-                            <div><label for="estoqueMinimo">Estoque mínimo</label><input id="estoqueMinimo" type="number" step="0.001" th:field="*{estoqueMinimo}"></div>
-                        </div>
-                        <div class="actions"><a class="button secondary" th:href="@{/produtos}">Cancelar</a><button type="submit">Salvar produto</button></div>
-                    </form>
-                </div>
-            </section>
+            <div class="page-heading">
+                <div><h1 th:text="${id == null ? 'Novo produto' : 'Editar produto'}"></h1><p class="muted">Identificação comercial, classificação, valores e parâmetros de estoque.</p></div>
+            </div>
+            <form class="registry-form-stack" th:action="${id == null} ? @{/produtos} : @{/produtos/{id}(id=${id})}" th:object="${produtoRequest}" method="post">
+                <section class="panel registry-form-section">
+                    <div class="panel-header"><div><h2>Identificação</h2><p class="muted">Códigos e descrição utilizados para localizar o produto.</p></div></div>
+                    <div class="panel-body form-grid">
+                        <div><label for="codigo">Código / SKU</label><input id="codigo" th:field="*{codigo}" autocomplete="off"><small class="field-error" th:errors="*{codigo}"></small></div>
+                        <div><label for="gtin">GTIN / EAN</label><input id="gtin" th:field="*{gtin}" data-mask="gtin" inputmode="numeric" maxlength="14"><small class="field-hint">Aceita GTIN-8, UPC-12, EAN-13 ou GTIN-14.</small><small class="field-error" th:errors="*{gtin}"></small></div>
+                        <div class="full-width"><label for="nome">Nome</label><input id="nome" th:field="*{nome}"><small class="field-error" th:errors="*{nome}"></small></div>
+                        <div class="full-width"><label for="descricao">Descrição</label><textarea id="descricao" th:field="*{descricao}" rows="3" maxlength="1000"></textarea></div>
+                    </div>
+                </section>
+                <section class="panel registry-form-section">
+                    <div class="panel-header"><h2>Classificação</h2></div>
+                    <div class="panel-body form-grid">
+                        <div><label for="marca">Marca</label><input id="marca" th:field="*{marca}"></div>
+                        <div><label for="categoria">Categoria</label><input id="categoria" th:field="*{categoria}"></div>
+                        <div><label for="subcategoria">Subcategoria</label><input id="subcategoria" th:field="*{subcategoria}"></div>
+                        <div><label for="unidadeMedida">Unidade de medida</label><select id="unidadeMedida" th:field="*{unidadeMedida}"><option th:each="unidade : ${unidades}" th:value="${unidade}" th:text="${unidade}"></option></select></div>
+                    </div>
+                </section>
+                <section class="panel registry-form-section">
+                    <div class="panel-header"><h2>Valores</h2></div>
+                    <div class="panel-body form-grid">
+                        <div><label for="custo">Custo</label><input id="custo" type="number" min="0" step="0.01" th:field="*{custo}" inputmode="decimal"></div>
+                        <div><label for="precoVenda">Preço de venda</label><input id="precoVenda" type="number" min="0" step="0.01" th:field="*{precoVenda}" inputmode="decimal"></div>
+                    </div>
+                </section>
+                <section class="panel registry-form-section">
+                    <div class="panel-header"><div><h2>Estoque</h2><p class="muted">O saldo não é editado aqui; ele é alterado somente por movimentações.</p></div></div>
+                    <div class="panel-body form-grid">
+                        <div><label for="estoqueMinimo">Estoque mínimo</label><input id="estoqueMinimo" type="number" min="0" step="0.001" th:field="*{estoqueMinimo}" inputmode="decimal"></div>
+                        <div><label for="estoqueMaximo">Estoque máximo</label><input id="estoqueMaximo" type="number" min="0" step="0.001" th:field="*{estoqueMaximo}" inputmode="decimal"></div>
+                        <div class="full-width"><label for="localizacao">Localização física</label><input id="localizacao" th:field="*{localizacao}" placeholder="Ex.: Depósito A · Corredor 2 · Prateleira 4"></div>
+                    </div>
+                </section>
+                <div class="registry-form-actions"><a class="button secondary" th:href="@{/produtos}">Cancelar</a><button type="submit">Salvar produto</button></div>
+            </form>
         </main>
     </div>
 </div>
+<script th:src="@{/js/cadastros.js}" defer></script>
 </body>
 </html>
