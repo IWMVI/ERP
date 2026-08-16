@@ -18,9 +18,7 @@
                 <div><h1>Funcionários</h1><p class="muted">Cadastro interno de colaboradores.</p></div>
                 <a class="button" th:href="@{/funcionarios/novo}">Novo funcionário</a>
             </div>
-            <div class="alert success" th:if="${sucesso}" th:text="${sucesso}"></div>
             <section class="registry-card">
-                <div class="registry-card-header"><h2>Funcionários cadastrados</h2><span class="muted" th:text="${#lists.size(funcionarios) + ' registro(s)'}"></span></div>
                 <div class="table-wrapper">
                     <table>
                         <thead><tr><th></th><th>Nome</th><th>CPF</th><th>Cargo</th><th>Admissão</th><th>Contato</th><th>Status</th><th aria-label="Ações"></th></tr></thead>
@@ -38,14 +36,10 @@
                             <td><span class="badge" th:classappend="${funcionario.ativo} ? ' success'" th:text="${funcionario.ativo ? 'Ativo' : 'Inativo'}"></span></td>
                             <td>
                                 <details class="row-actions">
-                                    <summary aria-label="Abrir ações do funcionário" title="Ações">
-                                        <svg class="row-actions-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
-                                    </summary>
+                                    <summary aria-label="Abrir ações do funcionário" title="Ações"><svg class="row-actions-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></summary>
                                     <div class="row-actions-menu">
                                         <a th:href="@{/funcionarios/{id}/editar(id=${funcionario.id})}">Editar</a>
-                                        <form th:action="@{/funcionarios/{id}/status(id=${funcionario.id})}" method="post">
-                                            <button type="submit" th:text="${funcionario.ativo ? 'Inativar' : 'Ativar'}"></button>
-                                        </form>
+                                        <form th:action="@{/funcionarios/{id}/status(id=${funcionario.id})}" method="post"><button type="submit" th:text="${funcionario.ativo ? 'Inativar' : 'Ativar'}"></button></form>
                                     </div>
                                 </details>
                             </td>
@@ -54,6 +48,7 @@
                         </tbody>
                     </table>
                 </div>
+                <nav th:replace="~{fragments/pagination :: pagination(${paginacao})}"></nav>
             </section>
         </main>
     </div>
