@@ -1,7 +1,6 @@
 package iwmvi.erp.shared.storage;
 
 import org.springframework.http.CacheControl;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -26,8 +25,8 @@ public class ImagemController {
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(imagem.contentType()))
                 .cacheControl(CacheControl.noCache())
-                .header(HttpHeaders.X_CONTENT_TYPE_OPTIONS, "nosniff")
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
+                .header("X-Content-Type-Options", "nosniff")
+                .header("Content-Disposition", "inline")
                 .body(imagem.resource());
     }
 }
