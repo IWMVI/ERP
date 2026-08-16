@@ -14,44 +14,105 @@
     <div class="app-main">
         <header th:replace="~{fragments/topbar :: topbar('Cadastros / Clientes')}"></header>
         <main class="content registry-page">
-            <div class="page-heading">
-                <div><h1 th:text="${id == null ? 'Novo cliente' : 'Editar cliente'}"></h1><p class="muted">Identificação, contato e endereço do cliente.</p></div>
+            <div class="registry-page-header">
+                <div>
+                    <span class="registry-eyebrow">Cadastro comercial</span>
+                    <h1 th:text="${id == null ? 'Novo cliente' : 'Editar cliente'}"></h1>
+                    <p>Centralize identificação, contato e endereço em um único cadastro.</p>
+                </div>
+                <span class="registry-mode" th:text="${id == null ? 'Novo registro' : 'Em edição'}"></span>
             </div>
-            <form class="registry-form-stack" th:action="${id == null} ? @{/clientes} : @{/clientes/{id}(id=${id})}" th:object="${clienteRequest}" method="post">
-                <section class="panel registry-form-section">
-                    <div class="panel-header"><div><h2>Identificação</h2><p class="muted">Dados principais para identificação e faturamento.</p></div></div>
+
+            <form class="registry-form-stack"
+                  th:action="${id == null} ? @{/clientes} : @{/clientes/{id}(id=${id})}"
+                  th:object="${clienteRequest}"
+                  method="post">
+                <section class="panel registry-form-section" id="identificacao">
+                    <div class="registry-section-header">
+                        <span class="registry-section-index">01</span>
+                        <div>
+                            <h2>Identificação</h2>
+                            <p>Dados principais utilizados nas operações comerciais.</p>
+                        </div>
+                    </div>
                     <div class="panel-body form-grid">
-                        <div><label for="tipoPessoa">Tipo de pessoa</label><select id="tipoPessoa" th:field="*{tipoPessoa}"><option th:each="tipo : ${tiposPessoa}" th:value="${tipo}" th:text="${tipo}"></option></select></div>
-                        <div class="field-group"><label for="documento">CPF / CNPJ</label><input id="documento" th:field="*{documento}" data-mask="documento" data-lookup-cnpj inputmode="numeric" autocomplete="off"><small data-lookup-status class="field-hint">Para CNPJ, os dados podem ser consultados automaticamente.</small><small class="field-error" th:errors="*{documento}"></small></div>
-                        <div><label for="nome">Nome / Razão social</label><input id="nome" th:field="*{nome}" autocomplete="name"><small class="field-error" th:errors="*{nome}"></small></div>
-                        <div><label for="nomeFantasia">Nome fantasia</label><input id="nomeFantasia" th:field="*{nomeFantasia}"></div>
+                        <div>
+                            <label for="tipoPessoa">Tipo de pessoa</label>
+                            <select id="tipoPessoa" th:field="*{tipoPessoa}">
+                                <option th:each="tipo : ${tiposPessoa}" th:value="${tipo}" th:text="${tipo}"></option>
+                            </select>
+                        </div>
+                        <div class="field-group full-width-tablet">
+                            <label for="documento">CPF / CNPJ</label>
+                            <div class="lookup-field-row">
+                                <input id="documento" th:field="*{documento}" data-mask="documento" data-lookup-cnpj inputmode="numeric" autocomplete="off">
+                                <button type="button" class="button lookup-button" data-action="consultar-cnpj" data-default-label="Consultar CNPJ">
+                                    <span data-button-label>Consultar CNPJ</span>
+                                </button>
+                            </div>
+                            <small data-lookup-status class="field-hint">Para pessoa jurídica, consulte os dados cadastrais públicos.</small>
+                            <small class="field-error" th:errors="*{documento}"></small>
+                        </div>
+                        <div>
+                            <label for="nome">Nome / Razão social</label>
+                            <input id="nome" th:field="*{nome}" autocomplete="name">
+                            <small class="field-error" th:errors="*{nome}"></small>
+                        </div>
+                        <div>
+                            <label for="nomeFantasia">Nome fantasia</label>
+                            <input id="nomeFantasia" th:field="*{nomeFantasia}">
+                        </div>
                     </div>
                 </section>
-                <section class="panel registry-form-section">
-                    <div class="panel-header"><div><h2>Contato</h2><p class="muted">Canais utilizados para comunicação comercial.</p></div></div>
-                    <div class="panel-body form-grid">
+
+                <section class="panel registry-form-section" id="contato">
+                    <div class="registry-section-header">
+                        <span class="registry-section-index">02</span>
+                        <div><h2>Contato</h2><p>Canais de comunicação utilizados no relacionamento comercial.</p></div>
+                    </div>
+                    <div class="panel-body form-grid form-grid-three">
                         <div><label for="email">E-mail</label><input id="email" type="email" th:field="*{email}" autocomplete="email"><small class="field-error" th:errors="*{email}"></small></div>
                         <div><label for="telefone">Telefone</label><input id="telefone" th:field="*{telefone}" data-mask="telefone" inputmode="tel" autocomplete="tel"></div>
                         <div><label for="celular">Celular</label><input id="celular" th:field="*{celular}" data-mask="celular" inputmode="tel"></div>
                     </div>
                 </section>
-                <section class="panel registry-form-section">
-                    <div class="panel-header"><div><h2>Endereço</h2><p class="muted">Informe o CEP para preencher parte do endereço automaticamente.</p></div></div>
+
+                <section class="panel registry-form-section" id="endereco">
+                    <div class="registry-section-header">
+                        <span class="registry-section-index">03</span>
+                        <div><h2>Endereço</h2><p>O CEP consulta e preenche automaticamente os dados disponíveis.</p></div>
+                    </div>
                     <div class="panel-body form-grid">
-                        <div class="field-group"><label for="cep">CEP</label><input id="cep" th:field="*{cep}" data-mask="cep" data-lookup-cep inputmode="numeric" autocomplete="postal-code"><small data-lookup-status class="field-hint"></small><small class="field-error" th:errors="*{cep}"></small></div>
-                        <div class="full-width"><label for="logradouro">Logradouro</label><input id="logradouro" th:field="*{logradouro}" autocomplete="address-line1"></div>
+                        <div class="field-group">
+                            <label for="cep">CEP</label>
+                            <input id="cep" th:field="*{cep}" data-mask="cep" data-lookup-cep inputmode="numeric" autocomplete="postal-code">
+                            <small data-lookup-status class="field-hint"></small>
+                            <small class="field-error" th:errors="*{cep}"></small>
+                        </div>
                         <div><label for="numero">Número</label><input id="numero" th:field="*{numero}"></div>
+                        <div class="full-width"><label for="logradouro">Logradouro</label><input id="logradouro" th:field="*{logradouro}" autocomplete="address-line1"></div>
                         <div><label for="complemento">Complemento</label><input id="complemento" th:field="*{complemento}"></div>
                         <div><label for="bairro">Bairro</label><input id="bairro" th:field="*{bairro}"></div>
                         <div><label for="cidade">Cidade</label><input id="cidade" th:field="*{cidade}" autocomplete="address-level2"></div>
                         <div><label for="estado">UF</label><input id="estado" th:field="*{estado}" maxlength="2" autocomplete="address-level1"></div>
                     </div>
                 </section>
-                <section class="panel registry-form-section">
-                    <div class="panel-header"><h2>Observações</h2></div>
-                    <div class="panel-body"><label for="observacoes">Informações adicionais</label><textarea id="observacoes" th:field="*{observacoes}" rows="4" maxlength="1000"></textarea></div>
+
+                <section class="panel registry-form-section" id="observacoes">
+                    <div class="registry-section-header">
+                        <span class="registry-section-index">04</span>
+                        <div><h2>Observações</h2><p>Informações complementares relevantes para o atendimento.</p></div>
+                    </div>
+                    <div class="panel-body"><textarea id="observacoes" th:field="*{observacoes}" rows="4" maxlength="1000" placeholder="Inclua observações somente quando forem úteis para a operação."></textarea></div>
                 </section>
-                <div class="registry-form-actions"><a class="button secondary" th:href="@{/clientes}">Cancelar</a><button type="submit">Salvar cliente</button></div>
+
+                <div class="registry-form-actions">
+                    <span class="registry-actions-hint">Revise os dados antes de salvar.</span>
+                    <div class="registry-actions-buttons">
+                        <a class="button secondary" th:href="@{/clientes}">Cancelar</a>
+                        <button type="submit">Salvar cliente</button>
+                    </div>
+                </div>
             </form>
         </main>
     </div>
