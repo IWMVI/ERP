@@ -7,14 +7,72 @@
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<header class="topbar">
-    <strong>ERP</strong>
-    <form th:action="@{/logout}" method="post"><button class="link-button" type="submit">Sair</button></form>
-</header>
-<main class="container">
-    <h1>Bem-vindo</h1>
-    <p th:text="${email}"></p>
-    <a class="button" th:if="${admin}" th:href="@{/usuarios}">Gerenciar usuários</a>
-</main>
+<div class="app-shell">
+    <aside class="sidebar">
+        <a th:href="@{/}" class="sidebar-brand">
+            <span class="brand-mark">ERP</span>
+            <span>Gestão Empresarial</span>
+        </a>
+
+        <nav class="sidebar-nav">
+            <span class="sidebar-section-title">Principal</span>
+            <a th:href="@{/}" class="nav-item active">
+                <span class="nav-symbol">IN</span>
+                <span>Início</span>
+            </a>
+
+            <span class="sidebar-section-title">Administração</span>
+            <a th:if="${admin}" th:href="@{/usuarios}" class="nav-item">
+                <span class="nav-symbol">US</span>
+                <span>Usuários</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-spacer"></div>
+        <div class="sidebar-footer">ERP · Ambiente de gestão</div>
+    </aside>
+
+    <div class="app-main">
+        <header class="topbar">
+            <span class="topbar-title">Visão geral</span>
+            <div class="user-menu">
+                <div class="user-identity">
+                    <strong>Usuário conectado</strong>
+                    <span th:text="${email}"></span>
+                </div>
+                <form th:action="@{/logout}" method="post">
+                    <button class="link-button" type="submit">Sair</button>
+                </form>
+            </div>
+        </header>
+
+        <main class="content">
+            <div class="page-heading">
+                <div>
+                    <h1>Visão geral</h1>
+                    <p class="muted">Acompanhe os módulos disponíveis e acesse as rotinas do sistema.</p>
+                </div>
+            </div>
+
+            <section class="dashboard-grid">
+                <article class="metric-card">
+                    <div class="metric-label">Cadastros</div>
+                    <div class="metric-value">Estrutura inicial</div>
+                    <p class="muted">Base para clientes, fornecedores e produtos.</p>
+                </article>
+                <article class="metric-card">
+                    <div class="metric-label">Operação</div>
+                    <div class="metric-value">Em evolução</div>
+                    <p class="muted">Estoque, vendas e compras serão adicionados nas próximas etapas.</p>
+                </article>
+                <article class="metric-card">
+                    <div class="metric-label">Financeiro</div>
+                    <div class="metric-value">Planejado</div>
+                    <p class="muted">Contas a pagar, receber e indicadores financeiros.</p>
+                </article>
+            </section>
+        </main>
+    </div>
+</div>
 </body>
 </html>

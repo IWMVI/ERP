@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Criar acesso | ERP</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="auth-page">
+    <section class="auth-brand-panel">
+        <div class="auth-brand">
+            <span class="brand-mark">ERP</span>
+            <span>Gestão Empresarial</span>
+        </div>
+
+        <div class="auth-brand-content">
+            <h1>Crie seu acesso ao ambiente de gestão.</h1>
+            <p>O cadastro público cria um usuário padrão. Permissões administrativas são concedidas somente por um administrador.</p>
+        </div>
+
+        <span class="auth-footer-note">Cadastro de acesso</span>
+    </section>
+
+    <section class="auth-form-panel">
+        <div class="auth-card">
+            <h2>Novo usuário</h2>
+            <p class="muted">Preencha seus dados para criar uma conta.</p>
+
+            <form th:action="@{/cadastro}" th:object="${cadastroUsuarioRequest}" method="post" class="form-stack">
+                <div class="form-group">
+                    <label for="nome">Nome</label>
+                    <input id="nome" th:field="*{nome}" type="text" autocomplete="name" required autofocus>
+                    <small class="field-error" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></small>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input id="email" th:field="*{email}" type="email" autocomplete="email" required>
+                    <small class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
+                </div>
+
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <input id="senha" th:field="*{senha}" type="password" autocomplete="new-password" minlength="6" required>
+                    <small class="field-error" th:if="${#fields.hasErrors('senha')}" th:errors="*{senha}"></small>
+                </div>
+
+                <button type="submit">Criar usuário</button>
+            </form>
+
+            <p class="auth-link-row">
+                Já possui acesso?
+                <a th:href="@{/login}">Voltar ao login</a>
+            </p>
+        </div>
+    </section>
+</main>
+</body>
+</html>
