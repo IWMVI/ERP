@@ -1,0 +1,84 @@
+.app-shell {
+    height: 100vh;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.sidebar {
+    height: 100vh;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.sidebar-nav {
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+}
+
+.sidebar-nav::-webkit-scrollbar,
+.content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 18%);
+    background-clip: padding-box;
+}
+
+.content::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: #bcc8d0;
+    background-clip: padding-box;
+}
+
+.app-main {
+    display: grid;
+    height: 100vh;
+    min-height: 0;
+    grid-template-rows: 66px minmax(0, 1fr);
+    overflow: hidden;
+}
+
+.topbar {
+    position: relative;
+    z-index: 20;
+    min-height: 66px;
+}
+
+.app-main > .content {
+    width: 100%;
+    max-width: none;
+    min-height: 0;
+    margin: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+}
+
+.app-main > .content > * {
+    max-width: 1280px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.app-main > .content > .registry-page-header,
+.app-main > .content > .registry-form-stack {
+    max-width: 1180px;
+}
+
+@media (max-width: 640px) {
+    .app-main {
+        grid-template-rows: 66px minmax(0, 1fr);
+    }
+
+    .app-main > .content {
+        padding: 20px 16px;
+    }
+}
