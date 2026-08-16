@@ -15,6 +15,7 @@ public final class PageView<T> {
     private final int totalPages;
     private final long totalItems;
     private final String basePath;
+    private final String pageParameter;
     private final Map<String, String> parameters;
 
     private PageView(
@@ -23,17 +24,28 @@ public final class PageView<T> {
             int totalPages,
             long totalItems,
             String basePath,
+            String pageParameter,
             Map<String, String> parameters) {
         this.items = items;
         this.page = page;
         this.totalPages = totalPages;
         this.totalItems = totalItems;
         this.basePath = basePath;
+        this.pageParameter = pageParameter;
         this.parameters = parameters;
     }
 
     public static <T> PageView<T> of(
             List<T> source, int requestedPage, String basePath, Map<String, ?> parameters) {
+        return of(source, requestedPage, basePath, "page", parameters);
+    }
+
+    public static <T> PageView<T> of(
+            List<T> source,
+            int requestedPage,
+            String basePath,
+            String pageParameter,
+            Map<String, ?> parameters) {
         int totalItems = source.size();
         int totalPages = Math.max(1, (int) Math.ceil(totalItems / (double) PAGE_SIZE));
         int page = Math.max(0, Math.min(requestedPage, totalPages - 1));
@@ -53,6 +65,7 @@ public final class PageView<T> {
                 totalPages,
                 totalItems,
                 basePath,
+                pageParameter,
                 Map.copyOf(normalized));
     }
 
@@ -98,7 +111,11 @@ public final class PageView<T> {
 
     public String url(int targetPage) {
         int safePage = Math.max(0, Math.min(targetPage, totalPages - 1));
-        StringBuilder url = new StringBuilder(basePath).append("?page=").append(safePage);
+        StringBuilder url = new StringBuilder(basePath)
+                .append('?')
+                .append(encode(pageParameter))
+                .append('=')
+                .append(safePage);
         parameters.forEach((key, value) -> url.append('&')
                 .append(encode(key))
                 .append('=')
