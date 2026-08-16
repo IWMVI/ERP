@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Não foi possível concluir | ERP</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+</head>
+<body>
+<main class="auth-page">
+    <section class="auth-brand-panel">
+        <div class="auth-brand">
+            <span class="brand-mark">ERP</span>
+            <span>Gestão Empresarial</span>
+        </div>
+        <div class="auth-brand-content">
+            <h1>Não foi possível concluir esta operação.</h1>
+            <p>O sistema encontrou uma situação inesperada. Tente novamente ou retorne para a página inicial.</p>
+        </div>
+        <span class="auth-footer-note">Ambiente de gestão empresarial</span>
+    </section>
+
+    <section class="auth-form-panel">
+        <div class="auth-card">
+            <div class="app-toast-icon" style="background:#fdecec;color:#a33a3a;margin-bottom:16px" aria-hidden="true">
+                <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
+            </div>
+            <h2>Algo deu errado</h2>
+            <p class="muted" th:text="${status != null ? 'Código ' + status + '. Tente novamente em alguns instantes.' : 'Tente novamente em alguns instantes.'}"></p>
+            <div class="form-stack">
+                <a class="button" th:href="@{/}">Voltar ao início</a>
+                <button type="button" class="button secondary" onclick="history.back()">Voltar à página anterior</button>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>
