@@ -1,3 +1,5 @@
+@import url("/css/layout.css");
+
 .sidebar-nav {
     gap: 6px;
 }
@@ -365,7 +367,6 @@
     transform: rotate(180deg);
 }
 
-/* Padrão das telas de cadastro */
 .registry-page .page-heading {
     margin-bottom: 18px;
 }
@@ -404,21 +405,6 @@
 .registry-card-header h2 {
     margin: 0;
     font-size: 15px;
-}
-
-.registry-form {
-    max-width: 920px;
-}
-
-.registry-form .panel-header {
-    background: #fafbfc;
-}
-
-.registry-form .actions {
-    margin-inline: -20px;
-    margin-bottom: -20px;
-    padding: 16px 20px;
-    background: #fafbfc;
 }
 
 @media (max-width: 900px) {

@@ -54,9 +54,7 @@
 
     document.querySelectorAll("[data-format]").forEach((element) => {
         const formatter = formatters[element.dataset.format];
-        if (formatter) {
-            element.textContent = formatter(element.textContent ?? "");
-        }
+        if (formatter) element.textContent = formatter(element.textContent ?? "");
     });
 
     const setIfPresent = (name, value, formatter) => {
@@ -70,7 +68,6 @@
     const showLookupState = (input, message, type = "info") => {
         const target = input.closest(".field-group")?.querySelector("[data-lookup-status]");
         if (!target) return;
-
         target.textContent = message;
         target.classList.toggle("field-error", type === "error");
         target.classList.toggle("field-success", type === "success");
@@ -80,11 +77,8 @@
     const setLoading = (button, loading) => {
         if (!button) return;
         button.disabled = loading;
-        button.classList.toggle("is-loading", loading);
         const label = button.querySelector("[data-button-label]");
-        if (label) {
-            label.textContent = loading ? "Consultando..." : button.dataset.defaultLabel;
-        }
+        if (label) label.textContent = loading ? "Consultando..." : button.dataset.defaultLabel;
     };
 
     const readError = async (response, fallback) => {
@@ -96,14 +90,42 @@
         }
     };
 
+    const documentoInput = document.querySelector("[data-documento-pessoa]");
+    const documentoTipo = document.querySelector("[data-documento-tipo]");
+    const tipoPessoaInput = document.querySelector("[name='tipoPessoa']");
+    const consultarCnpjButton = document.querySelector("[data-action='consultar-cnpj']");
+
+    const atualizarTipoDocumento = () => {
+        if (!documentoInput) return;
+        const raw = digits(documentoInput.value);
+        let tipo = "";
+        let descricao = "Informe CPF ou CNPJ";
+
+        if (raw.length === 11) {
+            tipo = "FISICA";
+            descricao = "CPF · Pessoa física";
+        } else if (raw.length === 14) {
+            tipo = "JURIDICA";
+            descricao = "CNPJ · Pessoa jurídica";
+        }
+
+        if (tipoPessoaInput) tipoPessoaInput.value = tipo;
+        if (documentoTipo) documentoTipo.textContent = descricao;
+        if (consultarCnpjButton) consultarCnpjButton.hidden = raw.length !== 14;
+    };
+
+    documentoInput?.addEventListener("input", atualizarTipoDocumento);
+    atualizarTipoDocumento();
+
     const cepInput = document.querySelector("[data-lookup-cep]");
     let ultimoCepConsultado = "";
 
     const consultarCep = async () => {
         if (!cepInput) return;
         const cep = digits(cepInput.value);
+        if (!cep) return;
         if (cep.length !== 8) {
-            showLookupState(cepInput, "Informe um CEP com 8 dígitos.", "error");
+            showLookupState(cepInput, "CEP deve possuir 8 dígitos.", "error");
             return;
         }
         if (cep === ultimoCepConsultado) return;
@@ -113,9 +135,7 @@
             const response = await fetch(`/integracoes/cep/${cep}`, {
                 headers: { Accept: "application/json" },
             });
-            if (!response.ok) {
-                throw new Error(await readError(response, "CEP não encontrado."));
-            }
+            if (!response.ok) throw new Error(await readError(response, "CEP não encontrado."));
 
             const data = await response.json();
             setIfPresent("logradouro", data.logradouro);
@@ -123,7 +143,7 @@
             setIfPresent("cidade", data.cidade);
             setIfPresent("estado", data.estado);
             ultimoCepConsultado = cep;
-            showLookupState(cepInput, "CEP localizado e endereço preenchido.", "success");
+            showLookupState(cepInput, "Endereço preenchido a partir do CEP.", "success");
         } catch (error) {
             showLookupState(cepInput, error.message || "Não foi possível consultar o CEP.", "error");
         }
@@ -131,31 +151,24 @@
 
     cepInput?.addEventListener("blur", consultarCep);
 
-    const documentoInput = document.querySelector("[data-lookup-cnpj]");
-    const consultarCnpjButton = document.querySelector("[data-action='consultar-cnpj']");
     let ultimoCnpjConsultado = "";
 
     const consultarCnpj = async ({ force = false } = {}) => {
         if (!documentoInput) return;
         const cnpj = digits(documentoInput.value);
-
         if (cnpj.length !== 14) {
-            if (force) {
-                showLookupState(documentoInput, "Informe um CNPJ com 14 dígitos.", "error");
-            }
+            if (force) showLookupState(documentoInput, "A consulta requer um CNPJ com 14 dígitos.", "error");
             return;
         }
         if (!force && cnpj === ultimoCnpjConsultado) return;
 
         setLoading(consultarCnpjButton, true);
-        showLookupState(documentoInput, "Consultando CNPJ...");
+        showLookupState(documentoInput, "Consultando dados do CNPJ...");
         try {
             const response = await fetch(`/integracoes/cnpj/${cnpj}`, {
                 headers: { Accept: "application/json" },
             });
-            if (!response.ok) {
-                throw new Error(await readError(response, "CNPJ não encontrado."));
-            }
+            if (!response.ok) throw new Error(await readError(response, "CNPJ não encontrado."));
 
             const data = await response.json();
             setIfPresent("nome", data.razaoSocial);
@@ -172,11 +185,7 @@
 
             ultimoCnpjConsultado = cnpj;
             const situacao = data.situacaoCadastral ? ` Situação: ${data.situacaoCadastral}.` : "";
-            showLookupState(
-                documentoInput,
-                `CNPJ localizado e dados preenchidos.${situacao}`,
-                "success",
-            );
+            showLookupState(documentoInput, `Dados do CNPJ carregados.${situacao}`, "success");
         } catch (error) {
             showLookupState(documentoInput, error.message || "Não foi possível consultar o CNPJ.", "error");
         } finally {
