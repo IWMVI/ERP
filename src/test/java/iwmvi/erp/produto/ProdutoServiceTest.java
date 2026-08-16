@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import iwmvi.erp.auditoria.AuditoriaService;
+import iwmvi.erp.integracao.ValidacaoCadastroService;
 import iwmvi.erp.shared.exception.CodigoProdutoJaCadastradoException;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,11 +21,12 @@ class ProdutoServiceTest {
 
     @Mock private ProdutoRepository repository;
     @Mock private AuditoriaService auditoriaService;
+    @Mock private ValidacaoCadastroService validacaoCadastroService;
     private ProdutoService service;
 
     @BeforeEach
     void setUp() {
-        service = new ProdutoService(repository, auditoriaService);
+        service = new ProdutoService(repository, auditoriaService, validacaoCadastroService);
     }
 
     @Test
@@ -42,6 +44,7 @@ class ProdutoServiceTest {
 
         assertThrows(CodigoProdutoJaCadastradoException.class, () -> service.criar(request));
 
+        verify(validacaoCadastroService, never()).validarGtin(any());
         verify(repository, never()).save(any());
     }
 }
