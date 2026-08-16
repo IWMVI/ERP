@@ -2,6 +2,7 @@ package iwmvi.erp.produto;
 
 import iwmvi.erp.shared.exception.CodigoProdutoJaCadastradoException;
 import iwmvi.erp.shared.exception.DocumentoInvalidoException;
+import iwmvi.erp.shared.storage.ImagemStorageService;
 import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -20,9 +22,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ProdutoController {
 
     private final ProdutoService service;
+    private final ImagemStorageService imagemStorageService;
 
-    public ProdutoController(ProdutoService service) {
+    public ProdutoController(ProdutoService service, ImagemStorageService imagemStorageService) {
         this.service = service;
+        this.imagemStorageService = imagemStorageService;
     }
 
     @GetMapping
@@ -65,6 +69,7 @@ public class ProdutoController {
     public String criar(
             @Valid @ModelAttribute("produtoRequest") ProdutoRequest request,
             BindingResult result,
+            @RequestParam(required = false) MultipartFile foto,
             Model model,
             RedirectAttributes redirect) {
         if (result.hasErrors()) {
@@ -73,13 +78,18 @@ public class ProdutoController {
         }
 
         try {
-            service.criar(request);
+            Produto produto = service.criar(request);
+            salvarFoto(produto, foto);
         } catch (CodigoProdutoJaCadastradoException exception) {
             result.rejectValue("codigo", "duplicado", exception.getMessage());
             preparar(model, request, null);
             return "produtos/form";
         } catch (DocumentoInvalidoException exception) {
             result.rejectValue("gtin", "gtin.invalido", exception.getMessage());
+            preparar(model, request, null);
+            return "produtos/form";
+        } catch (IllegalArgumentException | IllegalStateException exception) {
+            result.reject("foto.invalida", exception.getMessage());
             preparar(model, request, null);
             return "produtos/form";
         }
@@ -93,6 +103,7 @@ public class ProdutoController {
             @PathVariable Long id,
             @Valid @ModelAttribute("produtoRequest") ProdutoRequest request,
             BindingResult result,
+            @RequestParam(required = false) MultipartFile foto,
             Model model,
             RedirectAttributes redirect) {
         if (result.hasErrors()) {
@@ -101,13 +112,24 @@ public class ProdutoController {
         }
 
         try {
-            service.atualizar(id, request);
+            Produto atual = service.buscar(id);
+            String fotoAnterior = atual.getFotoArquivo();
+            Produto produto = service.atualizar(id, request);
+            if (foto != null && !foto.isEmpty()) {
+                String novaFoto = imagemStorageService.salvar(foto, "produtos");
+                service.atualizarFoto(produto.getId(), novaFoto);
+                imagemStorageService.remover(fotoAnterior);
+            }
         } catch (CodigoProdutoJaCadastradoException exception) {
             result.rejectValue("codigo", "duplicado", exception.getMessage());
             preparar(model, request, id);
             return "produtos/form";
         } catch (DocumentoInvalidoException exception) {
             result.rejectValue("gtin", "gtin.invalido", exception.getMessage());
+            preparar(model, request, id);
+            return "produtos/form";
+        } catch (IllegalArgumentException | IllegalStateException exception) {
+            result.reject("foto.invalida", exception.getMessage());
             preparar(model, request, id);
             return "produtos/form";
         }
@@ -122,10 +144,19 @@ public class ProdutoController {
         return "redirect:/produtos";
     }
 
+    private void salvarFoto(Produto produto, MultipartFile foto) {
+        if (foto == null || foto.isEmpty()) {
+            return;
+        }
+        String arquivo = imagemStorageService.salvar(foto, "produtos");
+        service.atualizarFoto(produto.getId(), arquivo);
+    }
+
     private void preparar(Model model, ProdutoRequest request, Long id) {
         model.addAttribute("produtoRequest", request);
         model.addAttribute("unidades", UnidadeMedida.values());
         model.addAttribute("id", id);
+        model.addAttribute("fotoAtual", id == null ? null : service.buscar(id).getFotoArquivo());
     }
 
     private ProdutoRequest vazio() {
