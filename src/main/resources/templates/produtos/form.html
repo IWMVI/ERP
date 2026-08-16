@@ -67,8 +67,24 @@
                         <section class="registry-form-section">
                             <div class="registry-section-header"><h2>Comercial</h2></div>
                             <div class="panel-body form-grid">
-                                <div><label for="custo">Custo</label><div class="input-prefix"><span>R$</span><input id="custo" type="number" min="0" step="0.01" th:field="*{custo}" inputmode="decimal"></div></div>
-                                <div><label for="precoVenda">Preço de venda</label><div class="input-prefix"><span>R$</span><input id="precoVenda" type="number" min="0" step="0.01" th:field="*{precoVenda}" inputmode="decimal"></div></div>
+                                <div>
+                                    <label for="custoVisual">Custo</label>
+                                    <div class="input-prefix">
+                                        <span>R$</span>
+                                        <input id="custoVisual" type="text" inputmode="numeric" autocomplete="off" data-money-input data-money-target="custo">
+                                    </div>
+                                    <input type="hidden" id="custo" th:field="*{custo}" data-money-value>
+                                    <small class="field-error" th:errors="*{custo}"></small>
+                                </div>
+                                <div>
+                                    <label for="precoVendaVisual">Preço de venda</label>
+                                    <div class="input-prefix">
+                                        <span>R$</span>
+                                        <input id="precoVendaVisual" type="text" inputmode="numeric" autocomplete="off" data-money-input data-money-target="precoVenda">
+                                    </div>
+                                    <input type="hidden" id="precoVenda" th:field="*{precoVenda}" data-money-value>
+                                    <small class="field-error" th:errors="*{precoVenda}"></small>
+                                </div>
                             </div>
                         </section>
 
