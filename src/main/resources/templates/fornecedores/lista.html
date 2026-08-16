@@ -5,60 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Fornecedores | ERP</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
 </head>
 <body>
 <div class="app-shell">
-    <aside class="sidebar">
-        <a th:href="@{/}" class="sidebar-brand">
-            <span class="brand-mark">ERP</span>
-            <span>Gestão Empresarial</span>
-        </a>
-        <nav class="sidebar-nav">
-            <a th:href="@{/}" class="nav-item">Início</a>
-            <span class="sidebar-section-title">Cadastros</span>
-            <a th:href="@{/clientes}" class="nav-item">Clientes</a>
-            <a th:href="@{/fornecedores}" class="nav-item active">Fornecedores</a>
-            <a th:href="@{/produtos}" class="nav-item">Produtos</a>
-            <a th:href="@{/estoque}" class="nav-item">Estoque</a>
-        </nav>
-    </aside>
+    <aside th:replace="~{fragments/sidebar :: sidebar('fornecedores')}"></aside>
     <div class="app-main">
-        <header class="topbar"><span class="topbar-title">Fornecedores</span></header>
-        <main class="content">
+        <header th:replace="~{fragments/topbar :: topbar('Cadastros / Fornecedores')}"></header>
+        <main class="content registry-page">
             <div class="page-heading">
-                <div>
-                    <h1>Fornecedores</h1>
-                    <p class="muted">Parceiros e contatos de compra.</p>
-                </div>
+                <div><h1>Fornecedores</h1><p class="muted">Parceiros comerciais, contatos e dados de fornecimento.</p></div>
                 <a class="button" th:href="@{/fornecedores/novo}">Novo fornecedor</a>
             </div>
             <div class="alert success" th:if="${sucesso}" th:text="${sucesso}"></div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                    <tr><th>Nome</th><th>CPF/CNPJ</th><th>Contato</th><th>Status</th><th>Ações</th></tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="fornecedor : ${fornecedores}">
-                        <td th:text="${fornecedor.nome}"></td>
-                        <td th:text="${fornecedor.documento}"></td>
-                        <td th:text="${fornecedor.email}"></td>
-                        <td><span class="badge" th:text="${fornecedor.ativo ? 'Ativo' : 'Inativo'}"></span></td>
-                        <td>
-                            <div class="user-menu">
-                                <a th:href="@{/fornecedores/{id}/editar(id=${fornecedor.id})}">Editar</a>
-                                <form th:action="@{/fornecedores/{id}/status(id=${fornecedor.id})}" method="post">
-                                    <button class="link-button" type="submit" th:text="${fornecedor.ativo ? 'Inativar' : 'Ativar'}"></button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(fornecedores)}"><td colspan="5">Nenhum fornecedor cadastrado.</td></tr>
-                    </tbody>
-                </table>
-            </div>
+            <section class="registry-card">
+                <div class="registry-card-header"><h2>Fornecedores cadastrados</h2><span class="muted" th:text="${#lists.size(fornecedores) + ' registro(s)'}"></span></div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Nome</th><th>CPF/CNPJ</th><th>Contato</th><th>Status</th><th>Ações</th></tr></thead>
+                        <tbody>
+                        <tr th:each="fornecedor : ${fornecedores}">
+                            <td th:text="${fornecedor.nome}"></td><td data-format="documento" th:text="${fornecedor.documento}"></td><td th:text="${fornecedor.email}"></td>
+                            <td><span class="badge" th:classappend="${fornecedor.ativo} ? ' success'" th:text="${fornecedor.ativo ? 'Ativo' : 'Inativo'}"></span></td>
+                            <td><div class="user-menu"><a th:href="@{/fornecedores/{id}/editar(id=${fornecedor.id})}">Editar</a><form th:action="@{/fornecedores/{id}/status(id=${fornecedor.id})}" method="post"><button class="link-button" type="submit" th:text="${fornecedor.ativo ? 'Inativar' : 'Ativar'}"></button></form></div></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(fornecedores)}"><td colspan="5">Nenhum fornecedor cadastrado.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
         </main>
     </div>
 </div>
+<script th:src="@{/js/cadastros.js}" defer></script>
 </body>
 </html>

@@ -1,5 +1,7 @@
 package iwmvi.erp.cliente;
 
+import iwmvi.erp.shared.exception.CepInvalidoException;
+import iwmvi.erp.shared.exception.DocumentoInvalidoException;
 import iwmvi.erp.shared.exception.DocumentoJaCadastradoException;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -30,11 +32,7 @@ public class ClienteController {
 
     @GetMapping("/novo")
     public String novo(Model model) {
-        preparar(
-                model,
-                new ClienteRequest(
-                        TipoPessoa.FISICA, "", "", "", "", "", "", "", "", ""),
-                null);
+        preparar(model, vazio(), null);
         return "clientes/form";
     }
 
@@ -46,14 +44,19 @@ public class ClienteController {
                 new ClienteRequest(
                         cliente.getTipoPessoa(),
                         cliente.getNome(),
+                        cliente.getNomeFantasia(),
                         cliente.getDocumento(),
                         cliente.getEmail(),
                         cliente.getTelefone(),
+                        cliente.getCelular(),
+                        cliente.getCep(),
                         cliente.getLogradouro(),
                         cliente.getNumero(),
+                        cliente.getComplemento(),
+                        cliente.getBairro(),
                         cliente.getCidade(),
                         cliente.getEstado(),
-                        cliente.getCep()),
+                        cliente.getObservacoes()),
                 id);
         return "clientes/form";
     }
@@ -71,8 +74,12 @@ public class ClienteController {
 
         try {
             service.criar(request);
-        } catch (DocumentoJaCadastradoException exception) {
-            result.rejectValue("documento", "duplicado", exception.getMessage());
+        } catch (DocumentoJaCadastradoException | DocumentoInvalidoException exception) {
+            result.rejectValue("documento", "documento.invalido", exception.getMessage());
+            preparar(model, request, null);
+            return "clientes/form";
+        } catch (CepInvalidoException exception) {
+            result.rejectValue("cep", "cep.invalido", exception.getMessage());
             preparar(model, request, null);
             return "clientes/form";
         }
@@ -95,8 +102,12 @@ public class ClienteController {
 
         try {
             service.atualizar(id, request);
-        } catch (DocumentoJaCadastradoException exception) {
-            result.rejectValue("documento", "duplicado", exception.getMessage());
+        } catch (DocumentoJaCadastradoException | DocumentoInvalidoException exception) {
+            result.rejectValue("documento", "documento.invalido", exception.getMessage());
+            preparar(model, request, id);
+            return "clientes/form";
+        } catch (CepInvalidoException exception) {
+            result.rejectValue("cep", "cep.invalido", exception.getMessage());
             preparar(model, request, id);
             return "clientes/form";
         }
@@ -115,5 +126,24 @@ public class ClienteController {
         model.addAttribute("clienteRequest", request);
         model.addAttribute("tiposPessoa", TipoPessoa.values());
         model.addAttribute("id", id);
+    }
+
+    private ClienteRequest vazio() {
+        return new ClienteRequest(
+                TipoPessoa.FISICA,
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "");
     }
 }
