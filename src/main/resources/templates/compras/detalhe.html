@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pedido de compra | ERP</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
+</head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('compras')}"></aside>
+    <div class="app-main">
+        <header th:replace="~{fragments/topbar :: topbar('Operação / Compras / Pedido')}"></header>
+        <main class="content registry-page">
+            <div th:replace="~{fragments/alerts :: alerts}"></div>
+            <div class="page-heading">
+                <div>
+                    <h1 th:text="${'Pedido de compra #' + pedido.id}"></h1>
+                    <p class="muted" th:text="${pedido.fornecedor.nome + ' · ' + #temporals.format(pedido.dataCriacao, 'dd/MM/yyyy HH:mm')}"></p>
+                </div>
+                <a class="button secondary" th:href="@{/compras}">Voltar</a>
+            </div>
+
+            <section class="dashboard-grid">
+                <article class="metric-card"><div class="metric-label">Total</div><div class="metric-value" th:text="${'R$ ' + #numbers.formatDecimal(pedido.total, 1, 2)}"></div></article>
+                <article class="metric-card"><div class="metric-label">Status</div><div class="metric-value" th:text="${pedido.status}"></div></article>
+            </section>
+
+            <section class="registry-card" th:if="${pedido.status.name() == 'RASCUNHO'}">
+                <div class="panel-body">
+                    <h2>Adicionar item</h2>
+                    <form class="form-grid" th:action="@{/compras/{id}/itens(id=${pedido.id})}" method="post">
+                        <label>Produto
+                            <select name="produtoId" required>
+                                <option value="">Selecione</option>
+                                <option th:each="produto : ${produtos}" th:if="${produto.ativo}" th:value="${produto.id}" th:text="${produto.codigo + ' - ' + produto.nome}"></option>
+                            </select>
+                        </label>
+                        <label>Quantidade<input name="quantidade" type="number" min="0.001" step="0.001" required></label>
+                        <label>Custo unitário<input name="custoUnitario" type="number" min="0" step="0.01" required></label>
+                        <div class="form-actions"><button type="submit">Adicionar item</button></div>
+                    </form>
+                </div>
+            </section>
+
+            <section class="registry-card">
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Produto</th><th>Quantidade</th><th>Custo unitário</th><th>Subtotal</th></tr></thead>
+                        <tbody>
+                        <tr th:each="item : ${pedido.itens}">
+                            <td th:text="${item.produto.codigo + ' - ' + item.produto.nome}"></td>
+                            <td th:text="${item.quantidade}"></td>
+                            <td th:text="${'R$ ' + #numbers.formatDecimal(item.custoUnitario, 1, 2)}"></td>
+                            <td th:text="${'R$ ' + #numbers.formatDecimal(item.subtotal(), 1, 2)}"></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(pedido.itens)}"><td colspan="4">Nenhum item adicionado.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <div class="form-actions" th:if="${pedido.status.name() == 'RASCUNHO'}">
+                <form th:action="@{/compras/{id}/cancelar(id=${pedido.id})}" method="post"><button class="secondary" type="submit">Cancelar pedido</button></form>
+                <form th:action="@{/compras/{id}/receber(id=${pedido.id})}" method="post"><button type="submit">Receber compra</button></form>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>
