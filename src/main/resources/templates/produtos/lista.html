@@ -32,7 +32,7 @@
                         <tr th:each="produto : ${produtos}">
                             <td class="photo-cell">
                                 <img th:if="${produto.fotoArquivo != null}" th:src="${'/uploads/' + produto.fotoArquivo}" class="table-product-photo" alt="">
-                                <span th:unless="${produto.fotoArquivo != null}" class="table-product-photo table-photo-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 8-9 5-9-5"></path><path d="m3 8 9-5 9 5v8l-9 5-9-5Z"></path></svg></span>
+                                <span th:unless="${produto.fotoArquivo != null}" class="table-product-photo table-photo-placeholder"><i data-lucide="package" aria-hidden="true"></i></span>
                             </td>
                             <td><strong th:text="${produto.codigo}"></strong><div class="muted" th:text="${produto.gtin != null ? produto.gtin : '-'}"></div></td>
                             <td><strong th:text="${produto.nome}"></strong><div class="muted" th:if="${produto.marca != null and !produto.marca.isBlank()}" th:text="${produto.marca}"></div></td>
@@ -42,7 +42,7 @@
                             <td><span class="badge" th:classappend="${produto.ativo} ? ' success'" th:text="${produto.ativo ? 'Ativo' : 'Inativo'}"></span></td>
                             <td>
                                 <details class="row-actions">
-                                    <summary aria-label="Abrir ações do produto" title="Ações"><svg class="row-actions-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></summary>
+                                    <summary aria-label="Abrir ações do produto" title="Ações"><i data-lucide="menu" class="row-actions-icon" aria-hidden="true"></i></summary>
                                     <div class="row-actions-menu">
                                         <a th:href="@{/produtos/{id}/editar(id=${produto.id})}">Editar</a>
                                         <form th:action="@{/produtos/{id}/status(id=${produto.id})}" method="post"><button type="submit" th:text="${produto.ativo ? 'Inativar' : 'Ativar'}"></button></form>

@@ -36,7 +36,7 @@
                             <td><span class="badge" th:classappend="${funcionario.ativo} ? ' success'" th:text="${funcionario.ativo ? 'Ativo' : 'Inativo'}"></span></td>
                             <td>
                                 <details class="row-actions">
-                                    <summary aria-label="Abrir ações do funcionário" title="Ações"><svg class="row-actions-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></summary>
+                                    <summary aria-label="Abrir ações do funcionário" title="Ações"><i data-lucide="menu" class="row-actions-icon" aria-hidden="true"></i></summary>
                                     <div class="row-actions-menu">
                                         <a th:href="@{/funcionarios/{id}/editar(id=${funcionario.id})}">Editar</a>
                                         <form th:action="@{/funcionarios/{id}/status(id=${funcionario.id})}" method="post"><button type="submit" th:text="${funcionario.ativo ? 'Inativar' : 'Ativar'}"></button></form>

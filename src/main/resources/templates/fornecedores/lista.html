@@ -29,7 +29,7 @@
                             <td><span class="badge" th:classappend="${fornecedor.ativo} ? ' success'" th:text="${fornecedor.ativo ? 'Ativo' : 'Inativo'}"></span></td>
                             <td>
                                 <details class="row-actions">
-                                    <summary aria-label="Abrir ações do fornecedor" title="Ações"><svg class="row-actions-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></summary>
+                                    <summary aria-label="Abrir ações do fornecedor" title="Ações"><i data-lucide="menu" class="row-actions-icon" aria-hidden="true"></i></summary>
                                     <div class="row-actions-menu">
                                         <a th:href="@{/fornecedores/{id}/editar(id=${fornecedor.id})}">Editar</a>
                                         <form th:action="@{/fornecedores/{id}/status(id=${fornecedor.id})}" method="post"><button type="submit" th:text="${fornecedor.ativo ? 'Inativar' : 'Ativar'}"></button></form>
