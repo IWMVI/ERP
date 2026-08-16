@@ -92,7 +92,8 @@ public class PedidoVendaService {
         return pedidoRepository.findAllByOrderByDataCriacaoDesc();
     }
 
-    private PedidoVenda buscar(Long id) {
+    @Transactional(readOnly = true)
+    public PedidoVenda buscar(Long id) {
         return pedidoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Pedido de venda não encontrado."));
     }
