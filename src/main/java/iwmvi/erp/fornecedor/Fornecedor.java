@@ -1,5 +1,6 @@
 package iwmvi.erp.fornecedor;
 
+import iwmvi.erp.shared.validation.DocumentoValidator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -47,61 +48,29 @@ public class Fornecedor {
 
     public void atualizar(FornecedorRequest request) {
         this.nome = request.nome().trim();
-        this.documento = request.documento().trim();
+        this.documento = DocumentoValidator.somenteDigitos(request.documento());
         this.email = request.email();
         this.telefone = request.telefone();
         this.logradouro = request.logradouro();
         this.numero = request.numero();
         this.cidade = request.cidade();
         this.estado = request.estado();
-        this.cep = request.cep();
+        this.cep = DocumentoValidator.somenteDigitos(request.cep());
     }
 
     public void alternarAtivo() {
         this.ativo = !this.ativo;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public String getDocumento() {
-        return documento;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public String getLogradouro() {
-        return logradouro;
-    }
-
-    public String getNumero() {
-        return numero;
-    }
-
-    public String getCidade() {
-        return cidade;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public String getCep() {
-        return cep;
-    }
-
-    public boolean isAtivo() {
-        return ativo;
-    }
+    public Long getId() { return id; }
+    public String getNome() { return nome; }
+    public String getDocumento() { return documento; }
+    public String getEmail() { return email; }
+    public String getTelefone() { return telefone; }
+    public String getLogradouro() { return logradouro; }
+    public String getNumero() { return numero; }
+    public String getCidade() { return cidade; }
+    public String getEstado() { return estado; }
+    public String getCep() { return cep; }
+    public boolean isAtivo() { return ativo; }
 }
