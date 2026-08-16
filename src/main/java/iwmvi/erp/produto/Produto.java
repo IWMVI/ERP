@@ -1,21 +1,14 @@
 package iwmvi.erp.produto;
 
+import iwmvi.erp.shared.validation.DocumentoValidator;
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 
-import iwmvi.erp.shared.validation.DocumentoValidator;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
-import jakarta.persistence.Version;
-
 @Entity
-@Table(name = "produtos", uniqueConstraints = @UniqueConstraint(name = "uk_produto_codigo", columnNames = "codigo"))
+@Table(
+    name = "produtos",
+    uniqueConstraints = @UniqueConstraint(name = "uk_produto_codigo", columnNames = "codigo"))
 public class Produto {
 
     @Id
@@ -125,7 +118,8 @@ public class Produto {
 
     public void atualizar(ProdutoRequest request) {
         this.codigo = request.codigo().trim();
-        this.gtin = request.gtin() == null || request.gtin().isBlank()
+        this.gtin =
+            request.gtin() == null || request.gtin().isBlank()
                 ? null
                 : DocumentoValidator.somenteDigitos(request.gtin());
         this.nome = request.nome().trim();
@@ -144,8 +138,8 @@ public class Produto {
         this.ncm = digitosOpcionais(request.ncm());
         this.cest = digitosOpcionais(request.cest());
         this.origem = request.origem();
-        this.unidadeTributavel = request.unidadeTributavel() == null ? request.unidadeMedida()
-                : request.unidadeTributavel();
+        this.unidadeTributavel =
+            request.unidadeTributavel() == null ? request.unidadeMedida() : request.unidadeTributavel();
         this.fatorConversaoTributavel = request.fatorConversaoTributavel();
         this.tipoItemSped = request.tipoItemSped();
         this.pesoLiquido = request.pesoLiquido();

@@ -1,15 +1,8 @@
 package iwmvi.erp.compra;
 
 import iwmvi.erp.produto.Produto;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 
 @Entity
@@ -34,18 +27,34 @@ public class ItemPedidoCompra {
     @Column(name = "custo_unitario", nullable = false, precision = 19, scale = 2)
     private BigDecimal custoUnitario;
 
-    protected ItemPedidoCompra() {}
+    protected ItemPedidoCompra() {
+    }
 
-    ItemPedidoCompra(PedidoCompra pedido, Produto produto, BigDecimal quantidade, BigDecimal custoUnitario) {
+    ItemPedidoCompra(
+        PedidoCompra pedido, Produto produto, BigDecimal quantidade, BigDecimal custoUnitario) {
         this.pedido = pedido;
         this.produto = produto;
         this.quantidade = quantidade;
         this.custoUnitario = custoUnitario;
     }
 
-    public BigDecimal subtotal() { return custoUnitario.multiply(quantidade); }
-    public Long getId() { return id; }
-    public Produto getProduto() { return produto; }
-    public BigDecimal getQuantidade() { return quantidade; }
-    public BigDecimal getCustoUnitario() { return custoUnitario; }
+    public BigDecimal subtotal() {
+        return custoUnitario.multiply(quantidade);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Produto getProduto() {
+        return produto;
+    }
+
+    public BigDecimal getQuantidade() {
+        return quantidade;
+    }
+
+    public BigDecimal getCustoUnitario() {
+        return custoUnitario;
+    }
 }

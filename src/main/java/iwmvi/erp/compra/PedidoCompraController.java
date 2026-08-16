@@ -2,16 +2,13 @@ package iwmvi.erp.compra;
 
 import iwmvi.erp.fornecedor.FornecedorRepository;
 import iwmvi.erp.produto.ProdutoRepository;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Controller
 @RequestMapping("/compras")
@@ -22,9 +19,9 @@ public class PedidoCompraController {
     private final ProdutoRepository produtoRepository;
 
     public PedidoCompraController(
-            PedidoCompraService service,
-            FornecedorRepository fornecedorRepository,
-            ProdutoRepository produtoRepository) {
+        PedidoCompraService service,
+        FornecedorRepository fornecedorRepository,
+        ProdutoRepository produtoRepository) {
         this.service = service;
         this.fornecedorRepository = fornecedorRepository;
         this.produtoRepository = produtoRepository;
@@ -67,13 +64,14 @@ public class PedidoCompraController {
 
     @PostMapping("/{id}/itens")
     public String adicionarItem(
-            @PathVariable Long id,
-            @RequestParam Long produtoId,
-            @RequestParam BigDecimal quantidade,
-            @RequestParam BigDecimal custoUnitario,
-            RedirectAttributes redirectAttributes) {
+        @PathVariable Long id,
+        @RequestParam Long produtoId,
+        @RequestParam BigDecimal quantidade,
+        @RequestParam BigDecimal custoUnitario,
+        RedirectAttributes redirectAttributes) {
         try {
-            service.adicionarItem(id, new AdicionarItemCompraRequest(produtoId, quantidade, custoUnitario));
+            service.adicionarItem(
+                id, new AdicionarItemCompraRequest(produtoId, quantidade, custoUnitario));
             redirectAttributes.addFlashAttribute("sucesso", "Item adicionado ao pedido.");
         } catch (IllegalArgumentException | IllegalStateException e) {
             redirectAttributes.addFlashAttribute("erroGlobal", e.getMessage());
@@ -83,14 +81,14 @@ public class PedidoCompraController {
 
     @PostMapping("/{id}/receber")
     public String receber(
-            @PathVariable Long id,
-            @RequestParam(defaultValue = "1") int parcelas,
-            @RequestParam LocalDate primeiroVencimento,
-            RedirectAttributes redirectAttributes) {
+        @PathVariable Long id,
+        @RequestParam(defaultValue = "1") int parcelas,
+        @RequestParam LocalDate primeiroVencimento,
+        RedirectAttributes redirectAttributes) {
         try {
             service.receber(id, parcelas, primeiroVencimento);
             redirectAttributes.addFlashAttribute(
-                    "sucesso", "Compra recebida. Estoque e financeiro foram atualizados.");
+                "sucesso", "Compra recebida. Estoque e financeiro foram atualizados.");
         } catch (IllegalArgumentException | IllegalStateException e) {
             redirectAttributes.addFlashAttribute("erroGlobal", e.getMessage());
         }
@@ -113,7 +111,7 @@ public class PedidoCompraController {
         try {
             service.estornar(id);
             redirectAttributes.addFlashAttribute(
-                    "sucesso", "Compra estornada. Estoque revertido e títulos cancelados.");
+                "sucesso", "Compra estornada. Estoque revertido e títulos cancelados.");
         } catch (IllegalArgumentException | IllegalStateException e) {
             redirectAttributes.addFlashAttribute("erroGlobal", e.getMessage());
         }

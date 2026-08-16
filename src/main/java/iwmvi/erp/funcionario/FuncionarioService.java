@@ -4,9 +4,10 @@ import iwmvi.erp.auditoria.AuditoriaService;
 import iwmvi.erp.integracao.ValidacaoCadastroService;
 import iwmvi.erp.shared.exception.DocumentoJaCadastradoException;
 import iwmvi.erp.shared.validation.DocumentoValidator;
-import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class FuncionarioService {
@@ -16,9 +17,9 @@ public class FuncionarioService {
     private final ValidacaoCadastroService validacaoCadastroService;
 
     public FuncionarioService(
-            FuncionarioRepository repository,
-            AuditoriaService auditoriaService,
-            ValidacaoCadastroService validacaoCadastroService) {
+        FuncionarioRepository repository,
+        AuditoriaService auditoriaService,
+        ValidacaoCadastroService validacaoCadastroService) {
         this.repository = repository;
         this.auditoriaService = auditoriaService;
         this.validacaoCadastroService = validacaoCadastroService;
@@ -31,8 +32,9 @@ public class FuncionarioService {
 
     @Transactional(readOnly = true)
     public Funcionario buscar(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Funcionário não encontrado."));
+        return repository
+            .findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Funcionário não encontrado."));
     }
 
     @Transactional
@@ -64,10 +66,7 @@ public class FuncionarioService {
         Funcionario funcionario = buscar(id);
         funcionario.alternarAtivo();
         auditoriaService.registrar(
-                funcionario.isAtivo() ? "ATIVAR" : "INATIVAR",
-                "Funcionario",
-                id,
-                funcionario.getNome());
+            funcionario.isAtivo() ? "ATIVAR" : "INATIVAR", "Funcionario", id, funcionario.getNome());
     }
 
     private void validar(FuncionarioRequest request, Long id) {
@@ -76,7 +75,8 @@ public class FuncionarioService {
             throw new IllegalArgumentException("CPF inválido.");
         }
 
-        boolean duplicado = id == null ? repository.existsByCpf(cpf) : repository.existsByCpfAndIdNot(cpf, id);
+        boolean duplicado =
+            id == null ? repository.existsByCpf(cpf) : repository.existsByCpfAndIdNot(cpf, id);
         if (duplicado) {
             throw new DocumentoJaCadastradoException(request.cpf());
         }

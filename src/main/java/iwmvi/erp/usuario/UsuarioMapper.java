@@ -7,11 +7,10 @@ public final class UsuarioMapper {
 
     public static UsuarioResponse toResponse(Usuario usuario) {
         return new UsuarioResponse(
-                usuario.getId(),
-                usuario.getNome(),
-                usuario.getEmail(),
-                usuario.getPerfil(),
-                usuario.isAtivo()
-        );
+            usuario.getId(),
+            usuario.getNome(),
+            usuario.getEmail(),
+            usuario.getPerfil(),
+            usuario.isAtivo());
     }
 }

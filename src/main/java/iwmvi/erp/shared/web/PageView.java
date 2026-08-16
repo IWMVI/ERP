@@ -19,13 +19,13 @@ public final class PageView<T> {
     private final Map<String, String> parameters;
 
     private PageView(
-            List<T> items,
-            int page,
-            int totalPages,
-            long totalItems,
-            String basePath,
-            String pageParameter,
-            Map<String, String> parameters) {
+        List<T> items,
+        int page,
+        int totalPages,
+        long totalItems,
+        String basePath,
+        String pageParameter,
+        Map<String, String> parameters) {
         this.items = items;
         this.page = page;
         this.totalPages = totalPages;
@@ -36,16 +36,16 @@ public final class PageView<T> {
     }
 
     public static <T> PageView<T> of(
-            List<T> source, int requestedPage, String basePath, Map<String, ?> parameters) {
+        List<T> source, int requestedPage, String basePath, Map<String, ?> parameters) {
         return of(source, requestedPage, basePath, "page", parameters);
     }
 
     public static <T> PageView<T> of(
-            List<T> source,
-            int requestedPage,
-            String basePath,
-            String pageParameter,
-            Map<String, ?> parameters) {
+        List<T> source,
+        int requestedPage,
+        String basePath,
+        String pageParameter,
+        Map<String, ?> parameters) {
         int totalItems = source.size();
         int totalPages = Math.max(1, (int) Math.ceil(totalItems / (double) PAGE_SIZE));
         int page = Math.max(0, Math.min(requestedPage, totalPages - 1));
@@ -53,20 +53,21 @@ public final class PageView<T> {
         int to = Math.min(from + PAGE_SIZE, totalItems);
 
         Map<String, String> normalized = new LinkedHashMap<>();
-        parameters.forEach((key, value) -> {
-            if (value != null && !value.toString().isBlank()) {
-                normalized.put(key, value.toString());
-            }
+        parameters.forEach(
+            (key, value) -> {
+                if (value != null && !value.toString().isBlank()) {
+                    normalized.put(key, value.toString());
+                }
         });
 
         return new PageView<>(
-                List.copyOf(source.subList(from, to)),
-                page,
-                totalPages,
-                totalItems,
-                basePath,
-                pageParameter,
-                Map.copyOf(normalized));
+            List.copyOf(source.subList(from, to)),
+            page,
+            totalPages,
+            totalItems,
+            basePath,
+            pageParameter,
+            Map.copyOf(normalized));
     }
 
     public static <T> PageView<T> of(List<T> source, int requestedPage, String basePath) {
@@ -111,15 +112,14 @@ public final class PageView<T> {
 
     public String url(int targetPage) {
         int safePage = Math.max(0, Math.min(targetPage, totalPages - 1));
-        StringBuilder url = new StringBuilder(basePath)
+        StringBuilder url =
+            new StringBuilder(basePath)
                 .append('?')
                 .append(encode(pageParameter))
                 .append('=')
                 .append(safePage);
-        parameters.forEach((key, value) -> url.append('&')
-                .append(encode(key))
-                .append('=')
-                .append(encode(value)));
+        parameters.forEach(
+            (key, value) -> url.append('&').append(encode(key)).append('=').append(encode(value)));
         return url.toString();
     }
 

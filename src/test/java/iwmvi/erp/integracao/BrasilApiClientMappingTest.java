@@ -1,10 +1,9 @@
 package iwmvi.erp.integracao;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
-
 import tools.jackson.databind.json.JsonMapper;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BrasilApiClientMappingTest {
 
@@ -12,7 +11,8 @@ class BrasilApiClientMappingTest {
 
     @Test
     void deveMapearDadosPrincipaisDoCnpj() throws Exception {
-        String json = """
+        String json =
+            """
                 {
                   "cnpj": "19131243000197",
                   "razao_social": "OPEN KNOWLEDGE BRASIL",

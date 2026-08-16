@@ -1,19 +1,13 @@
 package iwmvi.erp.fornecedor;
 
 import iwmvi.erp.shared.validation.DocumentoValidator;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 
 @Entity
 @Table(
-        name = "fornecedores",
-        uniqueConstraints =
-                @UniqueConstraint(name = "uk_fornecedor_documento", columnNames = "documento"))
+    name = "fornecedores",
+    uniqueConstraints =
+    @UniqueConstraint(name = "uk_fornecedor_documento", columnNames = "documento"))
 public class Fornecedor {
 
     @Id
@@ -48,7 +42,8 @@ public class Fornecedor {
     @Column(nullable = false)
     private boolean ativo = true;
 
-    protected Fornecedor() {}
+    protected Fornecedor() {
+    }
 
     public Fornecedor(FornecedorRequest request) {
         atualizar(request);
@@ -75,20 +70,67 @@ public class Fornecedor {
         this.ativo = !this.ativo;
     }
 
-    public Long getId() { return id; }
-    public String getNome() { return nome; }
-    public String getNomeFantasia() { return nomeFantasia; }
-    public String getDocumento() { return documento; }
-    public String getEmail() { return email; }
-    public String getTelefone() { return telefone; }
-    public String getCelular() { return celular; }
-    public String getCep() { return cep; }
-    public String getLogradouro() { return logradouro; }
-    public String getNumero() { return numero; }
-    public String getComplemento() { return complemento; }
-    public String getBairro() { return bairro; }
-    public String getCidade() { return cidade; }
-    public String getEstado() { return estado; }
-    public String getObservacoes() { return observacoes; }
-    public boolean isAtivo() { return ativo; }
+    public Long getId() {
+        return id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getNomeFantasia() {
+        return nomeFantasia;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public String getCelular() {
+        return celular;
+    }
+
+    public String getCep() {
+        return cep;
+    }
+
+    public String getLogradouro() {
+        return logradouro;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public String getComplemento() {
+        return complemento;
+    }
+
+    public String getBairro() {
+        return bairro;
+    }
+
+    public String getCidade() {
+        return cidade;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public String getObservacoes() {
+        return observacoes;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
 }

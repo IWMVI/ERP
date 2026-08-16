@@ -1,13 +1,12 @@
 package iwmvi.erp.produto;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import iwmvi.erp.auditoria.AuditoriaService;
 import iwmvi.erp.integracao.ValidacaoCadastroService;
 import iwmvi.erp.shared.exception.CodigoProdutoJaCadastradoException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class ProdutoService {
@@ -17,9 +16,9 @@ public class ProdutoService {
     private final ValidacaoCadastroService validacaoCadastroService;
 
     public ProdutoService(
-            ProdutoRepository repository,
-            AuditoriaService auditoriaService,
-            ValidacaoCadastroService validacaoCadastroService) {
+        ProdutoRepository repository,
+        AuditoriaService auditoriaService,
+        ValidacaoCadastroService validacaoCadastroService) {
         this.repository = repository;
         this.auditoriaService = auditoriaService;
         this.validacaoCadastroService = validacaoCadastroService;
@@ -31,14 +30,14 @@ public class ProdutoService {
             return repository.findAllByOrderByNomeAsc();
         }
         return repository.findByNomeContainingIgnoreCaseOrCodigoContainingIgnoreCaseOrderByNomeAsc(
-                termo, termo);
+            termo, termo);
     }
 
     @Transactional(readOnly = true)
     public Produto buscar(Long id) {
         return repository
-                .findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado."));
+            .findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado."));
     }
 
     @Transactional
@@ -46,7 +45,7 @@ public class ProdutoService {
         validarCadastro(request, null);
         Produto produto = repository.save(new Produto(request));
         auditoriaService.registrar(
-                "CRIAR", "Produto", produto.getId(), produto.getCodigo() + " - " + produto.getNome());
+            "CRIAR", "Produto", produto.getId(), produto.getCodigo() + " - " + produto.getNome());
         return produto;
     }
 
@@ -56,7 +55,7 @@ public class ProdutoService {
         Produto produto = buscar(id);
         produto.atualizar(request);
         auditoriaService.registrar(
-                "ATUALIZAR", "Produto", id, produto.getCodigo() + " - " + produto.getNome());
+            "ATUALIZAR", "Produto", id, produto.getCodigo() + " - " + produto.getNome());
         return produto;
     }
 
@@ -72,27 +71,28 @@ public class ProdutoService {
         Produto produto = buscar(id);
         produto.alternarAtivo();
         auditoriaService.registrar(
-                produto.isAtivo() ? "ATIVAR" : "INATIVAR", "Produto", id, produto.getNome());
+            produto.isAtivo() ? "ATIVAR" : "INATIVAR", "Produto", id, produto.getNome());
     }
 
     private void validarCadastro(ProdutoRequest request, Long id) {
         validarCodigo(request.codigo(), id);
         validacaoCadastroService.validarGtin(request.gtin());
         if (request.estoqueMaximo() != null
-                && request.estoqueMaximo().signum() > 0
-                && request.estoqueMaximo().compareTo(request.estoqueMinimo()) < 0) {
+            && request.estoqueMaximo().signum() > 0
+            && request.estoqueMaximo().compareTo(request.estoqueMinimo()) < 0) {
             throw new IllegalArgumentException(
-                    "O estoque máximo não pode ser menor que o estoque mínimo.");
+                "O estoque máximo não pode ser menor que o estoque mínimo.");
         }
         if (request.pesoLiquido() != null
-                && request.pesoBruto() != null
-                && request.pesoBruto().compareTo(request.pesoLiquido()) < 0) {
+            && request.pesoBruto() != null
+            && request.pesoBruto().compareTo(request.pesoLiquido()) < 0) {
             throw new IllegalArgumentException("O peso bruto não pode ser menor que o peso líquido.");
         }
     }
 
     private void validarCodigo(String codigo, Long id) {
-        boolean duplicado = id == null
+        boolean duplicado =
+            id == null
                 ? repository.existsByCodigo(codigo)
                 : repository.existsByCodigoAndIdNot(codigo, id);
         if (duplicado) {

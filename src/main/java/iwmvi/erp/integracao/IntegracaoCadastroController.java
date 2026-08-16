@@ -33,11 +33,7 @@ public class IntegracaoCadastroController {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "CEP não encontrado.");
             }
             return new CepResponse(
-                    dados.cep(),
-                    dados.state(),
-                    dados.city(),
-                    dados.neighborhood(),
-                    dados.street());
+                dados.cep(), dados.state(), dados.city(), dados.neighborhood(), dados.street());
         } catch (RestClientResponseException exception) {
             throw traduzirErroExterno(exception, "CEP");
         } catch (RestClientException exception) {
@@ -59,19 +55,19 @@ public class IntegracaoCadastroController {
             }
 
             return new CnpjResponse(
-                    dados.cnpj(),
-                    dados.razaoSocial(),
-                    dados.nomeFantasia(),
-                    dados.situacaoCadastral(),
-                    montarLogradouro(dados),
-                    dados.numero(),
-                    dados.complemento(),
-                    dados.bairro(),
-                    dados.cep(),
-                    dados.uf(),
-                    dados.municipio(),
-                    dados.email(),
-                    dados.telefone());
+                dados.cnpj(),
+                dados.razaoSocial(),
+                dados.nomeFantasia(),
+                dados.situacaoCadastral(),
+                montarLogradouro(dados),
+                dados.numero(),
+                dados.complemento(),
+                dados.bairro(),
+                dados.cep(),
+                dados.uf(),
+                dados.municipio(),
+                dados.email(),
+                dados.telefone());
         } catch (RestClientResponseException exception) {
             throw traduzirErroExterno(exception, "CNPJ");
         } catch (RestClientException exception) {
@@ -80,7 +76,7 @@ public class IntegracaoCadastroController {
     }
 
     private ResponseStatusException traduzirErroExterno(
-            RestClientResponseException exception, String tipo) {
+        RestClientResponseException exception, String tipo) {
         if (exception.getStatusCode().value() == 400) {
             return new ResponseStatusException(HttpStatus.BAD_REQUEST, tipo + " inválido.");
         }
@@ -92,8 +88,7 @@ public class IntegracaoCadastroController {
 
     private ResponseStatusException servicoIndisponivel(String tipo) {
         return new ResponseStatusException(
-                HttpStatus.BAD_GATEWAY,
-                "Não foi possível consultar " + tipo + " no serviço externo.");
+            HttpStatus.BAD_GATEWAY, "Não foi possível consultar " + tipo + " no serviço externo.");
     }
 
     private String montarLogradouro(BrasilApiClient.CnpjDados dados) {
@@ -109,20 +104,22 @@ public class IntegracaoCadastroController {
     }
 
     public record CepResponse(
-            String cep, String estado, String cidade, String bairro, String logradouro) {}
+        String cep, String estado, String cidade, String bairro, String logradouro) {
+    }
 
     public record CnpjResponse(
-            String cnpj,
-            String razaoSocial,
-            String nomeFantasia,
-            String situacaoCadastral,
-            String logradouro,
-            String numero,
-            String complemento,
-            String bairro,
-            String cep,
-            String uf,
-            String municipio,
-            String email,
-            String telefone) {}
+        String cnpj,
+        String razaoSocial,
+        String nomeFantasia,
+        String situacaoCadastral,
+        String logradouro,
+        String numero,
+        String complemento,
+        String bairro,
+        String cep,
+        String uf,
+        String municipio,
+        String email,
+        String telefone) {
+    }
 }

@@ -33,4 +33,3 @@ A imagem executa como usuário sem privilégios, expõe a porta `8080` e espera 
 - as variáveis opcionais de administrador e armazenamento aplicáveis ao ambiente.
 
 O deploy no servidor não está automatizado porque o repositório ainda não define um provedor ou destino de execução. Quando esse destino for escolhido, deve-se adicionar um job posterior a `publish-image` que consuma o digest publicado, sem reconstruir a imagem.
-

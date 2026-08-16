@@ -4,9 +4,10 @@ import iwmvi.erp.auditoria.AuditoriaService;
 import iwmvi.erp.integracao.ValidacaoCadastroService;
 import iwmvi.erp.shared.exception.DocumentoJaCadastradoException;
 import iwmvi.erp.shared.validation.DocumentoValidator;
-import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class FornecedorService {
@@ -16,9 +17,9 @@ public class FornecedorService {
     private final ValidacaoCadastroService validacaoCadastroService;
 
     public FornecedorService(
-            FornecedorRepository repository,
-            AuditoriaService auditoriaService,
-            ValidacaoCadastroService validacaoCadastroService) {
+        FornecedorRepository repository,
+        AuditoriaService auditoriaService,
+        ValidacaoCadastroService validacaoCadastroService) {
         this.repository = repository;
         this.auditoriaService = auditoriaService;
         this.validacaoCadastroService = validacaoCadastroService;
@@ -31,7 +32,9 @@ public class FornecedorService {
 
     @Transactional(readOnly = true)
     public Fornecedor buscar(Long id) {
-        return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Fornecedor não encontrado."));
+        return repository
+            .findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Fornecedor não encontrado."));
     }
 
     @Transactional
@@ -55,7 +58,8 @@ public class FornecedorService {
     public void alternarAtivo(Long id) {
         Fornecedor fornecedor = buscar(id);
         fornecedor.alternarAtivo();
-        auditoriaService.registrar(fornecedor.isAtivo() ? "ATIVAR" : "INATIVAR", "Fornecedor", id, fornecedor.getNome());
+        auditoriaService.registrar(
+            fornecedor.isAtivo() ? "ATIVAR" : "INATIVAR", "Fornecedor", id, fornecedor.getNome());
     }
 
     private void validarCadastro(FornecedorRequest request, Long id) {
@@ -66,7 +70,8 @@ public class FornecedorService {
 
     private void validarDocumentoDuplicado(String documento, Long id) {
         String documentoNormalizado = DocumentoValidator.normalizarDocumento(documento);
-        boolean duplicado = id == null
+        boolean duplicado =
+            id == null
                 ? repository.existsByDocumento(documentoNormalizado)
                 : repository.existsByDocumentoAndIdNot(documentoNormalizado, id);
         if (duplicado) {

@@ -2,17 +2,8 @@ package iwmvi.erp.financeiro;
 
 import iwmvi.erp.cliente.Cliente;
 import iwmvi.erp.fornecedor.Fornecedor;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -64,19 +55,20 @@ public class TituloFinanceiro {
     @Column(nullable = false, length = 200)
     private String descricao;
 
-    protected TituloFinanceiro() {}
+    protected TituloFinanceiro() {
+    }
 
     TituloFinanceiro(
-            TipoTituloFinanceiro tipo,
-            Cliente cliente,
-            Fornecedor fornecedor,
-            BigDecimal valor,
-            LocalDate dataVencimento,
-            int parcela,
-            int totalParcelas,
-            String origemTipo,
-            Long origemId,
-            String descricao) {
+        TipoTituloFinanceiro tipo,
+        Cliente cliente,
+        Fornecedor fornecedor,
+        BigDecimal valor,
+        LocalDate dataVencimento,
+        int parcela,
+        int totalParcelas,
+        String origemTipo,
+        Long origemId,
+        String descricao) {
         this.tipo = tipo;
         this.cliente = cliente;
         this.fornecedor = fornecedor;
@@ -108,17 +100,55 @@ public class TituloFinanceiro {
         return status == StatusTituloFinanceiro.ABERTO && dataVencimento.isBefore(hoje);
     }
 
-    public Long getId() { return id; }
-    public TipoTituloFinanceiro getTipo() { return tipo; }
-    public StatusTituloFinanceiro getStatus() { return status; }
-    public Cliente getCliente() { return cliente; }
-    public Fornecedor getFornecedor() { return fornecedor; }
-    public BigDecimal getValor() { return valor; }
-    public LocalDate getDataVencimento() { return dataVencimento; }
-    public LocalDate getDataPagamento() { return dataPagamento; }
-    public int getParcela() { return parcela; }
-    public int getTotalParcelas() { return totalParcelas; }
-    public String getOrigemTipo() { return origemTipo; }
-    public Long getOrigemId() { return origemId; }
-    public String getDescricao() { return descricao; }
+    public Long getId() {
+        return id;
+    }
+
+    public TipoTituloFinanceiro getTipo() {
+        return tipo;
+    }
+
+    public StatusTituloFinanceiro getStatus() {
+        return status;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public Fornecedor getFornecedor() {
+        return fornecedor;
+    }
+
+    public BigDecimal getValor() {
+        return valor;
+    }
+
+    public LocalDate getDataVencimento() {
+        return dataVencimento;
+    }
+
+    public LocalDate getDataPagamento() {
+        return dataPagamento;
+    }
+
+    public int getParcela() {
+        return parcela;
+    }
+
+    public int getTotalParcelas() {
+        return totalParcelas;
+    }
+
+    public String getOrigemTipo() {
+        return origemTipo;
+    }
+
+    public Long getOrigemId() {
+        return origemId;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
 }

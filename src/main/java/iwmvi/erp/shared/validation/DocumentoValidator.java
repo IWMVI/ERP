@@ -7,7 +7,8 @@ public final class DocumentoValidator {
     private static final int[] PESOS_CNPJ_PRIMEIRO = {5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
     private static final int[] PESOS_CNPJ_SEGUNDO = {6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
 
-    private DocumentoValidator() {}
+    private DocumentoValidator() {
+    }
 
     public static String somenteDigitos(String valor) {
         return valor == null ? "" : valor.replaceAll("\\D", "");
@@ -27,7 +28,7 @@ public final class DocumentoValidator {
         }
 
         return calcularDigitoCpf(digits.substring(0, 9), 10) == digits.charAt(9) - '0'
-                && calcularDigitoCpf(digits.substring(0, 10), 11) == digits.charAt(10) - '0';
+            && calcularDigitoCpf(digits.substring(0, 10), 11) == digits.charAt(10) - '0';
     }
 
     public static boolean cnpjValido(String cnpj) {
@@ -53,7 +54,10 @@ public final class DocumentoValidator {
 
     public static boolean gtinValido(String gtin) {
         String digits = somenteDigitos(gtin);
-        if (!(digits.length() == 8 || digits.length() == 12 || digits.length() == 13 || digits.length() == 14)) {
+        if (!(digits.length() == 8
+            || digits.length() == 12
+            || digits.length() == 13
+            || digits.length() == 14)) {
             return false;
         }
 

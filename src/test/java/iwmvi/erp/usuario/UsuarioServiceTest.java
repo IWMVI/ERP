@@ -1,13 +1,5 @@
 package iwmvi.erp.usuario;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import iwmvi.erp.shared.exception.EmailJaCadastradoException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,11 +8,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 class UsuarioServiceTest {
 
-    @Mock private UsuarioRepository usuarioRepository;
-    @Mock private PasswordEncoder passwordEncoder;
+    @Mock
+    private UsuarioRepository usuarioRepository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     private UsuarioService usuarioService;
 
@@ -32,13 +30,12 @@ class UsuarioServiceTest {
     @Test
     void deveCadastrarUsuarioComSenhaCodificada() {
         UsuarioRequest request =
-                new UsuarioRequest(
-                        "Wallace", "wallace@gmail.com", "123456", PerfilUsuario.ADMIN);
+            new UsuarioRequest("Wallace", "wallace@gmail.com", "123456", PerfilUsuario.ADMIN);
 
         when(usuarioRepository.existsByEmail(request.email())).thenReturn(false);
         when(passwordEncoder.encode("123456")).thenReturn("senha-codificada");
         when(usuarioRepository.save(any(Usuario.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+            .thenAnswer(invocation -> invocation.getArgument(0));
 
         Usuario usuario = usuarioService.criar(request);
 
@@ -53,12 +50,12 @@ class UsuarioServiceTest {
     @Test
     void deveCadastrarUsuarioPublicoSempreComPerfilUsuario() {
         CadastroUsuarioRequest request =
-                new CadastroUsuarioRequest("Wallace", "wallace@gmail.com", "123456");
+            new CadastroUsuarioRequest("Wallace", "wallace@gmail.com", "123456");
 
         when(usuarioRepository.existsByEmail(request.email())).thenReturn(false);
         when(passwordEncoder.encode("123456")).thenReturn("senha-codificada");
         when(usuarioRepository.save(any(Usuario.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+            .thenAnswer(invocation -> invocation.getArgument(0));
 
         Usuario usuario = usuarioService.criarPublico(request);
 
@@ -70,8 +67,7 @@ class UsuarioServiceTest {
     @Test
     void deveLancarExcecaoAoCadastrarUsuarioComEmailJaCadastrado() {
         UsuarioRequest request =
-                new UsuarioRequest(
-                        "Wallace", "wallace@gmail.com", "123456", PerfilUsuario.USUARIO);
+            new UsuarioRequest("Wallace", "wallace@gmail.com", "123456", PerfilUsuario.USUARIO);
         when(usuarioRepository.existsByEmail(request.email())).thenReturn(true);
 
         assertThrows(EmailJaCadastradoException.class, () -> usuarioService.criar(request));

@@ -2,16 +2,13 @@ package iwmvi.erp.venda;
 
 import iwmvi.erp.cliente.ClienteRepository;
 import iwmvi.erp.produto.ProdutoRepository;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Controller
 @RequestMapping("/vendas")
@@ -22,9 +19,9 @@ public class PedidoVendaController {
     private final ProdutoRepository produtoRepository;
 
     public PedidoVendaController(
-            PedidoVendaService service,
-            ClienteRepository clienteRepository,
-            ProdutoRepository produtoRepository) {
+        PedidoVendaService service,
+        ClienteRepository clienteRepository,
+        ProdutoRepository produtoRepository) {
         this.service = service;
         this.clienteRepository = clienteRepository;
         this.produtoRepository = produtoRepository;
@@ -46,9 +43,9 @@ public class PedidoVendaController {
 
     @PostMapping
     public String criar(
-            @RequestParam Long clienteId,
-            @RequestParam(defaultValue = "0") BigDecimal desconto,
-            RedirectAttributes redirectAttributes) {
+        @RequestParam Long clienteId,
+        @RequestParam(defaultValue = "0") BigDecimal desconto,
+        RedirectAttributes redirectAttributes) {
         try {
             PedidoVenda pedido = service.criar(new CriarPedidoVendaRequest(clienteId, desconto));
             redirectAttributes.addFlashAttribute("sucesso", "Pedido de venda criado com sucesso.");
@@ -70,10 +67,10 @@ public class PedidoVendaController {
 
     @PostMapping("/{id}/itens")
     public String adicionarItem(
-            @PathVariable Long id,
-            @RequestParam Long produtoId,
-            @RequestParam BigDecimal quantidade,
-            RedirectAttributes redirectAttributes) {
+        @PathVariable Long id,
+        @RequestParam Long produtoId,
+        @RequestParam BigDecimal quantidade,
+        RedirectAttributes redirectAttributes) {
         try {
             service.adicionarItem(id, new AdicionarItemVendaRequest(produtoId, quantidade));
             redirectAttributes.addFlashAttribute("sucesso", "Item adicionado ao pedido.");
@@ -85,14 +82,14 @@ public class PedidoVendaController {
 
     @PostMapping("/{id}/concluir")
     public String concluir(
-            @PathVariable Long id,
-            @RequestParam(defaultValue = "1") int parcelas,
-            @RequestParam LocalDate primeiroVencimento,
-            RedirectAttributes redirectAttributes) {
+        @PathVariable Long id,
+        @RequestParam(defaultValue = "1") int parcelas,
+        @RequestParam LocalDate primeiroVencimento,
+        RedirectAttributes redirectAttributes) {
         try {
             service.concluir(id, parcelas, primeiroVencimento);
             redirectAttributes.addFlashAttribute(
-                    "sucesso", "Venda concluída. Estoque e financeiro foram atualizados.");
+                "sucesso", "Venda concluída. Estoque e financeiro foram atualizados.");
         } catch (IllegalArgumentException | IllegalStateException e) {
             redirectAttributes.addFlashAttribute("erroGlobal", e.getMessage());
         }
@@ -115,7 +112,7 @@ public class PedidoVendaController {
         try {
             service.estornar(id);
             redirectAttributes.addFlashAttribute(
-                    "sucesso", "Venda estornada. Estoque revertido e títulos cancelados.");
+                "sucesso", "Venda estornada. Estoque revertido e títulos cancelados.");
         } catch (IllegalArgumentException | IllegalStateException e) {
             redirectAttributes.addFlashAttribute("erroGlobal", e.getMessage());
         }

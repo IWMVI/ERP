@@ -42,10 +42,10 @@ public class UsuarioController {
 
     @PostMapping("/usuarios")
     public String criar(
-            @Valid @ModelAttribute("usuarioRequest") UsuarioRequest request,
-            BindingResult bindingResult,
-            Model model,
-            RedirectAttributes redirectAttributes) {
+        @Valid @ModelAttribute("usuarioRequest") UsuarioRequest request,
+        BindingResult bindingResult,
+        Model model,
+        RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("perfis", PerfilUsuario.values());
             model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o usuário.");
@@ -55,7 +55,7 @@ public class UsuarioController {
         try {
             Usuario usuario = usuarioService.criar(request);
             auditoriaService.registrar(
-                    "CRIAR", "Usuario", usuario.getId(), usuario.getEmail() + " - " + usuario.getPerfil());
+                "CRIAR", "Usuario", usuario.getId(), usuario.getEmail() + " - " + usuario.getPerfil());
         } catch (EmailJaCadastradoException exception) {
             bindingResult.rejectValue("email", "email.duplicado", exception.getMessage());
             model.addAttribute("perfis", PerfilUsuario.values());

@@ -18,10 +18,10 @@ public class AdministradorInicialInitializer implements ApplicationRunner {
     private final String senha;
 
     public AdministradorInicialInitializer(
-            UsuarioService usuarioService,
-            @Value("${app.admin.nome:Administrador}") String nome,
-            @Value("${app.admin.email:}") String email,
-            @Value("${app.admin.senha:}") String senha) {
+        UsuarioService usuarioService,
+        @Value("${app.admin.nome:Administrador}") String nome,
+        @Value("${app.admin.email:}") String email,
+        @Value("${app.admin.senha:}") String senha) {
         this.usuarioService = usuarioService;
         this.nome = nome;
         this.email = email;

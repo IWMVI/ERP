@@ -10,7 +10,8 @@ public class HomeController {
 
     @GetMapping("/")
     public String index(Authentication authentication, Model model) {
-        boolean admin = authentication.getAuthorities().stream()
+        boolean admin =
+            authentication.getAuthorities().stream()
                 .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
 
         model.addAttribute("email", authentication.getName());

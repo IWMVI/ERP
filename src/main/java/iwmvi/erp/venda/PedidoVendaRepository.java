@@ -1,7 +1,8 @@
 package iwmvi.erp.venda;
 
-import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 public interface PedidoVendaRepository extends JpaRepository<PedidoVenda, Long> {
     List<PedidoVenda> findAllByOrderByDataCriacaoDesc();

@@ -1,7 +1,6 @@
 package iwmvi.erp.web;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -9,7 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DropdownCoverageTest {
 
@@ -19,7 +19,8 @@ class DropdownCoverageTest {
     void todoTemplateComSelectDeveCarregarOComponenteGlobal() throws IOException {
         List<Path> templatesComSelect;
         try (var arquivos = Files.walk(TEMPLATES)) {
-            templatesComSelect = arquivos
+            templatesComSelect =
+                arquivos
                     .filter(path -> path.toString().endsWith(".html"))
                     .filter(path -> conteudo(path).contains("<select"))
                     .toList();
@@ -29,14 +30,14 @@ class DropdownCoverageTest {
         for (Path template : templatesComSelect) {
             String html = conteudo(template);
             assertTrue(
-                    html.contains("fragments/topbar") || html.contains("/js/dropdowns.js"),
-                    () -> template + " não carrega o componente de dropdown.");
+                html.contains("fragments/topbar") || html.contains("/js/dropdowns.js"),
+                () -> template + " não carrega o componente de dropdown.");
             assertTrue(
-                    html.contains("@{/css/app.css}"),
-                    () -> template + " não carrega os estilos globais do dropdown.");
+                html.contains("@{/css/app.css}"),
+                () -> template + " não carrega os estilos globais do dropdown.");
             assertFalse(
-                    html.contains("data-native-select=\"true\""),
-                    () -> template + " mantém um select nativo fora do padrão global.");
+                html.contains("data-native-select=\"true\""),
+                () -> template + " mantém um select nativo fora do padrão global.");
         }
     }
 

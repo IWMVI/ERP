@@ -16,7 +16,7 @@ public class CadastroUsuarioController {
     private final AuditoriaService auditoriaService;
 
     public CadastroUsuarioController(
-            UsuarioService usuarioService, AuditoriaService auditoriaService) {
+        UsuarioService usuarioService, AuditoriaService auditoriaService) {
         this.usuarioService = usuarioService;
         this.auditoriaService = auditoriaService;
     }
@@ -28,16 +28,15 @@ public class CadastroUsuarioController {
 
     @PostMapping("/cadastro")
     public String cadastrar(
-            @Valid @ModelAttribute CadastroUsuarioRequest cadastroUsuarioRequest,
-            BindingResult bindingResult) {
+        @Valid @ModelAttribute CadastroUsuarioRequest cadastroUsuarioRequest,
+        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "cadastro";
         }
 
         try {
             Usuario usuario = usuarioService.criarPublico(cadastroUsuarioRequest);
-            auditoriaService.registrar(
-                    "CRIAR_PUBLICO", "Usuario", usuario.getId(), usuario.getEmail());
+            auditoriaService.registrar("CRIAR_PUBLICO", "Usuario", usuario.getId(), usuario.getEmail());
         } catch (EmailJaCadastradoException exception) {
             bindingResult.rejectValue("email", "email.duplicado", exception.getMessage());
             return "cadastro";

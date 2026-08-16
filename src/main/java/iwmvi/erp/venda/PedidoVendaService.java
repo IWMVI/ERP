@@ -1,11 +1,5 @@
 package iwmvi.erp.venda;
 
-import java.time.LocalDate;
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import iwmvi.erp.cliente.Cliente;
 import iwmvi.erp.cliente.ClienteRepository;
 import iwmvi.erp.estoque.EstoqueService;
@@ -14,6 +8,11 @@ import iwmvi.erp.estoque.TipoMovimentacao;
 import iwmvi.erp.financeiro.FinanceiroService;
 import iwmvi.erp.produto.Produto;
 import iwmvi.erp.produto.ProdutoRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class PedidoVendaService {
@@ -25,11 +24,11 @@ public class PedidoVendaService {
     private final FinanceiroService financeiroService;
 
     public PedidoVendaService(
-            PedidoVendaRepository pedidoRepository,
-            ClienteRepository clienteRepository,
-            ProdutoRepository produtoRepository,
-            EstoqueService estoqueService,
-            FinanceiroService financeiroService) {
+        PedidoVendaRepository pedidoRepository,
+        ClienteRepository clienteRepository,
+        ProdutoRepository produtoRepository,
+        EstoqueService estoqueService,
+        FinanceiroService financeiroService) {
         this.pedidoRepository = pedidoRepository;
         this.clienteRepository = clienteRepository;
         this.produtoRepository = produtoRepository;
@@ -39,7 +38,8 @@ public class PedidoVendaService {
 
     @Transactional
     public PedidoVenda criar(CriarPedidoVendaRequest request) {
-        Cliente cliente = clienteRepository
+        Cliente cliente =
+            clienteRepository
                 .findById(request.clienteId())
                 .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado."));
         if (!cliente.isAtivo()) {
@@ -51,7 +51,8 @@ public class PedidoVendaService {
     @Transactional
     public PedidoVenda adicionarItem(Long pedidoId, AdicionarItemVendaRequest request) {
         PedidoVenda pedido = buscar(pedidoId);
-        Produto produto = produtoRepository
+        Produto produto =
+            produtoRepository
                 .findById(request.produtoId())
                 .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado."));
         if (!produto.isAtivo()) {
@@ -67,23 +68,22 @@ public class PedidoVendaService {
         pedido.concluir();
 
         for (ItemPedidoVenda item : pedido.getItens()) {
-            if (!item.getProduto().isControlaEstoque())
-                continue;
+            if (!item.getProduto().isControlaEstoque()) continue;
             estoqueService.movimentar(
-                    new MovimentacaoEstoqueRequest(
-                            item.getProduto().getId(),
-                            TipoMovimentacao.SAIDA,
-                            item.getQuantidade(),
-                            "VENDA:" + pedido.getId() + ":ITEM:" + item.getId()));
+                new MovimentacaoEstoqueRequest(
+                    item.getProduto().getId(),
+                    TipoMovimentacao.SAIDA,
+                    item.getQuantidade(),
+                    "VENDA:" + pedido.getId() + ":ITEM:" + item.getId()));
         }
 
         financeiroService.gerarContasReceber(
-                pedido.getCliente(),
-                pedido.getTotal(),
-                parcelas,
-                primeiroVencimento,
-                "VENDA",
-                pedido.getId());
+            pedido.getCliente(),
+            pedido.getTotal(),
+            parcelas,
+            primeiroVencimento,
+            "VENDA",
+            pedido.getId());
         return pedido;
     }
 
@@ -99,14 +99,13 @@ public class PedidoVendaService {
         PedidoVenda pedido = buscar(pedidoId);
         financeiroService.cancelarPorOrigem("VENDA", pedido.getId());
         for (ItemPedidoVenda item : pedido.getItens()) {
-            if (!item.getProduto().isControlaEstoque())
-                continue;
+            if (!item.getProduto().isControlaEstoque()) continue;
             estoqueService.movimentar(
-                    new MovimentacaoEstoqueRequest(
-                            item.getProduto().getId(),
-                            TipoMovimentacao.ENTRADA,
-                            item.getQuantidade(),
-                            "ESTORNO_VENDA:" + pedido.getId() + ":ITEM:" + item.getId()));
+                new MovimentacaoEstoqueRequest(
+                    item.getProduto().getId(),
+                    TipoMovimentacao.ENTRADA,
+                    item.getQuantidade(),
+                    "ESTORNO_VENDA:" + pedido.getId() + ":ITEM:" + item.getId()));
         }
         pedido.estornar();
         return pedido;
@@ -120,7 +119,7 @@ public class PedidoVendaService {
     @Transactional(readOnly = true)
     public PedidoVenda buscar(Long id) {
         return pedidoRepository
-                .findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Pedido de venda não encontrado."));
+            .findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Pedido de venda não encontrado."));
     }
 }

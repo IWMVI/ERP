@@ -25,39 +25,39 @@ public class PessoaCadastroLookupService {
         }
 
         if (!DocumentoValidator.documentoEhCnpj(normalizado)
-                || !DocumentoValidator.cnpjValido(normalizado)) {
+            || !DocumentoValidator.cnpjValido(normalizado)) {
             throw new DocumentoInvalidoException(
-                    "Informe um CPF válido ou um CNPJ válido com 14 posições.");
+                "Informe um CPF válido ou um CNPJ válido com 14 posições.");
         }
 
         try {
             BrasilApiClient.CnpjDados dados = brasilApiClient.consultarCnpj(normalizado);
             if (dados == null) {
                 return PessoaCadastroLookupResult.pessoaJuridicaSemConsulta(
-                        normalizado,
-                        "Não foi possível localizar dados públicos para este CNPJ. Preencha os dados manualmente.");
+                    normalizado,
+                    "Não foi possível localizar dados públicos para este CNPJ. Preencha os dados manualmente.");
             }
 
             return new PessoaCadastroLookupResult(
-                    TipoDocumentoPessoa.CNPJ,
-                    normalizado,
-                    dados.razaoSocial(),
-                    dados.nomeFantasia(),
-                    dados.email(),
-                    dados.telefone(),
-                    dados.cep(),
-                    montarLogradouro(dados),
-                    dados.numero(),
-                    dados.complemento(),
-                    dados.bairro(),
-                    dados.municipio(),
-                    dados.uf(),
-                    dados.situacaoCadastral(),
-                    null);
+                TipoDocumentoPessoa.CNPJ,
+                normalizado,
+                dados.razaoSocial(),
+                dados.nomeFantasia(),
+                dados.email(),
+                dados.telefone(),
+                dados.cep(),
+                montarLogradouro(dados),
+                dados.numero(),
+                dados.complemento(),
+                dados.bairro(),
+                dados.municipio(),
+                dados.uf(),
+                dados.situacaoCadastral(),
+                null);
         } catch (RestClientException exception) {
             return PessoaCadastroLookupResult.pessoaJuridicaSemConsulta(
-                    normalizado,
-                    "O serviço de consulta de CNPJ está indisponível. Preencha os dados manualmente.");
+                normalizado,
+                "O serviço de consulta de CNPJ está indisponível. Preencha os dados manualmente.");
         }
     }
 
@@ -77,59 +77,59 @@ public class PessoaCadastroLookupService {
     }
 
     public record PessoaCadastroLookupResult(
-            TipoDocumentoPessoa tipoDocumento,
-            String documento,
-            String nome,
-            String nomeFantasia,
-            String email,
-            String telefone,
-            String cep,
-            String logradouro,
-            String numero,
-            String complemento,
-            String bairro,
-            String cidade,
-            String estado,
-            String situacaoCadastral,
-            String aviso) {
+        TipoDocumentoPessoa tipoDocumento,
+        String documento,
+        String nome,
+        String nomeFantasia,
+        String email,
+        String telefone,
+        String cep,
+        String logradouro,
+        String numero,
+        String complemento,
+        String bairro,
+        String cidade,
+        String estado,
+        String situacaoCadastral,
+        String aviso) {
 
         public static PessoaCadastroLookupResult pessoaFisica(String documento) {
             return new PessoaCadastroLookupResult(
-                    TipoDocumentoPessoa.CPF,
-                    documento,
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    null,
-                    null);
+                TipoDocumentoPessoa.CPF,
+                documento,
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                null,
+                null);
         }
 
         public static PessoaCadastroLookupResult pessoaJuridicaSemConsulta(
-                String documento, String aviso) {
+            String documento, String aviso) {
             return new PessoaCadastroLookupResult(
-                    TipoDocumentoPessoa.CNPJ,
-                    documento,
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    null,
-                    aviso);
+                TipoDocumentoPessoa.CNPJ,
+                documento,
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                null,
+                aviso);
         }
 
         public boolean pessoaFisica() {

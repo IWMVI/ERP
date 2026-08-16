@@ -1,19 +1,14 @@
 package iwmvi.erp.funcionario;
 
 import iwmvi.erp.shared.validation.DocumentoValidator;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
 @Entity
 @Table(
-        name = "funcionarios",
-        uniqueConstraints = @UniqueConstraint(name = "uk_funcionario_cpf", columnNames = "cpf"))
+    name = "funcionarios",
+    uniqueConstraints = @UniqueConstraint(name = "uk_funcionario_cpf", columnNames = "cpf"))
 public class Funcionario {
 
     @Id
@@ -54,7 +49,8 @@ public class Funcionario {
     @Column(nullable = false)
     private boolean ativo = true;
 
-    protected Funcionario() {}
+    protected Funcionario() {
+    }
 
     public Funcionario(FuncionarioRequest request) {
         atualizar(request);
@@ -85,21 +81,71 @@ public class Funcionario {
         this.ativo = !this.ativo;
     }
 
-    public Long getId() { return id; }
-    public String getNome() { return nome; }
-    public String getCpf() { return cpf; }
-    public String getEmail() { return email; }
-    public String getTelefone() { return telefone; }
-    public String getCargo() { return cargo; }
-    public LocalDate getDataNascimento() { return dataNascimento; }
-    public LocalDate getDataAdmissao() { return dataAdmissao; }
-    public String getCep() { return cep; }
-    public String getLogradouro() { return logradouro; }
-    public String getNumero() { return numero; }
-    public String getComplemento() { return complemento; }
-    public String getBairro() { return bairro; }
-    public String getCidade() { return cidade; }
-    public String getEstado() { return estado; }
-    public String getFotoArquivo() { return fotoArquivo; }
-    public boolean isAtivo() { return ativo; }
+    public Long getId() {
+        return id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public String getCargo() {
+        return cargo;
+    }
+
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public LocalDate getDataAdmissao() {
+        return dataAdmissao;
+    }
+
+    public String getCep() {
+        return cep;
+    }
+
+    public String getLogradouro() {
+        return logradouro;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public String getComplemento() {
+        return complemento;
+    }
+
+    public String getBairro() {
+        return bairro;
+    }
+
+    public String getCidade() {
+        return cidade;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public String getFotoArquivo() {
+        return fotoArquivo;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
 }

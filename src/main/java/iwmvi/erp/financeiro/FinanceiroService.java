@@ -2,13 +2,14 @@ package iwmvi.erp.financeiro;
 
 import iwmvi.erp.cliente.Cliente;
 import iwmvi.erp.fornecedor.Fornecedor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class FinanceiroService {
@@ -23,47 +24,49 @@ public class FinanceiroService {
 
     @Transactional
     public List<TituloFinanceiro> gerarContasReceber(
-            Cliente cliente,
-            BigDecimal valorTotal,
-            int parcelas,
-            LocalDate primeiroVencimento,
-            String origemTipo,
-            Long origemId) {
+        Cliente cliente,
+        BigDecimal valorTotal,
+        int parcelas,
+        LocalDate primeiroVencimento,
+        String origemTipo,
+        Long origemId) {
         return gerarParcelas(
-                TipoTituloFinanceiro.RECEBER,
-                cliente,
-                null,
-                valorTotal,
-                parcelas,
-                primeiroVencimento,
-                origemTipo,
-                origemId,
-                "Recebimento " + origemTipo + " #" + origemId);
+            TipoTituloFinanceiro.RECEBER,
+            cliente,
+            null,
+            valorTotal,
+            parcelas,
+            primeiroVencimento,
+            origemTipo,
+            origemId,
+            "Recebimento " + origemTipo + " #" + origemId);
     }
 
     @Transactional
     public List<TituloFinanceiro> gerarContasPagar(
-            Fornecedor fornecedor,
-            BigDecimal valorTotal,
-            int parcelas,
-            LocalDate primeiroVencimento,
-            String origemTipo,
-            Long origemId) {
+        Fornecedor fornecedor,
+        BigDecimal valorTotal,
+        int parcelas,
+        LocalDate primeiroVencimento,
+        String origemTipo,
+        Long origemId) {
         return gerarParcelas(
-                TipoTituloFinanceiro.PAGAR,
-                null,
-                fornecedor,
-                valorTotal,
-                parcelas,
-                primeiroVencimento,
-                origemTipo,
-                origemId,
-                "Pagamento " + origemTipo + " #" + origemId);
+            TipoTituloFinanceiro.PAGAR,
+            null,
+            fornecedor,
+            valorTotal,
+            parcelas,
+            primeiroVencimento,
+            origemTipo,
+            origemId,
+            "Pagamento " + origemTipo + " #" + origemId);
     }
 
     @Transactional
     public TituloFinanceiro pagar(Long id) {
-        TituloFinanceiro titulo = repository.findById(id)
+        TituloFinanceiro titulo =
+            repository
+                .findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Título financeiro não encontrado."));
         titulo.pagar(LocalDate.now());
         return titulo;
@@ -74,11 +77,11 @@ public class FinanceiroService {
         List<TituloFinanceiro> titulos = repository.findByOrigemTipoAndOrigemId(origemTipo, origemId);
         if (titulos.stream().anyMatch(titulo -> titulo.getStatus() == StatusTituloFinanceiro.PAGO)) {
             throw new IllegalStateException(
-                    "Não é possível estornar a operação porque há título financeiro já pago.");
+                "Não é possível estornar a operação porque há título financeiro já pago.");
         }
         titulos.stream()
-                .filter(titulo -> titulo.getStatus() == StatusTituloFinanceiro.ABERTO)
-                .forEach(TituloFinanceiro::cancelar);
+            .filter(titulo -> titulo.getStatus() == StatusTituloFinanceiro.ABERTO)
+            .forEach(TituloFinanceiro::cancelar);
     }
 
     @Transactional(readOnly = true)
@@ -89,19 +92,19 @@ public class FinanceiroService {
     @Transactional(readOnly = true)
     public List<TituloFinanceiro> vencidos() {
         return repository.findByStatusAndDataVencimentoBeforeOrderByDataVencimentoAsc(
-                StatusTituloFinanceiro.ABERTO, LocalDate.now());
+            StatusTituloFinanceiro.ABERTO, LocalDate.now());
     }
 
     private List<TituloFinanceiro> gerarParcelas(
-            TipoTituloFinanceiro tipo,
-            Cliente cliente,
-            Fornecedor fornecedor,
-            BigDecimal valorTotal,
-            int parcelas,
-            LocalDate primeiroVencimento,
-            String origemTipo,
-            Long origemId,
-            String descricao) {
+        TipoTituloFinanceiro tipo,
+        Cliente cliente,
+        Fornecedor fornecedor,
+        BigDecimal valorTotal,
+        int parcelas,
+        LocalDate primeiroVencimento,
+        String origemTipo,
+        Long origemId,
+        String descricao) {
         if (parcelas <= 0 || parcelas > MAX_PARCELAS) {
             throw new IllegalArgumentException("A quantidade de parcelas deve estar entre 1 e 24.");
         }
@@ -122,7 +125,8 @@ public class FinanceiroService {
         for (int numero = 1; numero <= parcelas; numero++) {
             BigDecimal valor = numero == parcelas ? valorTotal.subtract(acumulado) : valorBase;
             acumulado = acumulado.add(valor);
-            titulos.add(new TituloFinanceiro(
+            titulos.add(
+                new TituloFinanceiro(
                     tipo,
                     cliente,
                     fornecedor,

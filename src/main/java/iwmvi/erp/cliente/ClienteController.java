@@ -10,12 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -26,7 +21,7 @@ public class ClienteController {
     private final PessoaCadastroLookupService pessoaCadastroLookupService;
 
     public ClienteController(
-            ClienteService service, PessoaCadastroLookupService pessoaCadastroLookupService) {
+        ClienteService service, PessoaCadastroLookupService pessoaCadastroLookupService) {
         this.service = service;
         this.pessoaCadastroLookupService = pessoaCadastroLookupService;
     }
@@ -49,7 +44,8 @@ public class ClienteController {
     public String identificar(@RequestParam String documento, Model model) {
         try {
             PessoaCadastroLookupResult dados = pessoaCadastroLookupService.consultar(documento);
-            ClienteRequest request = new ClienteRequest(
+            ClienteRequest request =
+                new ClienteRequest(
                     dados.pessoaJuridica() ? TipoPessoa.JURIDICA : TipoPessoa.FISICA,
                     valor(dados.nome()),
                     valor(dados.nomeFantasia()),
@@ -83,33 +79,33 @@ public class ClienteController {
     public String editar(@PathVariable Long id, Model model) {
         Cliente cliente = service.buscar(id);
         preparar(
-                model,
-                new ClienteRequest(
-                        cliente.getTipoPessoa(),
-                        cliente.getNome(),
-                        cliente.getNomeFantasia(),
-                        cliente.getDocumento(),
-                        cliente.getEmail(),
-                        cliente.getTelefone(),
-                        cliente.getCelular(),
-                        cliente.getCep(),
-                        cliente.getLogradouro(),
-                        cliente.getNumero(),
-                        cliente.getComplemento(),
-                        cliente.getBairro(),
-                        cliente.getCidade(),
-                        cliente.getEstado(),
-                        cliente.getObservacoes()),
-                id);
+            model,
+            new ClienteRequest(
+                cliente.getTipoPessoa(),
+                cliente.getNome(),
+                cliente.getNomeFantasia(),
+                cliente.getDocumento(),
+                cliente.getEmail(),
+                cliente.getTelefone(),
+                cliente.getCelular(),
+                cliente.getCep(),
+                cliente.getLogradouro(),
+                cliente.getNumero(),
+                cliente.getComplemento(),
+                cliente.getBairro(),
+                cliente.getCidade(),
+                cliente.getEstado(),
+                cliente.getObservacoes()),
+            id);
         return "clientes/form";
     }
 
     @PostMapping
     public String criar(
-            @Valid @ModelAttribute("clienteRequest") ClienteRequest request,
-            BindingResult result,
-            Model model,
-            RedirectAttributes redirect) {
+        @Valid @ModelAttribute("clienteRequest") ClienteRequest request,
+        BindingResult result,
+        Model model,
+        RedirectAttributes redirect) {
         if (result.hasErrors()) {
             preparar(model, request, null);
             model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o cliente.");
@@ -136,11 +132,11 @@ public class ClienteController {
 
     @PostMapping("/{id}")
     public String atualizar(
-            @PathVariable Long id,
-            @Valid @ModelAttribute("clienteRequest") ClienteRequest request,
-            BindingResult result,
-            Model model,
-            RedirectAttributes redirect) {
+        @PathVariable Long id,
+        @Valid @ModelAttribute("clienteRequest") ClienteRequest request,
+        BindingResult result,
+        Model model,
+        RedirectAttributes redirect) {
         if (result.hasErrors()) {
             preparar(model, request, id);
             model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o cliente.");

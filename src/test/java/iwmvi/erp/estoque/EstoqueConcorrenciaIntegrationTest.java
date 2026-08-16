@@ -1,29 +1,35 @@
 package iwmvi.erp.estoque;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import iwmvi.erp.produto.Produto;
 import iwmvi.erp.produto.ProdutoRepository;
 import iwmvi.erp.produto.ProdutoRequest;
 import iwmvi.erp.produto.UnidadeMedida;
-import java.math.BigDecimal;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @SpringBootTest
 class EstoqueConcorrenciaIntegrationTest {
 
-    @Autowired private EstoqueService estoqueService;
-    @Autowired private ProdutoRepository produtoRepository;
-    @Autowired private MovimentacaoEstoqueRepository movimentacaoRepository;
+    @Autowired
+    private EstoqueService estoqueService;
+    @Autowired
+    private ProdutoRepository produtoRepository;
+    @Autowired
+    private MovimentacaoEstoqueRepository movimentacaoRepository;
 
     @BeforeEach
+    @AfterEach
     void limpar() {
         movimentacaoRepository.deleteAll();
         produtoRepository.deleteAll();
@@ -47,11 +53,9 @@ class EstoqueConcorrenciaIntegrationTest {
         ExecutorService executor = Executors.newFixedThreadPool(2);
         try {
             Future<?> primeira =
-                    executor.submit(
-                            () -> movimentarAposSinal(inicio, produto.getId(), BigDecimal.TEN));
+                    executor.submit(() -> movimentarAposSinal(inicio, produto.getId(), BigDecimal.TEN));
             Future<?> segunda =
-                    executor.submit(
-                            () -> movimentarAposSinal(inicio, produto.getId(), BigDecimal.TEN));
+                    executor.submit(() -> movimentarAposSinal(inicio, produto.getId(), BigDecimal.TEN));
 
             inicio.countDown();
             primeira.get();

@@ -4,18 +4,14 @@ import iwmvi.erp.shared.exception.DocumentoJaCadastradoException;
 import iwmvi.erp.shared.storage.ImagemStorageService;
 import iwmvi.erp.shared.web.PageView;
 import jakarta.validation.Valid;
-import java.time.LocalDate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.LocalDate;
 
 @Controller
 @RequestMapping("/funcionarios")
@@ -24,7 +20,8 @@ public class FuncionarioController {
     private final FuncionarioService service;
     private final ImagemStorageService imagemStorageService;
 
-    public FuncionarioController(FuncionarioService service, ImagemStorageService imagemStorageService) {
+    public FuncionarioController(
+        FuncionarioService service, ImagemStorageService imagemStorageService) {
         this.service = service;
         this.imagemStorageService = imagemStorageService;
     }
@@ -46,23 +43,38 @@ public class FuncionarioController {
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable Long id, Model model) {
         Funcionario funcionario = service.buscar(id);
-        preparar(model,
-                new FuncionarioRequest(funcionario.getNome(), funcionario.getCpf(), funcionario.getEmail(),
-                        funcionario.getTelefone(), funcionario.getCargo(), funcionario.getDataNascimento(),
-                        funcionario.getDataAdmissao(), funcionario.getCep(), funcionario.getLogradouro(),
-                        funcionario.getNumero(), funcionario.getComplemento(), funcionario.getBairro(),
-                        funcionario.getCidade(), funcionario.getEstado()),
-                id);
+        preparar(
+            model,
+            new FuncionarioRequest(
+                funcionario.getNome(),
+                funcionario.getCpf(),
+                funcionario.getEmail(),
+                funcionario.getTelefone(),
+                funcionario.getCargo(),
+                funcionario.getDataNascimento(),
+                funcionario.getDataAdmissao(),
+                funcionario.getCep(),
+                funcionario.getLogradouro(),
+                funcionario.getNumero(),
+                funcionario.getComplemento(),
+                funcionario.getBairro(),
+                funcionario.getCidade(),
+                funcionario.getEstado()),
+            id);
         return "funcionarios/form";
     }
 
     @PostMapping
-    public String criar(@Valid @ModelAttribute("funcionarioRequest") FuncionarioRequest request,
-            BindingResult result, @RequestParam(required = false) MultipartFile foto,
-            Model model, RedirectAttributes redirect) {
+    public String criar(
+        @Valid @ModelAttribute("funcionarioRequest") FuncionarioRequest request,
+        BindingResult result,
+        @RequestParam(required = false) MultipartFile foto,
+        Model model,
+        RedirectAttributes redirect) {
         if (result.hasErrors()) {
             preparar(model, request, null);
-            model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o funcionário.");
+            model.addAttribute(
+                "erroGlobal", "Revise os campos destacados antes de salvar o funcionário.");
             return "funcionarios/form";
         }
         try {
@@ -84,13 +96,17 @@ public class FuncionarioController {
     }
 
     @PostMapping("/{id}")
-    public String atualizar(@PathVariable Long id,
-            @Valid @ModelAttribute("funcionarioRequest") FuncionarioRequest request,
-            BindingResult result, @RequestParam(required = false) MultipartFile foto,
-            Model model, RedirectAttributes redirect) {
+    public String atualizar(
+        @PathVariable Long id,
+        @Valid @ModelAttribute("funcionarioRequest") FuncionarioRequest request,
+        BindingResult result,
+        @RequestParam(required = false) MultipartFile foto,
+        Model model,
+        RedirectAttributes redirect) {
         if (result.hasErrors()) {
             preparar(model, request, id);
-            model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o funcionário.");
+            model.addAttribute(
+                "erroGlobal", "Revise os campos destacados antes de salvar o funcionário.");
             return "funcionarios/form";
         }
         try {
@@ -137,6 +153,7 @@ public class FuncionarioController {
     }
 
     private FuncionarioRequest vazio() {
-        return new FuncionarioRequest("", "", "", "", "", null, LocalDate.now(), "", "", "", "", "", "", "");
+        return new FuncionarioRequest(
+            "", "", "", "", "", null, LocalDate.now(), "", "", "", "", "", "", "");
     }
 }

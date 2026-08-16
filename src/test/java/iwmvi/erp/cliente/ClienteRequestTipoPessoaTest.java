@@ -1,9 +1,9 @@
 package iwmvi.erp.cliente;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-
-import org.junit.jupiter.api.Test;
 
 class ClienteRequestTipoPessoaTest {
 
@@ -30,20 +30,6 @@ class ClienteRequestTipoPessoaTest {
 
     private ClienteRequest request(String documento) {
         return new ClienteRequest(
-                null,
-                "Teste",
-                "",
-                documento,
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "");
+            null, "Teste", "", documento, "", "", "", "", "", "", "", "", "", "", "");
     }
 }
