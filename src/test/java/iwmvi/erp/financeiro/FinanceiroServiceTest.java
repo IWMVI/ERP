@@ -1,6 +1,7 @@
 package iwmvi.erp.financeiro;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -23,7 +24,7 @@ class FinanceiroServiceTest {
                 mock(Cliente.class),
                 new BigDecimal("100.00"),
                 3,
-                LocalDate.of(2026, 8, 20),
+                LocalDate.now().plusDays(30),
                 "VENDA",
                 10L);
 
@@ -33,5 +34,20 @@ class FinanceiroServiceTest {
         assertEquals(new BigDecimal("33.34"), titulos.get(2).getValor());
         assertEquals(new BigDecimal("100.00"),
                 titulos.stream().map(TituloFinanceiro::getValor).reduce(BigDecimal.ZERO, BigDecimal::add));
+    }
+
+    @Test
+    void deveRejeitarMaisDeVinteEQuatroParcelas() {
+        FinanceiroService service = new FinanceiroService(mock(TituloFinanceiroRepository.class));
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> service.gerarContasReceber(
+                        mock(Cliente.class),
+                        new BigDecimal("100.00"),
+                        25,
+                        LocalDate.now().plusDays(30),
+                        "VENDA",
+                        10L));
     }
 }
