@@ -9,7 +9,7 @@
 
 .registry-page-header h1 {
     margin: 0;
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 700;
     letter-spacing: -0.015em;
 }
@@ -24,14 +24,18 @@
     max-width: 1180px;
     margin: 0 auto;
     overflow: hidden;
-    border: 1px solid var(--color-border);
+    border: 1px solid #cfd8df;
     border-radius: var(--radius-md);
     background: var(--color-surface);
     box-shadow: var(--shadow-soft);
 }
 
 .registry-form-section {
-    border-bottom: 1px solid var(--color-border);
+    border: 0;
+    border-bottom: 2px solid #d9e1e7;
+    border-radius: 0 !important;
+    background: #fff;
+    box-shadow: none !important;
 }
 
 .registry-form-section:last-of-type {
@@ -39,23 +43,26 @@
 }
 
 .registry-section-header {
-    padding: 18px 22px 8px;
-    background: var(--color-surface);
+    padding: 15px 16px;
+    border-bottom: 1px solid #e1e6ea;
+    border-radius: 0 !important;
+    background: #f6f8fa;
 }
 
 .registry-section-header h2 {
     margin: 0;
-    color: #2c3943;
+    color: #253744;
     font-size: 14px;
     font-weight: 700;
 }
 
 .registry-form-section .panel-body {
-    padding: 10px 22px 22px;
+    padding: 18px 16px 22px;
 }
 
 .registry-form-section label {
     margin-bottom: 6px;
+    color: #3b4954;
     font-size: 12px;
     font-weight: 650;
 }
@@ -75,12 +82,21 @@
     box-shadow: var(--focus-ring);
 }
 
+.form-grid,
 .form-grid-three {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+.form-grid .full-width,
+.form-grid-three .full-width {
+    grid-column: 1 / -1;
 }
 
 .field-group {
     display: grid;
+    min-width: 0;
     align-content: start;
 }
 
@@ -103,13 +119,12 @@
 
 .lookup-field-row {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: 1fr;
     gap: 8px;
 }
 
 .lookup-button {
-    min-width: 116px;
-    white-space: nowrap;
+    width: 100%;
 }
 
 .input-prefix {
@@ -150,21 +165,29 @@ textarea {
 .registry-form-actions {
     display: flex;
     justify-content: flex-end;
-    padding: 16px 22px;
-    border-top: 1px solid var(--color-border);
-    background: #f7f9fa;
+    padding: 16px;
+    border-top: 2px solid #d3dce3;
+    border-radius: 0 !important;
+    background: #f4f6f8;
 }
 
 .registry-actions-buttons {
     display: flex;
+    width: 100%;
+    flex-direction: column-reverse;
     gap: 10px;
+}
+
+.registry-actions-buttons .button,
+.registry-actions-buttons button {
+    width: 100%;
 }
 
 .registry-image-field {
     display: grid;
-    grid-template-columns: 72px minmax(0, 1fr) auto;
+    grid-template-columns: 1fr;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
     padding: 14px;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
@@ -173,8 +196,8 @@ textarea {
 
 .registry-image-preview {
     display: grid;
-    width: 72px;
-    height: 72px;
+    width: 88px;
+    height: 88px;
     place-items: center;
     overflow: hidden;
     border: 1px solid var(--color-border);
@@ -200,24 +223,15 @@ textarea {
     stroke-width: 1.6;
 }
 
-.registry-image-info label {
-    margin-bottom: 3px;
-}
-
-.registry-image-file-name {
-    margin-bottom: 2px;
-    color: #3f4d58;
-    font-size: 12px;
-}
-
-.registry-image-info small {
-    color: var(--color-muted);
-    font-size: 11px;
-}
-
 .registry-image-actions {
     display: flex;
+    flex-direction: column;
     gap: 8px;
+}
+
+.registry-image-actions .button,
+.registry-image-actions button {
+    width: 100%;
 }
 
 .registry-fields-after-media {
@@ -248,20 +262,6 @@ textarea {
     border-radius: 10px;
 }
 
-.table-avatar-placeholder {
-    color: #4d5b65;
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.table-photo-placeholder svg {
-    width: 20px;
-    height: 20px;
-    fill: none;
-    stroke: #6e7a83;
-    stroke-width: 1.5;
-}
-
 .identification-step {
     max-width: 640px;
 }
@@ -287,35 +287,71 @@ textarea {
     display: none !important;
 }
 
-@media (max-width: 980px) {
-    .form-grid-three {
+@media (min-width: 641px) {
+    .registry-page-header h1 {
+        font-size: 24px;
+    }
+
+    .registry-section-header {
+        padding: 16px 22px;
+    }
+
+    .registry-form-section .panel-body {
+        padding: 20px 22px 24px;
+    }
+
+    .form-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 720px) {
-    .form-grid-three,
-    .lookup-field-row,
-    .registry-image-field {
-        grid-template-columns: 1fr;
+        gap: 18px;
     }
 
-    .registry-image-preview {
-        width: 88px;
-        height: 88px;
+    .lookup-field-row {
+        grid-template-columns: minmax(0, 1fr) auto;
     }
 
-    .registry-image-actions,
-    .registry-form-actions,
+    .lookup-button {
+        width: auto;
+        min-width: 126px;
+    }
+
+    .registry-form-actions {
+        padding: 16px 22px;
+    }
+
     .registry-actions-buttons {
-        align-items: stretch;
-        flex-direction: column-reverse;
+        width: auto;
+        flex-direction: row;
     }
 
     .registry-actions-buttons .button,
-    .registry-actions-buttons button,
+    .registry-actions-buttons button {
+        width: auto;
+        min-width: 104px;
+    }
+
+    .registry-image-field {
+        grid-template-columns: 72px minmax(0, 1fr) auto;
+        gap: 16px;
+    }
+
+    .registry-image-preview {
+        width: 72px;
+        height: 72px;
+    }
+
+    .registry-image-actions {
+        flex-direction: row;
+    }
+
     .registry-image-actions .button,
     .registry-image-actions button {
-        width: 100%;
+        width: auto;
+    }
+}
+
+@media (min-width: 901px) {
+    .form-grid-three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
     }
 }
