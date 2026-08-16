@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Funcionário | ERP</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
+    <link rel="stylesheet" th:href="@{/css/cadastros.css}">
+</head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('funcionarios')}"></aside>
+    <div class="app-main">
+        <header th:replace="~{fragments/topbar :: topbar('Administração / Funcionários')}"></header>
+        <main class="content registry-page">
+            <div class="registry-page-header">
+                <h1 th:text="${id == null ? 'Novo funcionário' : 'Editar funcionário'}"></h1>
+                <p>Dados pessoais e vínculo com a empresa.</p>
+            </div>
+
+            <form class="registry-form-stack"
+                  th:action="${id == null} ? @{/funcionarios} : @{/funcionarios/{id}(id=${id})}"
+                  th:object="${funcionarioRequest}"
+                  method="post"
+                  enctype="multipart/form-data">
+                <div class="entity-form-layout">
+                    <aside class="entity-photo-panel">
+                        <div class="entity-photo-preview">
+                            <img th:if="${fotoAtual != null}"
+                                 th:src="@{'/uploads/' + ${fotoAtual}}"
+                                 alt="Foto do funcionário"
+                                 data-image-preview>
+                            <div th:unless="${fotoAtual != null}" class="entity-photo-placeholder" data-image-placeholder>
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>
+                                <span>Sem foto</span>
+                            </div>
+                        </div>
+                        <label class="button secondary upload-button" for="fotoFuncionario">Selecionar foto</label>
+                        <input id="fotoFuncionario" class="visually-hidden" type="file" name="foto" accept="image/jpeg,image/png,image/webp" data-image-input>
+                        <small>JPG, PNG ou WEBP · até 5 MB</small>
+                    </aside>
+
+                    <div class="entity-form-content">
+                        <div class="alert error" th:if="${#fields.hasGlobalErrors()}" th:each="erro : ${#fields.globalErrors()}" th:text="${erro}"></div>
+
+                        <section class="registry-form-section">
+                            <div class="registry-section-header"><h2>Identificação</h2></div>
+                            <div class="panel-body form-grid">
+                                <div class="full-width"><label for="nome">Nome completo</label><input id="nome" th:field="*{nome}" autocomplete="name"><small class="field-error" th:errors="*{nome}"></small></div>
+                                <div><label for="cpf">CPF</label><input id="cpf" th:field="*{cpf}" data-mask="cpf" inputmode="numeric"><small class="field-error" th:errors="*{cpf}"></small></div>
+                                <div><label for="dataNascimento">Data de nascimento</label><input id="dataNascimento" type="date" th:field="*{dataNascimento}"></div>
+                            </div>
+                        </section>
+
+                        <section class="registry-form-section">
+                            <div class="registry-section-header"><h2>Vínculo</h2></div>
+                            <div class="panel-body form-grid">
+                                <div><label for="cargo">Cargo</label><input id="cargo" th:field="*{cargo}"><small class="field-error" th:errors="*{cargo}"></small></div>
+                                <div><label for="dataAdmissao">Data de admissão</label><input id="dataAdmissao" type="date" th:field="*{dataAdmissao}"><small class="field-error" th:errors="*{dataAdmissao}"></small></div>
+                                <div><label for="email">E-mail</label><input id="email" type="email" th:field="*{email}" autocomplete="email"><small class="field-error" th:errors="*{email}"></small></div>
+                                <div><label for="telefone">Telefone</label><input id="telefone" th:field="*{telefone}" data-mask="telefone" inputmode="tel"></div>
+                            </div>
+                        </section>
+
+                        <section class="registry-form-section">
+                            <div class="registry-section-header"><h2>Endereço</h2></div>
+                            <div class="panel-body form-grid">
+                                <div class="field-group"><label for="cep">CEP</label><input id="cep" th:field="*{cep}" data-mask="cep" data-lookup-cep inputmode="numeric"><small data-lookup-status class="field-hint"></small></div>
+                                <div><label for="numero">Número</label><input id="numero" th:field="*{numero}"></div>
+                                <div class="full-width"><label for="logradouro">Logradouro</label><input id="logradouro" th:field="*{logradouro}"></div>
+                                <div><label for="complemento">Complemento</label><input id="complemento" th:field="*{complemento}"></div>
+                                <div><label for="bairro">Bairro</label><input id="bairro" th:field="*{bairro}"></div>
+                                <div><label for="cidade">Cidade</label><input id="cidade" th:field="*{cidade}"></div>
+                                <div><label for="estado">UF</label><input id="estado" th:field="*{estado}" maxlength="2"></div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+
+                <div class="registry-form-actions">
+                    <div class="registry-actions-buttons">
+                        <a class="button secondary" th:href="@{/funcionarios}">Cancelar</a>
+                        <button type="submit">Salvar funcionário</button>
+                    </div>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/cadastros.js}" defer></script>
+</body>
+</html>
