@@ -1,114 +1,378 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Produto | ERP</title>
-    <link rel="stylesheet" th:href="@{/css/app.css}">
-    <link rel="stylesheet" th:href="@{/css/navigation.css}">
-    <link rel="stylesheet" th:href="@{/css/cadastros.css}">
-    <link rel="stylesheet" th:href="@{/css/upload.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+    <link rel="stylesheet" th:href="@{/css/navigation.css}" />
+    <link rel="stylesheet" th:href="@{/css/cadastros.css}" />
+    <link rel="stylesheet" th:href="@{/css/upload.css}" />
 </head>
+
 <body>
-<div class="app-shell">
-    <aside th:replace="~{fragments/sidebar :: sidebar('produtos')}"></aside>
-    <div class="app-main">
-        <header th:replace="~{fragments/topbar :: topbar('Cadastros / Produtos')}"></header>
-        <main class="content registry-page">
-            <div class="registry-page-header">
-                <h1 th:text="${id == null ? 'Novo produto' : 'Editar produto'}"></h1>
-                <p>Identificação, valores e parâmetros operacionais.</p>
-            </div>
+    <div class="app-shell">
+        <aside th:replace="~{fragments/sidebar :: sidebar('produtos')}"></aside>
+        <div class="app-main">
+            <header th:replace="~{fragments/topbar :: topbar('Cadastros / Produtos')}"></header>
+            <main class="content registry-page">
+                <div class="registry-page-header">
+                    <h1 th:text="${id == null ? 'Novo produto' : 'Editar produto'}"></h1>
+                    <p>Identificação, valores e parâmetros operacionais.</p>
+                </div>
 
-            <form class="registry-form-stack"
-                  th:action="${id == null} ? @{/produtos} : @{/produtos/{id}(id=${id})}"
-                  th:object="${produtoRequest}"
-                  method="post"
-                  enctype="multipart/form-data">
-                <div class="alert error" th:if="${#fields.hasGlobalErrors()}" th:each="erro : ${#fields.globalErrors()}" th:text="${erro}"></div>
+                <form class="registry-form-stack" th:action="${id == null} ? @{/produtos} : @{/produtos/{id}(id=${id})}"
+                    th:object="${produtoRequest}" method="post" enctype="multipart/form-data">
+                    <div class="alert error" th:if="${#fields.hasGlobalErrors()}"
+                        th:each="erro : ${#fields.globalErrors()}" th:text="${erro}"></div>
 
-                <section class="registry-form-section">
-                    <div class="registry-section-header"><h2>Identificação</h2></div>
-                    <div class="panel-body">
-                        <div class="registry-image-field" data-image-field>
-                            <div class="registry-image-preview product-image-preview">
-                                <img th:if="${fotoAtual != null}"
-                                     th:src="@{'/uploads/' + ${fotoAtual}}"
-                                     alt="Imagem do produto"
-                                     data-image-preview>
-                                <div th:unless="${fotoAtual != null}" class="registry-image-placeholder" data-image-placeholder>
-                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 8-9 5-9-5"></path><path d="m3 8 9-5 9 5v8l-9 5-9-5Z"></path></svg>
+                    <section class="registry-form-section">
+                        <div class="registry-section-header">
+                            <h2>Identificação</h2>
+                        </div>
+                        <div class="panel-body">
+                            <div class="registry-image-field" data-image-field>
+                                <div class="registry-image-preview product-image-preview">
+                                    <img th:if="${fotoAtual != null}" th:src="@{'/uploads/' + ${fotoAtual}}"
+                                        alt="Imagem do produto" data-image-preview />
+                                    <div th:unless="${fotoAtual != null}" class="registry-image-placeholder"
+                                        data-image-placeholder>
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="m21 8-9 5-9-5"></path>
+                                            <path d="m3 8 9-5 9 5v8l-9 5-9-5Z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="registry-image-info">
+                                    <label>Imagem do produto</label>
+                                    <div class="registry-image-file-name" data-image-file-name
+                                        th:text="${fotoAtual != null ? 'Imagem cadastrada' : 'Nenhum arquivo selecionado'}">
+                                    </div>
+                                    <small>JPG ou PNG. Tamanho máximo: 5
+                                        MB.</small>
+                                </div>
+                                <div class="registry-image-actions">
+                                    <label class="button secondary compact" for="fotoProduto">Escolher arquivo</label>
+                                    <button type="button" class="button secondary compact" data-image-clear hidden>
+                                        Limpar seleção
+                                    </button>
+                                    <input id="fotoProduto" class="visually-hidden" type="file" name="foto"
+                                        accept="image/jpeg,image/png" data-image-input />
                                 </div>
                             </div>
-                            <div class="registry-image-info">
-                                <label>Imagem do produto</label>
-                                <div class="registry-image-file-name" data-image-file-name th:text="${fotoAtual != null ? 'Imagem cadastrada' : 'Nenhum arquivo selecionado'}"></div>
-                                <small>JPG ou PNG. Tamanho máximo: 5 MB.</small>
+
+                            <div class="form-grid registry-fields-after-media">
+                                <div>
+                                    <div class="field-label">
+                                        <label for="codigo">Código / SKU</label><button type="button" class="info-help"
+                                            aria-label="Informação sobre SKU"
+                                            data-tooltip="Identificador interno único do produto. Pode ser diferente do código de barras.">
+                                            i
+                                        </button>
+                                    </div>
+                                    <input id="codigo" th:field="*{codigo}" maxlength="80" autocomplete="off"
+                                        required /><small class="field-error" th:errors="*{codigo}"></small>
+                                </div>
+                                <div>
+                                    <div class="field-label">
+                                        <label for="gtin">GTIN / EAN</label><button type="button" class="info-help"
+                                            aria-label="Informação sobre GTIN"
+                                            data-tooltip="Código de barras com 8, 12, 13 ou 14 dígitos. Deixe vazio quando o produto não possuir GTIN.">
+                                            i
+                                        </button>
+                                    </div>
+                                    <input id="gtin" th:field="*{gtin}" data-mask="gtin" inputmode="numeric"
+                                        maxlength="14" /><small class="field-error" th:errors="*{gtin}"></small>
+                                </div>
+                                <div class="full-width">
+                                    <label for="nome">Nome</label><input id="nome" th:field="*{nome}" /><small
+                                        class="field-error" th:errors="*{nome}"></small>
+                                </div>
+                                <div class="full-width">
+                                    <label for="descricao">Descrição</label><textarea id="descricao"
+                                        th:field="*{descricao}" rows="3" maxlength="1000"></textarea>
+                                </div>
                             </div>
-                            <div class="registry-image-actions">
-                                <label class="button secondary compact" for="fotoProduto">Escolher arquivo</label>
-                                <button type="button" class="button secondary compact" data-image-clear hidden>Limpar seleção</button>
-                                <input id="fotoProduto" class="visually-hidden" type="file" name="foto" accept="image/jpeg,image/png" data-image-input>
+                        </div>
+                    </section>
+
+                    <section class="registry-form-section">
+                        <div class="registry-section-header">
+                            <h2>Classificação</h2>
+                        </div>
+                        <div class="panel-body form-grid form-grid-three">
+                            <div>
+                                <div class="field-label">
+                                    <label for="tipo">Tipo</label><button type="button" class="info-help"
+                                        aria-label="Informação sobre tipo de produto"
+                                        data-tooltip="Define se o cadastro representa um item simples, serviço, kit, matéria-prima ou produto com variações.">
+                                        i
+                                    </button>
+                                </div>
+                                <select id="tipo" th:field="*{tipo}" required>
+                                    <option th:each="tipoProduto : ${tiposProduto}" th:value="${tipoProduto}"
+                                        th:text="${tipoProduto.descricao}"></option>
+                                </select><small class="field-error" th:errors="*{tipo}"></small>
+                            </div>
+                            <div>
+                                <label for="marca">Marca</label><input id="marca" th:field="*{marca}" />
+                            </div>
+                            <div>
+                                <label for="categoria">Categoria</label><input id="categoria" th:field="*{categoria}" />
+                            </div>
+                            <div>
+                                <label for="subcategoria">Subcategoria</label><input id="subcategoria"
+                                    th:field="*{subcategoria}" />
+                            </div>
+                            <div>
+                                <div class="field-label">
+                                    <label for="unidadeMedida">Unidade comercial</label><button type="button"
+                                        class="info-help" aria-label="Informação sobre unidade comercial"
+                                        data-tooltip="Unidade usada nas compras, vendas e no controle do estoque, como unidade, quilograma ou litro.">
+                                        i
+                                    </button>
+                                </div>
+                                <select id="unidadeMedida" th:field="*{unidadeMedida}" required>
+                                    <option th:each="unidade : ${unidades}" th:value="${unidade}" th:text="${unidade}">
+                                    </option>
+                                </select><small class="field-error" th:errors="*{unidadeMedida}"></small>
                             </div>
                         </div>
+                    </section>
 
-                        <div class="form-grid registry-fields-after-media">
-                            <div><label for="codigo">Código / SKU</label><input id="codigo" th:field="*{codigo}" autocomplete="off"><small class="field-error" th:errors="*{codigo}"></small></div>
-                            <div><label for="gtin">GTIN / EAN</label><input id="gtin" th:field="*{gtin}" data-mask="gtin" inputmode="numeric" maxlength="14"><small class="field-error" th:errors="*{gtin}"></small></div>
-                            <div class="full-width"><label for="nome">Nome</label><input id="nome" th:field="*{nome}"><small class="field-error" th:errors="*{nome}"></small></div>
-                            <div class="full-width"><label for="descricao">Descrição</label><textarea id="descricao" th:field="*{descricao}" rows="3" maxlength="1000"></textarea></div>
+                    <section class="registry-form-section">
+                        <div class="registry-section-header">
+                            <div>
+                                <h2>Fiscal</h2>
+                                <p>
+                                    Preencha conforme a orientação da
+                                    contabilidade quando o item for usado em
+                                    documentos fiscais.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="panel-body form-grid form-grid-three">
+                            <div>
+                                <div class="field-label">
+                                    <label for="ncm">NCM</label><button type="button" class="info-help"
+                                        aria-label="Informação sobre NCM"
+                                        data-tooltip="Classificação fiscal da mercadoria com 8 dígitos. É necessária para emissão de NF-e de produtos.">
+                                        i
+                                    </button>
+                                </div>
+                                <input id="ncm" th:field="*{ncm}" inputmode="numeric" maxlength="8"
+                                    pattern="[0-9]{8}" /><small class="field-error" th:errors="*{ncm}"></small>
+                            </div>
+                            <div>
+                                <div class="field-label">
+                                    <label for="cest">CEST</label><button type="button" class="info-help"
+                                        aria-label="Informação sobre CEST"
+                                        data-tooltip="Código com 7 dígitos usado em mercadorias sujeitas à substituição tributária. Preencha somente quando aplicável.">
+                                        i
+                                    </button>
+                                </div>
+                                <input id="cest" th:field="*{cest}" inputmode="numeric" maxlength="7"
+                                    pattern="[0-9]{7}" /><small class="field-error" th:errors="*{cest}"></small>
+                            </div>
+                            <div>
+                                <div class="field-label">
+                                    <label for="origem">Origem da mercadoria</label><button type="button"
+                                        class="info-help" aria-label="Informação sobre origem"
+                                        data-tooltip="Indica se a mercadoria é nacional ou estrangeira e seu conteúdo de importação para fins de ICMS.">
+                                        i
+                                    </button>
+                                </div>
+                                <select id="origem" th:field="*{origem}">
+                                    <option value="">Selecione</option>
+                                    <option th:each="origemItem : ${origens}" th:value="${origemItem}"
+                                        th:text="${origemItem.descricao}"></option>
+                                </select>
+                            </div>
+                            <div>
+                                <div class="field-label">
+                                    <label for="unidadeTributavel">Unidade tributável</label><button type="button"
+                                        class="info-help" aria-label="Informação sobre unidade tributável"
+                                        data-tooltip="Unidade informada ao Fisco. Normalmente é igual à unidade comercial.">
+                                        i
+                                    </button>
+                                </div>
+                                <select id="unidadeTributavel" th:field="*{unidadeTributavel}">
+                                    <option th:each="unidade : ${unidades}" th:value="${unidade}" th:text="${unidade}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div>
+                                <div class="field-label">
+                                    <label for="fatorConversaoTributavel">Fator de conversão</label><button
+                                        type="button" class="info-help" aria-label="Informação sobre fator de conversão"
+                                        data-tooltip="Quantidade na unidade tributável correspondente a uma unidade comercial. Use 1 quando forem iguais.">
+                                        i
+                                    </button>
+                                </div>
+                                <input id="fatorConversaoTributavel" type="number" min="0.000001" step="0.000001"
+                                    th:field="*{fatorConversaoTributavel}" inputmode="decimal" required /><small
+                                    class="field-error" th:errors="*{fatorConversaoTributavel}"></small>
+                            </div>
+                            <div>
+                                <div class="field-label">
+                                    <label for="tipoItemSped">Tipo do item no SPED</label><button type="button"
+                                        class="info-help" aria-label="Informação sobre tipo do item SPED"
+                                        data-tooltip="Classificação usada no Registro 0200 do SPED Fiscal. Confirme a opção com a contabilidade.">
+                                        i
+                                    </button>
+                                </div>
+                                <select id="tipoItemSped" th:field="*{tipoItemSped}">
+                                    <option value="">Selecione</option>
+                                    <option th:each="tipoSped : ${tiposItemSped}" th:value="${tipoSped}"
+                                        th:text="${tipoSped.descricao}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="registry-form-section">
+                        <div class="registry-section-header">
+                            <h2>Comercial</h2>
+                        </div>
+                        <div class="panel-body form-grid">
+                            <div>
+                                <label for="custoVisual">Custo</label>
+                                <div class="input-prefix">
+                                    <span>R$</span><input id="custoVisual" type="text" inputmode="numeric"
+                                        autocomplete="off" data-money-input data-money-target="custo" />
+                                </div>
+                                <input type="hidden" id="custo" th:field="*{custo}" data-money-value />
+                                <small class="field-error" th:errors="*{custo}"></small>
+                            </div>
+                            <div>
+                                <label for="precoVendaVisual">Preço de venda</label>
+                                <div class="input-prefix">
+                                    <span>R$</span><input id="precoVendaVisual" type="text" inputmode="numeric"
+                                        autocomplete="off" data-money-input data-money-target="precoVenda" />
+                                </div>
+                                <input type="hidden" id="precoVenda" th:field="*{precoVenda}" data-money-value />
+                                <small class="field-error" th:errors="*{precoVenda}"></small>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="registry-form-section">
+                        <div class="registry-section-header">
+                            <h2>Estoque</h2>
+                        </div>
+                        <div class="panel-body form-grid">
+                            <div class="full-width checkbox-field">
+                                <input id="controlaEstoque" type="checkbox" th:field="*{controlaEstoque}" />
+                                <div>
+                                    <div class="field-label">
+                                        <label for="controlaEstoque">Controlar estoque deste
+                                            item</label><button type="button" class="info-help"
+                                            aria-label="Informação sobre controle de estoque"
+                                            data-tooltip="Desative para serviços e itens sem saldo físico. O saldo continua sendo alterado exclusivamente por movimentações.">
+                                            i
+                                        </button>
+                                    </div>
+                                    <small>Quando ativo, entradas, saídas e
+                                        limites de estoque são acompanhados
+                                        pelo ERP.</small>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="estoqueMinimo">Estoque mínimo</label><input id="estoqueMinimo" type="number"
+                                    min="0" step="0.001" th:field="*{estoqueMinimo}" inputmode="decimal" />
+                            </div>
+                            <div>
+                                <label for="estoqueMaximo">Estoque máximo</label><input id="estoqueMaximo" type="number"
+                                    min="0" step="0.001" th:field="*{estoqueMaximo}" inputmode="decimal" />
+                            </div>
+                            <div class="full-width">
+                                <label for="localizacao">Localização</label><input id="localizacao"
+                                    th:field="*{localizacao}" />
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="registry-form-section">
+                        <div class="registry-section-header">
+                            <div>
+                                <h2>Logística</h2>
+                                <p>
+                                    Dados utilizados em fretes, expedição e
+                                    integrações com lojas virtuais.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="panel-body form-grid form-grid-three">
+                            <div>
+                                <div class="field-label">
+                                    <label for="pesoLiquido">Peso líquido (kg)</label><button type="button"
+                                        class="info-help" aria-label="Informação sobre peso líquido"
+                                        data-tooltip="Peso do produto sem a embalagem de envio.">
+                                        i
+                                    </button>
+                                </div>
+                                <input id="pesoLiquido" type="number" min="0" step="0.001" th:field="*{pesoLiquido}"
+                                    inputmode="decimal" /><small class="field-error" th:errors="*{pesoLiquido}"></small>
+                            </div>
+                            <div>
+                                <div class="field-label">
+                                    <label for="pesoBruto">Peso bruto (kg)</label><button type="button"
+                                        class="info-help" aria-label="Informação sobre peso bruto"
+                                        data-tooltip="Peso total do produto pronto para despacho, incluindo a embalagem.">
+                                        i
+                                    </button>
+                                </div>
+                                <input id="pesoBruto" type="number" min="0" step="0.001" th:field="*{pesoBruto}"
+                                    inputmode="decimal" /><small class="field-error" th:errors="*{pesoBruto}"></small>
+                            </div>
+                            <div>
+                                <label for="volumes">Volumes</label><input id="volumes" type="number" min="1" step="1"
+                                    th:field="*{volumes}" inputmode="numeric" /><small class="field-error"
+                                    th:errors="*{volumes}"></small>
+                            </div>
+                            <div>
+                                <label for="largura">Largura (cm)</label><input id="largura" type="number" min="0"
+                                    step="0.01" th:field="*{largura}" inputmode="decimal" /><small class="field-error"
+                                    th:errors="*{largura}"></small>
+                            </div>
+                            <div>
+                                <label for="altura">Altura (cm)</label><input id="altura" type="number" min="0"
+                                    step="0.01" th:field="*{altura}" inputmode="decimal" /><small class="field-error"
+                                    th:errors="*{altura}"></small>
+                            </div>
+                            <div>
+                                <label for="comprimento">Comprimento (cm)</label><input id="comprimento" type="number"
+                                    min="0" step="0.01" th:field="*{comprimento}" inputmode="decimal" /><small
+                                    class="field-error" th:errors="*{comprimento}"></small>
+                            </div>
+                            <div>
+                                <div class="field-label">
+                                    <label for="prazoPreparacaoDias">Preparação (dias)</label><button type="button"
+                                        class="info-help" aria-label="Informação sobre prazo de preparação"
+                                        data-tooltip="Quantidade de dias necessários para deixar o produto disponível para despacho.">
+                                        i
+                                    </button>
+                                </div>
+                                <input id="prazoPreparacaoDias" type="number" min="0" step="1"
+                                    th:field="*{prazoPreparacaoDias}" inputmode="numeric" /><small class="field-error"
+                                    th:errors="*{prazoPreparacaoDias}"></small>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="registry-form-actions">
+                        <div class="registry-actions-buttons">
+                            <a class="button secondary" th:href="@{/produtos}">Cancelar</a>
+                            <button type="submit">Salvar produto</button>
                         </div>
                     </div>
-                </section>
-
-                <section class="registry-form-section">
-                    <div class="registry-section-header"><h2>Classificação</h2></div>
-                    <div class="panel-body form-grid form-grid-three">
-                        <div><label for="marca">Marca</label><input id="marca" th:field="*{marca}"></div>
-                        <div><label for="categoria">Categoria</label><input id="categoria" th:field="*{categoria}"></div>
-                        <div><label for="subcategoria">Subcategoria</label><input id="subcategoria" th:field="*{subcategoria}"></div>
-                        <div><label for="unidadeMedida">Unidade</label><select id="unidadeMedida" th:field="*{unidadeMedida}"><option th:each="unidade : ${unidades}" th:value="${unidade}" th:text="${unidade}"></option></select></div>
-                    </div>
-                </section>
-
-                <section class="registry-form-section">
-                    <div class="registry-section-header"><h2>Comercial</h2></div>
-                    <div class="panel-body form-grid">
-                        <div>
-                            <label for="custoVisual">Custo</label>
-                            <div class="input-prefix"><span>R$</span><input id="custoVisual" type="text" inputmode="numeric" autocomplete="off" data-money-input data-money-target="custo"></div>
-                            <input type="hidden" id="custo" th:field="*{custo}" data-money-value>
-                            <small class="field-error" th:errors="*{custo}"></small>
-                        </div>
-                        <div>
-                            <label for="precoVendaVisual">Preço de venda</label>
-                            <div class="input-prefix"><span>R$</span><input id="precoVendaVisual" type="text" inputmode="numeric" autocomplete="off" data-money-input data-money-target="precoVenda"></div>
-                            <input type="hidden" id="precoVenda" th:field="*{precoVenda}" data-money-value>
-                            <small class="field-error" th:errors="*{precoVenda}"></small>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="registry-form-section">
-                    <div class="registry-section-header"><h2>Estoque</h2></div>
-                    <div class="panel-body form-grid">
-                        <div><label for="estoqueMinimo">Estoque mínimo</label><input id="estoqueMinimo" type="number" min="0" step="0.001" th:field="*{estoqueMinimo}" inputmode="decimal"></div>
-                        <div><label for="estoqueMaximo">Estoque máximo</label><input id="estoqueMaximo" type="number" min="0" step="0.001" th:field="*{estoqueMaximo}" inputmode="decimal"></div>
-                        <div class="full-width"><label for="localizacao">Localização</label><input id="localizacao" th:field="*{localizacao}"></div>
-                    </div>
-                </section>
-
-                <div class="registry-form-actions">
-                    <div class="registry-actions-buttons">
-                        <a class="button secondary" th:href="@{/produtos}">Cancelar</a>
-                        <button type="submit">Salvar produto</button>
-                    </div>
-                </div>
-            </form>
-        </main>
+                </form>
+            </main>
+        </div>
     </div>
-</div>
-<script th:src="@{/js/cadastros.js}" defer></script>
-<script th:src="@{/js/upload.js}" defer></script>
+    <script th:src="@{/js/cadastros.js}" defer></script>
+    <script th:src="@{/js/upload.js}" defer></script>
 </body>
+
 </html>

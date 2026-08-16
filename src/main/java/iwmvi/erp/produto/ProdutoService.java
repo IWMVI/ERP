@@ -1,11 +1,13 @@
 package iwmvi.erp.produto;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import iwmvi.erp.auditoria.AuditoriaService;
 import iwmvi.erp.integracao.ValidacaoCadastroService;
 import iwmvi.erp.shared.exception.CodigoProdutoJaCadastradoException;
-import java.util.List;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProdutoService {
@@ -28,19 +30,23 @@ public class ProdutoService {
         if (termo == null || termo.isBlank()) {
             return repository.findAllByOrderByNomeAsc();
         }
-        return repository.findByNomeContainingIgnoreCaseOrCodigoContainingIgnoreCaseOrderByNomeAsc(termo, termo);
+        return repository.findByNomeContainingIgnoreCaseOrCodigoContainingIgnoreCaseOrderByNomeAsc(
+                termo, termo);
     }
 
     @Transactional(readOnly = true)
     public Produto buscar(Long id) {
-        return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Produto não encontrado."));
+        return repository
+                .findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado."));
     }
 
     @Transactional
     public Produto criar(ProdutoRequest request) {
         validarCadastro(request, null);
         Produto produto = repository.save(new Produto(request));
-        auditoriaService.registrar("CRIAR", "Produto", produto.getId(), produto.getCodigo() + " - " + produto.getNome());
+        auditoriaService.registrar(
+                "CRIAR", "Produto", produto.getId(), produto.getCodigo() + " - " + produto.getNome());
         return produto;
     }
 
@@ -49,7 +55,8 @@ public class ProdutoService {
         validarCadastro(request, id);
         Produto produto = buscar(id);
         produto.atualizar(request);
-        auditoriaService.registrar("ATUALIZAR", "Produto", id, produto.getCodigo() + " - " + produto.getNome());
+        auditoriaService.registrar(
+                "ATUALIZAR", "Produto", id, produto.getCodigo() + " - " + produto.getNome());
         return produto;
     }
 
@@ -64,12 +71,24 @@ public class ProdutoService {
     public void alternarAtivo(Long id) {
         Produto produto = buscar(id);
         produto.alternarAtivo();
-        auditoriaService.registrar(produto.isAtivo() ? "ATIVAR" : "INATIVAR", "Produto", id, produto.getNome());
+        auditoriaService.registrar(
+                produto.isAtivo() ? "ATIVAR" : "INATIVAR", "Produto", id, produto.getNome());
     }
 
     private void validarCadastro(ProdutoRequest request, Long id) {
         validarCodigo(request.codigo(), id);
         validacaoCadastroService.validarGtin(request.gtin());
+        if (request.estoqueMaximo() != null
+                && request.estoqueMaximo().signum() > 0
+                && request.estoqueMaximo().compareTo(request.estoqueMinimo()) < 0) {
+            throw new IllegalArgumentException(
+                    "O estoque máximo não pode ser menor que o estoque mínimo.");
+        }
+        if (request.pesoLiquido() != null
+                && request.pesoBruto() != null
+                && request.pesoBruto().compareTo(request.pesoLiquido()) < 0) {
+            throw new IllegalArgumentException("O peso bruto não pode ser menor que o peso líquido.");
+        }
     }
 
     private void validarCodigo(String codigo, Long id) {
