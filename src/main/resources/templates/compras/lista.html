@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Compras | ERP</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
+</head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('compras')}"></aside>
+    <div class="app-main">
+        <header th:replace="~{fragments/topbar :: topbar('Operação / Compras')}"></header>
+        <main class="content registry-page">
+            <div th:replace="~{fragments/alerts :: alerts}"></div>
+            <div class="page-heading">
+                <div><h1>Pedidos de compra</h1><p class="muted">Controle compras de fornecedores e seus recebimentos.</p></div>
+                <a class="button" th:href="@{/compras/novo}">Nova compra</a>
+            </div>
+            <section class="registry-card">
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Pedido</th><th>Fornecedor</th><th>Data</th><th>Total</th><th>Status</th><th></th></tr></thead>
+                        <tbody>
+                        <tr th:each="pedido : ${pedidos}">
+                            <td th:text="${'#' + pedido.id}"></td>
+                            <td th:text="${pedido.fornecedor.nome}"></td>
+                            <td th:text="${#temporals.format(pedido.dataCriacao, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td th:text="${'R$ ' + #numbers.formatDecimal(pedido.total, 1, 2)}"></td>
+                            <td><span class="badge" th:classappend="${pedido.status.name() == 'RECEBIDO'} ? ' success'" th:text="${pedido.status}"></span></td>
+                            <td><a th:href="@{/compras/{id}(id=${pedido.id})}">Abrir</a></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(pedidos)}"><td colspan="6">Nenhum pedido de compra encontrado.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+</body>
+</html>
