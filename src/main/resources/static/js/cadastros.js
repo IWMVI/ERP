@@ -1,19 +1,23 @@
 (() => {
     const digits = (value) => (value || "").replace(/\D/g, "");
+    const documentChars = (value) => (value || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 14);
 
     const maskCpfCnpj = (value) => {
-        const raw = digits(value).slice(0, 14);
-        if (raw.length <= 11) {
+        const raw = documentChars(value);
+        const isCnpj = /[A-Z]/.test(raw) || raw.length > 11;
+
+        if (!isCnpj) {
             return raw
                 .replace(/(\d{3})(\d)/, "$1.$2")
                 .replace(/(\d{3})(\d)/, "$1.$2")
                 .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
         }
+
         return raw
-            .replace(/(\d{2})(\d)/, "$1.$2")
-            .replace(/(\d{3})(\d)/, "$1.$2")
-            .replace(/(\d{3})(\d)/, "$1/$2")
-            .replace(/(\d{4})(\d{1,2})$/, "$1-$2");
+            .replace(/([A-Z0-9]{2})([A-Z0-9])/, "$1.$2")
+            .replace(/([A-Z0-9]{3})([A-Z0-9])/, "$1.$2")
+            .replace(/([A-Z0-9]{3})([A-Z0-9])/, "$1/$2")
+            .replace(/([A-Z0-9]{4})(\d{1,2})$/, "$1-$2");
     };
 
     const maskCep = (value) => digits(value).slice(0, 8).replace(/(\d{5})(\d)/, "$1-$2");
@@ -21,13 +25,9 @@
     const maskPhone = (value) => {
         const raw = digits(value).slice(0, 11);
         if (raw.length <= 10) {
-            return raw
-                .replace(/(\d{2})(\d)/, "($1) $2")
-                .replace(/(\d{4})(\d)/, "$1-$2");
+            return raw.replace(/(\d{2})(\d)/, "($1) $2").replace(/(\d{4})(\d)/, "$1-$2");
         }
-        return raw
-            .replace(/(\d{2})(\d)/, "($1) $2")
-            .replace(/(\d{5})(\d)/, "$1-$2");
+        return raw.replace(/(\d{2})(\d)/, "($1) $2").replace(/(\d{5})(\d)/, "$1-$2");
     };
 
     const maskGtin = (value) => digits(value).slice(0, 14);
@@ -43,11 +43,9 @@
     document.querySelectorAll("[data-mask]").forEach((input) => {
         const formatter = formatters[input.dataset.mask];
         if (!formatter) return;
-
         const apply = () => {
             input.value = formatter(input.value);
         };
-
         input.addEventListener("input", apply);
         apply();
     });
@@ -94,24 +92,37 @@
     const documentoTipo = document.querySelector("[data-documento-tipo]");
     const tipoPessoaInput = document.querySelector("[name='tipoPessoa']");
     const consultarCnpjButton = document.querySelector("[data-action='consultar-cnpj']");
+    const nomeLabel = document.querySelector("[data-label-nome-pessoa]");
+
+    const atualizarCamposPorTipo = (tipo) => {
+        document.querySelectorAll("[data-pessoa-juridica]").forEach((element) => {
+            element.hidden = tipo !== "JURIDICA";
+        });
+        document.querySelectorAll("[data-pessoa-fisica]").forEach((element) => {
+            element.hidden = tipo !== "FISICA";
+        });
+        if (nomeLabel) {
+            nomeLabel.textContent = tipo === "JURIDICA" ? "Razão social" : tipo === "FISICA" ? "Nome completo" : "Nome / Razão social";
+        }
+    };
 
     const atualizarTipoDocumento = () => {
         if (!documentoInput) return;
-        const raw = digits(documentoInput.value);
-        let tipo = "";
-        let descricao = "Informe CPF ou CNPJ";
-
-        if (raw.length === 11) {
-            tipo = "FISICA";
-            descricao = "CPF · Pessoa física";
-        } else if (raw.length === 14) {
-            tipo = "JURIDICA";
-            descricao = "CNPJ · Pessoa jurídica";
-        }
+        const raw = documentChars(documentoInput.value);
+        const cpf = /^\d{11}$/.test(raw);
+        const cnpj = /^[A-Z0-9]{12}\d{2}$/.test(raw);
+        const tipo = cpf ? "FISICA" : cnpj ? "JURIDICA" : "";
 
         if (tipoPessoaInput) tipoPessoaInput.value = tipo;
-        if (documentoTipo) documentoTipo.textContent = descricao;
-        if (consultarCnpjButton) consultarCnpjButton.hidden = raw.length !== 14;
+        if (documentoTipo) {
+            documentoTipo.textContent = cpf
+                ? "CPF · Pessoa física"
+                : cnpj
+                  ? "CNPJ · Pessoa jurídica"
+                  : "Informe CPF ou CNPJ";
+        }
+        if (consultarCnpjButton) consultarCnpjButton.hidden = !cnpj;
+        atualizarCamposPorTipo(tipo);
     };
 
     documentoInput?.addEventListener("input", atualizarTipoDocumento);
@@ -132,11 +143,8 @@
 
         showLookupState(cepInput, "Consultando CEP...");
         try {
-            const response = await fetch(`/integracoes/cep/${cep}`, {
-                headers: { Accept: "application/json" },
-            });
+            const response = await fetch(`/integracoes/cep/${cep}`, { headers: { Accept: "application/json" } });
             if (!response.ok) throw new Error(await readError(response, "CEP não encontrado."));
-
             const data = await response.json();
             setIfPresent("logradouro", data.logradouro);
             setIfPresent("bairro", data.bairro);
@@ -152,12 +160,11 @@
     cepInput?.addEventListener("blur", consultarCep);
 
     let ultimoCnpjConsultado = "";
-
     const consultarCnpj = async ({ force = false } = {}) => {
         if (!documentoInput) return;
-        const cnpj = digits(documentoInput.value);
-        if (cnpj.length !== 14) {
-            if (force) showLookupState(documentoInput, "A consulta requer um CNPJ com 14 dígitos.", "error");
+        const cnpj = documentChars(documentoInput.value);
+        if (!/^[A-Z0-9]{12}\d{2}$/.test(cnpj)) {
+            if (force) showLookupState(documentoInput, "Informe um CNPJ válido com 14 posições.", "error");
             return;
         }
         if (!force && cnpj === ultimoCnpjConsultado) return;
@@ -165,11 +172,8 @@
         setLoading(consultarCnpjButton, true);
         showLookupState(documentoInput, "Consultando dados do CNPJ...");
         try {
-            const response = await fetch(`/integracoes/cnpj/${cnpj}`, {
-                headers: { Accept: "application/json" },
-            });
+            const response = await fetch(`/integracoes/cnpj/${cnpj}`, { headers: { Accept: "application/json" } });
             if (!response.ok) throw new Error(await readError(response, "CNPJ não encontrado."));
-
             const data = await response.json();
             setIfPresent("nome", data.razaoSocial);
             setIfPresent("nomeFantasia", data.nomeFantasia);
@@ -182,7 +186,6 @@
             setIfPresent("bairro", data.bairro);
             setIfPresent("cidade", data.municipio);
             setIfPresent("estado", data.uf);
-
             ultimoCnpjConsultado = cnpj;
             const situacao = data.situacaoCadastral ? ` Situação: ${data.situacaoCadastral}.` : "";
             showLookupState(documentoInput, `Dados do CNPJ carregados.${situacao}`, "success");
