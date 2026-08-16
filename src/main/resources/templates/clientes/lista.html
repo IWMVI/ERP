@@ -17,26 +17,22 @@
                 <div><h1>Clientes</h1><p class="muted">Pessoas físicas e jurídicas vinculadas à operação comercial.</p></div>
                 <a class="button" th:href="@{/clientes/novo}">Novo cliente</a>
             </div>
-            <div class="alert success" th:if="${sucesso}" th:text="${sucesso}"></div>
             <section class="registry-card">
-                <div class="registry-card-header"><h2>Clientes cadastrados</h2><span class="muted" th:text="${#lists.size(clientes) + ' registro(s)'}"></span></div>
                 <div class="table-wrapper">
                     <table>
                         <thead><tr><th>Nome</th><th>CPF/CNPJ</th><th>Contato</th><th>Status</th><th aria-label="Ações"></th></tr></thead>
                         <tbody>
                         <tr th:each="cliente : ${clientes}">
-                            <td th:text="${cliente.nome}"></td><td data-format="documento" th:text="${cliente.documento}"></td><td th:text="${cliente.email}"></td>
+                            <td th:text="${cliente.nome}"></td>
+                            <td data-format="documento" th:text="${cliente.documento}"></td>
+                            <td th:text="${cliente.email}"></td>
                             <td><span class="badge" th:classappend="${cliente.ativo} ? ' success'" th:text="${cliente.ativo ? 'Ativo' : 'Inativo'}"></span></td>
                             <td>
                                 <details class="row-actions">
-                                    <summary aria-label="Abrir ações do cliente" title="Ações">
-                                        <svg class="row-actions-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
-                                    </summary>
+                                    <summary aria-label="Abrir ações do cliente" title="Ações"><svg class="row-actions-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></summary>
                                     <div class="row-actions-menu">
                                         <a th:href="@{/clientes/{id}/editar(id=${cliente.id})}">Editar</a>
-                                        <form th:action="@{/clientes/{id}/status(id=${cliente.id})}" method="post">
-                                            <button type="submit" th:text="${cliente.ativo ? 'Inativar' : 'Ativar'}"></button>
-                                        </form>
+                                        <form th:action="@{/clientes/{id}/status(id=${cliente.id})}" method="post"><button type="submit" th:text="${cliente.ativo ? 'Inativar' : 'Ativar'}"></button></form>
                                     </div>
                                 </details>
                             </td>
@@ -45,6 +41,7 @@
                         </tbody>
                     </table>
                 </div>
+                <nav th:replace="~{fragments/pagination :: pagination(${paginacao})}"></nav>
             </section>
         </main>
     </div>
