@@ -92,7 +92,8 @@ public class PedidoCompraService {
         return pedidoRepository.findAllByOrderByDataCriacaoDesc();
     }
 
-    private PedidoCompra buscar(Long id) {
+    @Transactional(readOnly = true)
+    public PedidoCompra buscar(Long id) {
         return pedidoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Pedido de compra não encontrado."));
     }
