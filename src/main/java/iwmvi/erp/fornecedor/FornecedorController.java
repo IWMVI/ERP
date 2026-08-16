@@ -6,6 +6,7 @@ import iwmvi.erp.shared.exception.CepInvalidoException;
 import iwmvi.erp.shared.exception.DocumentoInvalidoException;
 import iwmvi.erp.shared.exception.DocumentoJaCadastradoException;
 import iwmvi.erp.shared.validation.DocumentoValidator;
+import iwmvi.erp.shared.web.PageView;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,8 +33,10 @@ public class FornecedorController {
     }
 
     @GetMapping
-    public String listar(Model model) {
-        model.addAttribute("fornecedores", service.listar());
+    public String listar(@RequestParam(defaultValue = "0") int page, Model model) {
+        PageView<Fornecedor> paginacao = PageView.of(service.listar(), page, "/fornecedores");
+        model.addAttribute("fornecedores", paginacao.items());
+        model.addAttribute("paginacao", paginacao);
         return "fornecedores/lista";
     }
 
@@ -48,20 +51,10 @@ public class FornecedorController {
         try {
             PessoaCadastroLookupResult dados = pessoaCadastroLookupService.consultar(documento);
             FornecedorRequest request = new FornecedorRequest(
-                    valor(dados.nome()),
-                    valor(dados.nomeFantasia()),
-                    dados.documento(),
-                    valor(dados.email()),
-                    valor(dados.telefone()),
-                    "",
-                    valor(dados.cep()),
-                    valor(dados.logradouro()),
-                    valor(dados.numero()),
-                    valor(dados.complemento()),
-                    valor(dados.bairro()),
-                    valor(dados.cidade()),
-                    valor(dados.estado()),
-                    "");
+                    valor(dados.nome()), valor(dados.nomeFantasia()), dados.documento(),
+                    valor(dados.email()), valor(dados.telefone()), "", valor(dados.cep()),
+                    valor(dados.logradouro()), valor(dados.numero()), valor(dados.complemento()),
+                    valor(dados.bairro()), valor(dados.cidade()), valor(dados.estado()), "");
             preparar(model, request, null);
             model.addAttribute("cadastroNovo", true);
             model.addAttribute("avisoConsulta", dados.aviso());
@@ -79,39 +72,24 @@ public class FornecedorController {
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable Long id, Model model) {
         Fornecedor fornecedor = service.buscar(id);
-        preparar(
-                model,
-                new FornecedorRequest(
-                        fornecedor.getNome(),
-                        fornecedor.getNomeFantasia(),
-                        fornecedor.getDocumento(),
-                        fornecedor.getEmail(),
-                        fornecedor.getTelefone(),
-                        fornecedor.getCelular(),
-                        fornecedor.getCep(),
-                        fornecedor.getLogradouro(),
-                        fornecedor.getNumero(),
-                        fornecedor.getComplemento(),
-                        fornecedor.getBairro(),
-                        fornecedor.getCidade(),
-                        fornecedor.getEstado(),
-                        fornecedor.getObservacoes()),
+        preparar(model,
+                new FornecedorRequest(fornecedor.getNome(), fornecedor.getNomeFantasia(),
+                        fornecedor.getDocumento(), fornecedor.getEmail(), fornecedor.getTelefone(),
+                        fornecedor.getCelular(), fornecedor.getCep(), fornecedor.getLogradouro(),
+                        fornecedor.getNumero(), fornecedor.getComplemento(), fornecedor.getBairro(),
+                        fornecedor.getCidade(), fornecedor.getEstado(), fornecedor.getObservacoes()),
                 id);
         return "fornecedores/form";
     }
 
     @PostMapping
-    public String criar(
-            @Valid @ModelAttribute("fornecedorRequest") FornecedorRequest request,
-            BindingResult result,
-            Model model,
-            RedirectAttributes redirect) {
+    public String criar(@Valid @ModelAttribute("fornecedorRequest") FornecedorRequest request,
+            BindingResult result, Model model, RedirectAttributes redirect) {
         if (result.hasErrors()) {
             preparar(model, request, null);
             model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o fornecedor.");
             return "fornecedores/form";
         }
-
         try {
             service.criar(request);
         } catch (DocumentoJaCadastradoException | DocumentoInvalidoException exception) {
@@ -125,24 +103,19 @@ public class FornecedorController {
             model.addAttribute("erroGlobal", exception.getMessage());
             return "fornecedores/form";
         }
-
         redirect.addFlashAttribute("sucesso", "Fornecedor cadastrado com sucesso.");
         return "redirect:/fornecedores";
     }
 
     @PostMapping("/{id}")
-    public String atualizar(
-            @PathVariable Long id,
+    public String atualizar(@PathVariable Long id,
             @Valid @ModelAttribute("fornecedorRequest") FornecedorRequest request,
-            BindingResult result,
-            Model model,
-            RedirectAttributes redirect) {
+            BindingResult result, Model model, RedirectAttributes redirect) {
         if (result.hasErrors()) {
             preparar(model, request, id);
             model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o fornecedor.");
             return "fornecedores/form";
         }
-
         try {
             service.atualizar(id, request);
         } catch (DocumentoJaCadastradoException | DocumentoInvalidoException exception) {
@@ -156,7 +129,6 @@ public class FornecedorController {
             model.addAttribute("erroGlobal", exception.getMessage());
             return "fornecedores/form";
         }
-
         redirect.addFlashAttribute("sucesso", "Fornecedor atualizado com sucesso.");
         return "redirect:/fornecedores";
     }
@@ -176,17 +148,14 @@ public class FornecedorController {
         model.addAttribute("voltarUrl", "/fornecedores");
         model.addAttribute("documento", documento);
         model.addAttribute("erro", erro);
-        if (erro != null && !erro.isBlank()) {
-            model.addAttribute("erroGlobal", erro);
-        }
+        if (erro != null && !erro.isBlank()) model.addAttribute("erroGlobal", erro);
     }
 
     private void preparar(Model model, FornecedorRequest request, Long id) {
         model.addAttribute("fornecedorRequest", request);
         model.addAttribute("id", id);
         String documento = DocumentoValidator.normalizarDocumento(request.documento());
-        model.addAttribute(
-                "tipoPessoa", DocumentoValidator.documentoEhCnpj(documento) ? "JURIDICA" : "FISICA");
+        model.addAttribute("tipoPessoa", DocumentoValidator.documentoEhCnpj(documento) ? "JURIDICA" : "FISICA");
     }
 
     private String valor(String valor) {
