@@ -24,11 +24,11 @@ public record ClienteRequest(
 
     @Override
     public TipoPessoa tipoPessoa() {
-        String digits = DocumentoValidator.somenteDigitos(documento);
-        if (digits.length() == 11) {
+        String normalizado = DocumentoValidator.normalizarDocumento(documento);
+        if (DocumentoValidator.documentoEhCpf(normalizado)) {
             return TipoPessoa.FISICA;
         }
-        if (digits.length() == 14) {
+        if (DocumentoValidator.documentoEhCnpj(normalizado)) {
             return TipoPessoa.JURIDICA;
         }
         return tipoPessoa;
