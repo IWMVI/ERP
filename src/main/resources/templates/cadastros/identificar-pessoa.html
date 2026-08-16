@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${titulo + ' | ERP'}">Cadastro | ERP</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
+    <link rel="stylesheet" th:href="@{/css/cadastros.css}">
+</head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar(${activePage})}"></aside>
+    <div class="app-main">
+        <header th:replace="~{fragments/topbar :: topbar(${breadcrumb})}"></header>
+        <main class="content registry-page">
+            <div class="registry-page-header">
+                <h1 th:text="${titulo}"></h1>
+                <p>Informe o documento para identificar o tipo de pessoa antes de continuar.</p>
+            </div>
+
+            <section class="registry-form-stack identification-step">
+                <form th:action="${formAction}" method="post" class="identification-form">
+                    <div class="registry-section-header"><h2>Identificação</h2></div>
+                    <div class="panel-body">
+                        <div class="alert error" th:if="${erro}" th:text="${erro}"></div>
+                        <div class="field-group identification-document-field">
+                            <label for="documento">CPF ou CNPJ</label>
+                            <input id="documento"
+                                   name="documento"
+                                   th:value="${documento}"
+                                   data-mask="documento"
+                                   data-document-identification
+                                   autocomplete="off"
+                                   autofocus
+                                   required>
+                            <small class="document-type" data-document-identification-type>Informe CPF ou CNPJ</small>
+                        </div>
+                    </div>
+                    <div class="registry-form-actions">
+                        <div class="registry-actions-buttons">
+                            <a class="button secondary" th:href="${voltarUrl}">Cancelar</a>
+                            <button type="submit">Continuar</button>
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/cadastros.js}" defer></script>
+</body>
+</html>
