@@ -51,7 +51,19 @@
 textarea {
     width: 100%;
     min-height: 96px;
+    padding: 9px 10px;
+    border: 1px solid #bcc7d1;
+    border-radius: 4px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font: inherit;
+    outline: none;
     resize: vertical;
+}
+
+textarea:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px rgb(47 111 115 / 14%);
 }
 
 @media (max-width: 720px) {

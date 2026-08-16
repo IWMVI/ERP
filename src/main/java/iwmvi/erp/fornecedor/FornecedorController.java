@@ -32,7 +32,7 @@ public class FornecedorController {
 
     @GetMapping("/novo")
     public String novo(Model model) {
-        preparar(model, new FornecedorRequest("", "", "", "", "", "", "", "", ""), null);
+        preparar(model, vazio(), null);
         return "fornecedores/form";
     }
 
@@ -43,14 +43,19 @@ public class FornecedorController {
                 model,
                 new FornecedorRequest(
                         fornecedor.getNome(),
+                        fornecedor.getNomeFantasia(),
                         fornecedor.getDocumento(),
                         fornecedor.getEmail(),
                         fornecedor.getTelefone(),
+                        fornecedor.getCelular(),
+                        fornecedor.getCep(),
                         fornecedor.getLogradouro(),
                         fornecedor.getNumero(),
+                        fornecedor.getComplemento(),
+                        fornecedor.getBairro(),
                         fornecedor.getCidade(),
                         fornecedor.getEstado(),
-                        fornecedor.getCep()),
+                        fornecedor.getObservacoes()),
                 id);
         return "fornecedores/form";
     }
@@ -119,5 +124,9 @@ public class FornecedorController {
     private void preparar(Model model, FornecedorRequest request, Long id) {
         model.addAttribute("fornecedorRequest", request);
         model.addAttribute("id", id);
+    }
+
+    private FornecedorRequest vazio() {
+        return new FornecedorRequest("", "", "", "", "", "", "", "", "", "", "", "", "", "");
     }
 }

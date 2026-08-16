@@ -25,7 +25,7 @@
                         <thead><tr><th>Nome</th><th>CPF/CNPJ</th><th>Contato</th><th>Status</th><th>Ações</th></tr></thead>
                         <tbody>
                         <tr th:each="cliente : ${clientes}">
-                            <td th:text="${cliente.nome}"></td><td th:text="${cliente.documento}"></td><td th:text="${cliente.email}"></td>
+                            <td th:text="${cliente.nome}"></td><td data-format="documento" th:text="${cliente.documento}"></td><td th:text="${cliente.email}"></td>
                             <td><span class="badge" th:classappend="${cliente.ativo} ? ' success'" th:text="${cliente.ativo ? 'Ativo' : 'Inativo'}"></span></td>
                             <td><div class="user-menu"><a th:href="@{/clientes/{id}/editar(id=${cliente.id})}">Editar</a><form th:action="@{/clientes/{id}/status(id=${cliente.id})}" method="post"><button class="link-button" type="submit" th:text="${cliente.ativo ? 'Inativar' : 'Ativar'}"></button></form></div></td>
                         </tr>
@@ -37,5 +37,6 @@
         </main>
     </div>
 </div>
+<script th:src="@{/js/cadastros.js}" defer></script>
 </body>
 </html>

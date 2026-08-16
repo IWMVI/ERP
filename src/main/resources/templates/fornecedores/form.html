@@ -6,6 +6,7 @@
     <title>Fornecedor | ERP</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
     <link rel="stylesheet" th:href="@{/css/navigation.css}">
+    <link rel="stylesheet" th:href="@{/css/cadastros.css}">
 </head>
 <body>
 <div class="app-shell">
@@ -20,6 +21,7 @@
                     <div class="panel-body form-grid">
                         <div class="field-group"><label for="documento">CPF / CNPJ</label><input id="documento" th:field="*{documento}" data-mask="documento" data-lookup-cnpj inputmode="numeric" autocomplete="off"><small data-lookup-status class="field-hint">Para CNPJ, os dados podem ser consultados automaticamente.</small><small class="field-error" th:errors="*{documento}"></small></div>
                         <div><label for="nome">Nome / Razão social</label><input id="nome" th:field="*{nome}"><small class="field-error" th:errors="*{nome}"></small></div>
+                        <div><label for="nomeFantasia">Nome fantasia</label><input id="nomeFantasia" th:field="*{nomeFantasia}"></div>
                     </div>
                 </section>
                 <section class="panel registry-form-section">
@@ -27,6 +29,7 @@
                     <div class="panel-body form-grid">
                         <div><label for="email">E-mail</label><input id="email" type="email" th:field="*{email}" autocomplete="email"></div>
                         <div><label for="telefone">Telefone</label><input id="telefone" th:field="*{telefone}" data-mask="telefone" inputmode="tel" autocomplete="tel"></div>
+                        <div><label for="celular">Celular</label><input id="celular" th:field="*{celular}" data-mask="celular" inputmode="tel"></div>
                     </div>
                 </section>
                 <section class="panel registry-form-section">
@@ -35,9 +38,15 @@
                         <div class="field-group"><label for="cep">CEP</label><input id="cep" th:field="*{cep}" data-mask="cep" data-lookup-cep inputmode="numeric" autocomplete="postal-code"><small data-lookup-status class="field-hint"></small><small class="field-error" th:errors="*{cep}"></small></div>
                         <div class="full-width"><label for="logradouro">Logradouro</label><input id="logradouro" th:field="*{logradouro}" autocomplete="address-line1"></div>
                         <div><label for="numero">Número</label><input id="numero" th:field="*{numero}"></div>
+                        <div><label for="complemento">Complemento</label><input id="complemento" th:field="*{complemento}"></div>
+                        <div><label for="bairro">Bairro</label><input id="bairro" th:field="*{bairro}"></div>
                         <div><label for="cidade">Cidade</label><input id="cidade" th:field="*{cidade}" autocomplete="address-level2"></div>
                         <div><label for="estado">UF</label><input id="estado" th:field="*{estado}" maxlength="2" autocomplete="address-level1"></div>
                     </div>
+                </section>
+                <section class="panel registry-form-section">
+                    <div class="panel-header"><h2>Observações</h2></div>
+                    <div class="panel-body"><label for="observacoes">Informações adicionais</label><textarea id="observacoes" th:field="*{observacoes}" rows="4" maxlength="1000"></textarea></div>
                 </section>
                 <div class="registry-form-actions"><a class="button secondary" th:href="@{/fornecedores}">Cancelar</a><button type="submit">Salvar fornecedor</button></div>
             </form>

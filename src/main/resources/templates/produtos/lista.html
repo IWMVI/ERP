@@ -14,7 +14,7 @@
         <header th:replace="~{fragments/topbar :: topbar('Cadastros / Produtos')}"></header>
         <main class="content registry-page">
             <div class="page-heading">
-                <div><h1>Produtos</h1><p class="muted">Catálogo, preços e parâmetros de estoque.</p></div>
+                <div><h1>Produtos</h1><p class="muted">Catálogo, classificação, preços e parâmetros de estoque.</p></div>
                 <a class="button" th:href="@{/produtos/novo}">Novo produto</a>
             </div>
             <div class="registry-toolbar">
@@ -28,14 +28,19 @@
                 <div class="registry-card-header"><h2>Produtos cadastrados</h2><span class="muted" th:text="${#lists.size(produtos) + ' registro(s)'}"></span></div>
                 <div class="table-wrapper">
                     <table>
-                        <thead><tr><th>Código</th><th>Produto</th><th>Categoria</th><th>Venda</th><th>Saldo</th><th>Status</th><th>Ações</th></tr></thead>
+                        <thead><tr><th>Código</th><th>GTIN</th><th>Produto</th><th>Classificação</th><th>Venda</th><th>Saldo</th><th>Status</th><th>Ações</th></tr></thead>
                         <tbody>
                         <tr th:each="produto : ${produtos}">
-                            <td th:text="${produto.codigo}"></td><td th:text="${produto.nome}"></td><td th:text="${produto.categoria}"></td><td th:text="${#numbers.formatDecimal(produto.precoVenda, 1, 2)}"></td><td th:text="${produto.saldoEstoque}"></td>
+                            <td th:text="${produto.codigo}"></td>
+                            <td th:text="${produto.gtin != null ? produto.gtin : '-'}"></td>
+                            <td><strong th:text="${produto.nome}"></strong><div class="muted" th:if="${produto.marca != null and !produto.marca.isBlank()}" th:text="${produto.marca}"></div></td>
+                            <td><span th:text="${produto.categoria != null ? produto.categoria : '-'}"></span><div class="muted" th:if="${produto.subcategoria != null and !produto.subcategoria.isBlank()}" th:text="${produto.subcategoria}"></div></td>
+                            <td th:text="${'R$ ' + #numbers.formatDecimal(produto.precoVenda, 1, 2)}"></td>
+                            <td th:text="${produto.saldoEstoque}"></td>
                             <td><span class="badge" th:classappend="${produto.ativo} ? ' success'" th:text="${produto.ativo ? 'Ativo' : 'Inativo'}"></span></td>
                             <td><div class="user-menu"><a th:href="@{/produtos/{id}/editar(id=${produto.id})}">Editar</a><form th:action="@{/produtos/{id}/status(id=${produto.id})}" method="post"><button class="link-button" type="submit" th:text="${produto.ativo ? 'Inativar' : 'Ativar'}"></button></form></div></td>
                         </tr>
-                        <tr th:if="${#lists.isEmpty(produtos)}"><td colspan="7">Nenhum produto encontrado.</td></tr>
+                        <tr th:if="${#lists.isEmpty(produtos)}"><td colspan="8">Nenhum produto encontrado.</td></tr>
                         </tbody>
                     </table>
                 </div>
