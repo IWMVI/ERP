@@ -41,6 +41,7 @@ public class EstoqueController {
                 produtos,
                 pageProdutos,
                 "/estoque",
+                "pageProdutos",
                 Map.of(
                         "pageMovimentacoes", pageMovimentacoes,
                         "produtoId", produtoId == null ? "" : produtoId,
@@ -51,6 +52,7 @@ public class EstoqueController {
                 service.historico(produtoId, inicio, fim),
                 pageMovimentacoes,
                 "/estoque",
+                "pageMovimentacoes",
                 Map.of(
                         "pageProdutos", pageProdutos,
                         "produtoId", produtoId == null ? "" : produtoId,
