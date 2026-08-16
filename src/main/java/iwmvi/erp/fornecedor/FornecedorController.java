@@ -1,5 +1,7 @@
 package iwmvi.erp.fornecedor;
 
+import iwmvi.erp.shared.exception.CepInvalidoException;
+import iwmvi.erp.shared.exception.DocumentoInvalidoException;
 import iwmvi.erp.shared.exception.DocumentoJaCadastradoException;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -66,8 +68,12 @@ public class FornecedorController {
 
         try {
             service.criar(request);
-        } catch (DocumentoJaCadastradoException exception) {
-            result.rejectValue("documento", "duplicado", exception.getMessage());
+        } catch (DocumentoJaCadastradoException | DocumentoInvalidoException exception) {
+            result.rejectValue("documento", "documento.invalido", exception.getMessage());
+            preparar(model, request, null);
+            return "fornecedores/form";
+        } catch (CepInvalidoException exception) {
+            result.rejectValue("cep", "cep.invalido", exception.getMessage());
             preparar(model, request, null);
             return "fornecedores/form";
         }
@@ -90,8 +96,12 @@ public class FornecedorController {
 
         try {
             service.atualizar(id, request);
-        } catch (DocumentoJaCadastradoException exception) {
-            result.rejectValue("documento", "duplicado", exception.getMessage());
+        } catch (DocumentoJaCadastradoException | DocumentoInvalidoException exception) {
+            result.rejectValue("documento", "documento.invalido", exception.getMessage());
+            preparar(model, request, id);
+            return "fornecedores/form";
+        } catch (CepInvalidoException exception) {
+            result.rejectValue("cep", "cep.invalido", exception.getMessage());
             preparar(model, request, id);
             return "fornecedores/form";
         }
