@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Produtos | ERP</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
+    <link rel="stylesheet" th:href="@{/css/cadastros.css}">
+</head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('produtos')}"></aside>
+    <div class="app-main">
+        <header th:replace="~{fragments/topbar :: topbar('Cadastros / Produtos')}"></header>
+        <main class="content registry-page">
+            <div class="page-heading">
+                <div><h1>Produtos</h1><p class="muted">Catálogo, preços e posição de estoque.</p></div>
+                <a class="button" th:href="@{/produtos/novo}">Novo produto</a>
+            </div>
+            <div class="registry-toolbar">
+                <form class="form-grid panel panel-body" method="get">
+                    <input name="q" th:value="${q}" placeholder="Buscar por nome ou código">
+                    <button type="submit">Buscar</button>
+                </form>
+            </div>
+            <section class="registry-card">
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th></th><th>Código</th><th>Produto</th><th>Classificação</th><th>Venda</th><th>Saldo</th><th>Status</th><th aria-label="Ações"></th></tr></thead>
+                        <tbody>
+                        <tr th:each="produto : ${produtos}">
+                            <td class="photo-cell">
+                                <img th:if="${produto.fotoArquivo != null}" th:src="${'/uploads/' + produto.fotoArquivo}" class="table-product-photo" alt="">
+                                <span th:unless="${produto.fotoArquivo != null}" class="table-product-photo table-photo-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 8-9 5-9-5"></path><path d="m3 8 9-5 9 5v8l-9 5-9-5Z"></path></svg></span>
+                            </td>
+                            <td><strong th:text="${produto.codigo}"></strong><div class="muted" th:text="${produto.gtin != null ? produto.gtin : '-'}"></div></td>
+                            <td><strong th:text="${produto.nome}"></strong><div class="muted" th:if="${produto.marca != null and !produto.marca.isBlank()}" th:text="${produto.marca}"></div></td>
+                            <td><span th:text="${produto.categoria != null ? produto.categoria : '-'}"></span><div class="muted" th:if="${produto.subcategoria != null and !produto.subcategoria.isBlank()}" th:text="${produto.subcategoria}"></div></td>
+                            <td th:text="${'R$ ' + #numbers.formatDecimal(produto.precoVenda, 1, 2)}"></td>
+                            <td th:text="${produto.saldoEstoque}"></td>
+                            <td><span class="badge" th:classappend="${produto.ativo} ? ' success'" th:text="${produto.ativo ? 'Ativo' : 'Inativo'}"></span></td>
+                            <td>
+                                <details class="row-actions">
+                                    <summary aria-label="Abrir ações do produto" title="Ações"><svg class="row-actions-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></summary>
+                                    <div class="row-actions-menu">
+                                        <a th:href="@{/produtos/{id}/editar(id=${produto.id})}">Editar</a>
+                                        <form th:action="@{/produtos/{id}/status(id=${produto.id})}" method="post"><button type="submit" th:text="${produto.ativo ? 'Inativar' : 'Ativar'}"></button></form>
+                                    </div>
+                                </details>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(produtos)}"><td colspan="8">Nenhum produto encontrado.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <nav th:replace="~{fragments/pagination :: pagination(${paginacao})}"></nav>
+            </section>
+        </main>
+    </div>
+</div>
+</body>
+</html>

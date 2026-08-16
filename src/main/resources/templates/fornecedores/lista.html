@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Fornecedores | ERP</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
+</head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('fornecedores')}"></aside>
+    <div class="app-main">
+        <header th:replace="~{fragments/topbar :: topbar('Cadastros / Fornecedores')}"></header>
+        <main class="content registry-page">
+            <div class="page-heading">
+                <div><h1>Fornecedores</h1><p class="muted">Parceiros comerciais, contatos e dados de fornecimento.</p></div>
+                <a class="button" th:href="@{/fornecedores/novo}">Novo fornecedor</a>
+            </div>
+            <section class="registry-card">
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Nome</th><th>CPF/CNPJ</th><th>Contato</th><th>Status</th><th aria-label="Ações"></th></tr></thead>
+                        <tbody>
+                        <tr th:each="fornecedor : ${fornecedores}">
+                            <td th:text="${fornecedor.nome}"></td>
+                            <td data-format="documento" th:text="${fornecedor.documento}"></td>
+                            <td th:text="${fornecedor.email}"></td>
+                            <td><span class="badge" th:classappend="${fornecedor.ativo} ? ' success'" th:text="${fornecedor.ativo ? 'Ativo' : 'Inativo'}"></span></td>
+                            <td>
+                                <details class="row-actions">
+                                    <summary aria-label="Abrir ações do fornecedor" title="Ações"><svg class="row-actions-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></summary>
+                                    <div class="row-actions-menu">
+                                        <a th:href="@{/fornecedores/{id}/editar(id=${fornecedor.id})}">Editar</a>
+                                        <form th:action="@{/fornecedores/{id}/status(id=${fornecedor.id})}" method="post"><button type="submit" th:text="${fornecedor.ativo ? 'Inativar' : 'Ativar'}"></button></form>
+                                    </div>
+                                </details>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(fornecedores)}"><td colspan="5">Nenhum fornecedor cadastrado.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <nav th:replace="~{fragments/pagination :: pagination(${paginacao})}"></nav>
+            </section>
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/cadastros.js}" defer></script>
+</body>
+</html>

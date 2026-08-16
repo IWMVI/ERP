@@ -1,0 +1,357 @@
+.registry-page {
+    padding-bottom: 28px;
+}
+
+.registry-page-header {
+    max-width: 1180px;
+    margin: 0 auto 18px;
+}
+
+.registry-page-header h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+}
+
+.registry-page-header p {
+    margin: 4px 0 0;
+    color: var(--color-muted);
+    font-size: 13px;
+}
+
+.registry-form-stack {
+    max-width: 1180px;
+    margin: 0 auto;
+    overflow: hidden;
+    border: 1px solid #cfd8df;
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-soft);
+}
+
+.registry-form-section {
+    border: 0;
+    border-bottom: 2px solid #d9e1e7;
+    border-radius: 0 !important;
+    background: #fff;
+    box-shadow: none !important;
+}
+
+.registry-form-section:last-of-type {
+    border-bottom: 0;
+}
+
+.registry-section-header {
+    padding: 15px 16px;
+    border-bottom: 1px solid #e1e6ea;
+    border-radius: 0 !important;
+    background: #f6f8fa;
+}
+
+.registry-section-header h2 {
+    margin: 0;
+    color: #253744;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.registry-form-section .panel-body {
+    padding: 18px 16px 22px;
+}
+
+.registry-form-section label {
+    margin-bottom: 6px;
+    color: #3b4954;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.registry-form-section input,
+.registry-form-section select,
+.registry-form-section textarea {
+    min-height: 42px;
+    border-color: var(--border-strong);
+    border-radius: var(--radius-sm);
+}
+
+.registry-form-section input:focus,
+.registry-form-section select:focus,
+.registry-form-section textarea:focus {
+    border-color: var(--color-accent);
+    box-shadow: var(--focus-ring);
+}
+
+.form-grid,
+.form-grid-three {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+.form-grid .full-width,
+.form-grid-three .full-width {
+    grid-column: 1 / -1;
+}
+
+.field-group {
+    display: grid;
+    min-width: 0;
+    align-content: start;
+}
+
+.field-hint,
+.field-success,
+.document-type {
+    display: block;
+    margin-top: 6px;
+    font-size: 11px;
+}
+
+.field-hint,
+.document-type {
+    color: var(--color-muted);
+}
+
+.field-success {
+    color: var(--color-success);
+}
+
+.lookup-field-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+}
+
+.lookup-button {
+    width: 100%;
+}
+
+.input-prefix {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    overflow: hidden;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: #fff;
+}
+
+.input-prefix:focus-within {
+    border-color: var(--color-accent);
+    box-shadow: var(--focus-ring);
+}
+
+.input-prefix > span {
+    display: flex;
+    align-items: center;
+    padding: 0 11px;
+    border-right: 1px solid var(--color-border);
+    background: #f3f5f7;
+    color: #596773;
+    font-size: 12px;
+}
+
+.input-prefix input {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none !important;
+}
+
+textarea {
+    min-height: 96px;
+    resize: vertical;
+}
+
+.registry-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px;
+    border-top: 2px solid #d3dce3;
+    border-radius: 0 !important;
+    background: #f4f6f8;
+}
+
+.registry-actions-buttons {
+    display: flex;
+    width: 100%;
+    flex-direction: column-reverse;
+    gap: 10px;
+}
+
+.registry-actions-buttons .button,
+.registry-actions-buttons button {
+    width: 100%;
+}
+
+.registry-image-field {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: #f9fbfc;
+}
+
+.registry-image-preview {
+    display: grid;
+    width: 88px;
+    height: 88px;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: #fff;
+}
+
+.employee-image-preview {
+    border-radius: 50%;
+}
+
+.registry-image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.registry-image-placeholder svg {
+    width: 26px;
+    height: 26px;
+    fill: none;
+    stroke: #72818d;
+    stroke-width: 1.6;
+}
+
+.registry-image-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.registry-image-actions .button,
+.registry-image-actions button {
+    width: 100%;
+}
+
+.registry-fields-after-media {
+    margin-top: 18px;
+}
+
+.photo-cell {
+    width: 54px;
+}
+
+.table-avatar,
+.table-product-photo {
+    display: inline-grid;
+    width: 40px;
+    height: 40px;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    background: #f1f3f4;
+    object-fit: cover;
+}
+
+.table-avatar {
+    border-radius: 50%;
+}
+
+.table-product-photo {
+    border-radius: 10px;
+}
+
+.identification-step {
+    max-width: 640px;
+}
+
+.identification-document-field {
+    max-width: 460px;
+}
+
+.visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+[data-person-only][hidden],
+[data-company-only][hidden] {
+    display: none !important;
+}
+
+@media (min-width: 641px) {
+    .registry-page-header h1 {
+        font-size: 24px;
+    }
+
+    .registry-section-header {
+        padding: 16px 22px;
+    }
+
+    .registry-form-section .panel-body {
+        padding: 20px 22px 24px;
+    }
+
+    .form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .lookup-field-row {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .lookup-button {
+        width: auto;
+        min-width: 126px;
+    }
+
+    .registry-form-actions {
+        padding: 16px 22px;
+    }
+
+    .registry-actions-buttons {
+        width: auto;
+        flex-direction: row;
+    }
+
+    .registry-actions-buttons .button,
+    .registry-actions-buttons button {
+        width: auto;
+        min-width: 104px;
+    }
+
+    .registry-image-field {
+        grid-template-columns: 72px minmax(0, 1fr) auto;
+        gap: 16px;
+    }
+
+    .registry-image-preview {
+        width: 72px;
+        height: 72px;
+    }
+
+    .registry-image-actions {
+        flex-direction: row;
+    }
+
+    .registry-image-actions .button,
+    .registry-image-actions button {
+        width: auto;
+    }
+}
+
+@media (min-width: 901px) {
+    .form-grid-three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+    }
+}

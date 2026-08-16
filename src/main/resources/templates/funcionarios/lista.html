@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Funcionários | ERP</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
+    <link rel="stylesheet" th:href="@{/css/cadastros.css}">
+</head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('funcionarios')}"></aside>
+    <div class="app-main">
+        <header th:replace="~{fragments/topbar :: topbar('Administração / Funcionários')}"></header>
+        <main class="content registry-page">
+            <div class="page-heading">
+                <div><h1>Funcionários</h1><p class="muted">Cadastro interno de colaboradores.</p></div>
+                <a class="button" th:href="@{/funcionarios/novo}">Novo funcionário</a>
+            </div>
+            <section class="registry-card">
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th></th><th>Nome</th><th>CPF</th><th>Cargo</th><th>Admissão</th><th>Contato</th><th>Status</th><th aria-label="Ações"></th></tr></thead>
+                        <tbody>
+                        <tr th:each="funcionario : ${funcionarios}">
+                            <td class="photo-cell">
+                                <img th:if="${funcionario.fotoArquivo != null}" th:src="@{'/uploads/' + ${funcionario.fotoArquivo}}" class="table-avatar" alt="">
+                                <span th:unless="${funcionario.fotoArquivo != null}" class="table-avatar table-avatar-placeholder" th:text="${#strings.substring(funcionario.nome, 0, 1)}"></span>
+                            </td>
+                            <td><strong th:text="${funcionario.nome}"></strong><div class="muted" th:text="${funcionario.email}"></div></td>
+                            <td data-format="cpf" th:text="${funcionario.cpf}"></td>
+                            <td th:text="${funcionario.cargo}"></td>
+                            <td th:text="${funcionario.dataAdmissao}"></td>
+                            <td th:text="${funcionario.telefone != null ? funcionario.telefone : '-'}"></td>
+                            <td><span class="badge" th:classappend="${funcionario.ativo} ? ' success'" th:text="${funcionario.ativo ? 'Ativo' : 'Inativo'}"></span></td>
+                            <td>
+                                <details class="row-actions">
+                                    <summary aria-label="Abrir ações do funcionário" title="Ações"><svg class="row-actions-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></summary>
+                                    <div class="row-actions-menu">
+                                        <a th:href="@{/funcionarios/{id}/editar(id=${funcionario.id})}">Editar</a>
+                                        <form th:action="@{/funcionarios/{id}/status(id=${funcionario.id})}" method="post"><button type="submit" th:text="${funcionario.ativo ? 'Inativar' : 'Ativar'}"></button></form>
+                                    </div>
+                                </details>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(funcionarios)}"><td colspan="8">Nenhum funcionário cadastrado.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <nav th:replace="~{fragments/pagination :: pagination(${paginacao})}"></nav>
+            </section>
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/cadastros.js}" defer></script>
+</body>
+</html>

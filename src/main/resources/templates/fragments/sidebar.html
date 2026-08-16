@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<body>
+<aside th:fragment="sidebar(activePage)" class="sidebar" id="app-sidebar">
+    <a th:href="@{/}" class="sidebar-brand">
+        <span class="brand-mark">ERP</span>
+        <span class="sidebar-label">Gestão Empresarial</span>
+    </a>
+
+    <nav class="sidebar-nav">
+        <a th:href="@{/}"
+           class="nav-item nav-root"
+           th:classappend="${activePage == 'inicio'} ? ' active'"
+           title="Início">
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+                <rect x="14" y="3" width="7" height="5" rx="1"></rect>
+                <rect x="14" y="12" width="7" height="9" rx="1"></rect>
+                <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+            </svg>
+            <span class="sidebar-label">Início</span>
+        </a>
+
+        <details class="nav-domain"
+                 th:attr="open=${activePage == 'clientes' or activePage == 'fornecedores' or activePage == 'produtos'} ? 'open' : null">
+            <summary class="nav-domain-toggle" title="Cadastros">
+                <span class="nav-domain-label">
+                    <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    <span class="sidebar-label">Cadastros</span>
+                </span>
+                <svg class="nav-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+            </summary>
+            <div class="nav-submenu">
+                <a th:href="@{/clientes}" class="nav-subitem" th:classappend="${activePage == 'clientes'} ? ' active'" title="Clientes">
+                    <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="10" cy="7" r="4"></circle><path d="M16 11a4 4 0 0 0 0-8"></path><path d="M21 21v-2a4 4 0 0 0-3-3.87"></path></svg>
+                    <span class="sidebar-label">Clientes</span>
+                </a>
+                <a th:href="@{/fornecedores}" class="nav-subitem" th:classappend="${activePage == 'fornecedores'} ? ' active'" title="Fornecedores">
+                    <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17h4V5H2v12h3"></path><path d="M14 9h4l4 4v4h-3"></path><circle cx="7.5" cy="17.5" r="2.5"></circle><circle cx="16.5" cy="17.5" r="2.5"></circle></svg>
+                    <span class="sidebar-label">Fornecedores</span>
+                </a>
+                <a th:href="@{/produtos}" class="nav-subitem" th:classappend="${activePage == 'produtos'} ? ' active'" title="Produtos">
+                    <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21 8-9 5-9-5"></path><path d="m3 8 9-5 9 5v8l-9 5-9-5Z"></path><path d="M12 13v8"></path></svg>
+                    <span class="sidebar-label">Produtos</span>
+                </a>
+            </div>
+        </details>
+
+        <details class="nav-domain"
+                 th:attr="open=${activePage == 'estoque' or activePage == 'estoque-movimentar'} ? 'open' : null">
+            <summary class="nav-domain-toggle" title="Operação">
+                <span class="nav-domain-label">
+                    <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"></path><path d="M5 7l1 13h12l1-13"></path><path d="M9 11v5"></path><path d="M15 11v5"></path><path d="M8 7V4h8v3"></path></svg>
+                    <span class="sidebar-label">Operação</span>
+                </span>
+                <svg class="nav-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+            </summary>
+            <div class="nav-submenu">
+                <a th:href="@{/estoque}" class="nav-subitem" th:classappend="${activePage == 'estoque'} ? ' active'" title="Estoque">
+                    <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 2 7l10 5 10-5-10-5Z"></path><path d="m2 17 10 5 10-5"></path><path d="m2 12 10 5 10-5"></path></svg>
+                    <span class="sidebar-label">Estoque</span>
+                </a>
+                <a th:href="@{/estoque/movimentar}" class="nav-subitem" th:classappend="${activePage == 'estoque-movimentar'} ? ' active'" title="Nova movimentação">
+                    <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg>
+                    <span class="sidebar-label">Nova movimentação</span>
+                </a>
+            </div>
+        </details>
+
+        <details class="nav-domain"
+                 th:if="${admin}"
+                 th:attr="open=${activePage == 'usuarios' or activePage == 'auditoria'} ? 'open' : null">
+            <summary class="nav-domain-toggle" title="Administração">
+                <span class="nav-domain-label">
+                    <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path><path d="m9 12 2 2 4-4"></path></svg>
+                    <span class="sidebar-label">Administração</span>
+                </span>
+                <svg class="nav-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+            </summary>
+            <div class="nav-submenu">
+                <a th:href="@{/usuarios}" class="nav-subitem" th:classappend="${activePage == 'usuarios'} ? ' active'" title="Usuários">
+                    <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6"></path><path d="M22 11h-6"></path></svg>
+                    <span class="sidebar-label">Usuários</span>
+                </a>
+                <a th:href="@{/auditoria}" class="nav-subitem" th:classappend="${activePage == 'auditoria'} ? ' active'" title="Auditoria">
+                    <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+                    <span class="sidebar-label">Auditoria</span>
+                </a>
+            </div>
+        </details>
+    </nav>
+
+    <div class="sidebar-spacer"></div>
+    <button type="button" class="sidebar-collapse-button" data-sidebar-toggle title="Minimizar menu" aria-label="Minimizar menu">
+        <svg class="nav-icon sidebar-collapse-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+        <span class="sidebar-label">Minimizar menu</span>
+    </button>
+    <div class="sidebar-footer sidebar-label">ERP · Ambiente de gestão</div>
+    <script th:src="@{/js/navigation.js}" defer></script>
+</aside>
+</body>
+</html>

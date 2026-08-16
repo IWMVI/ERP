@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="topbar(title)" class="topbar">
+    <div class="topbar-left">
+        <button type="button" class="topbar-sidebar-toggle" data-sidebar-toggle aria-label="Alternar menu lateral" title="Alternar menu lateral">
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 6h16"></path>
+                <path d="M4 12h16"></path>
+                <path d="M4 18h16"></path>
+            </svg>
+        </button>
+        <span class="topbar-title" th:text="${title}"></span>
+    </div>
+
+    <details class="user-dropdown">
+        <summary class="user-dropdown-trigger">
+            <span class="user-avatar" th:text="${#strings.substring(usuarioAtualNome, 0, 1)}">U</span>
+            <span class="user-dropdown-identity">
+                <strong th:text="${usuarioAtualNome}">Usuário</strong>
+                <small th:text="${usuarioAtualEmail}">usuario@erp.local</small>
+            </span>
+            <svg class="user-dropdown-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+        </summary>
+
+        <div class="user-dropdown-menu">
+            <div class="user-dropdown-header">
+                <strong th:text="${usuarioAtualNome}">Usuário</strong>
+                <span th:text="${usuarioAtualEmail}">usuario@erp.local</span>
+            </div>
+
+            <div class="user-dropdown-section">
+                <span class="user-dropdown-section-title">Atalhos</span>
+                <a th:href="@{/}" class="user-dropdown-item"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg><span>Visão geral</span></a>
+                <a th:href="@{/clientes/novo}" class="user-dropdown-item"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 19a6 6 0 0 0-12 0"></path><circle cx="9" cy="8" r="4"></circle><path d="M19 8v6"></path><path d="M22 11h-6"></path></svg><span>Novo cliente</span></a>
+                <a th:href="@{/produtos/novo}" class="user-dropdown-item"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21 8-9 5-9-5"></path><path d="m3 8 9-5 9 5v8l-9 5-9-5Z"></path><path d="M12 13v8"></path></svg><span>Novo produto</span></a>
+                <a th:href="@{/estoque/movimentar}" class="user-dropdown-item"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg><span>Movimentar estoque</span></a>
+            </div>
+
+            <div class="user-dropdown-section" th:if="${admin}">
+                <span class="user-dropdown-section-title">Administração</span>
+                <a th:href="@{/usuarios}" class="user-dropdown-item"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6"></path><path d="M22 11h-6"></path></svg><span>Usuários</span></a>
+                <a th:href="@{/auditoria}" class="user-dropdown-item"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg><span>Auditoria</span></a>
+            </div>
+
+            <form th:action="@{/logout}" method="post" class="user-dropdown-logout">
+                <button type="submit" class="user-dropdown-item user-dropdown-button"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path></svg><span>Sair</span></button>
+            </form>
+        </div>
+    </details>
+
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+    <script th:src="@{/js/navigation.js}" defer></script>
+    <script th:src="@{/js/alerts.js}" defer></script>
+</header>
+</body>
+</html>

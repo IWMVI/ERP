@@ -1,0 +1,5 @@
+ALTER TABLE clientes ADD COLUMN nome_fantasia VARCHAR(255);
+ALTER TABLE clientes ADD COLUMN celular VARCHAR(30);
+ALTER TABLE clientes ADD COLUMN complemento VARCHAR(120);
+ALTER TABLE clientes ADD COLUMN bairro VARCHAR(120);
+ALTER TABLE clientes ADD COLUMN observacoes VARCHAR(1000);
