@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nova venda | ERP</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
+</head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('vendas')}"></aside>
+    <div class="app-main">
+        <header th:replace="~{fragments/topbar :: topbar('Operação / Vendas / Nova')}"></header>
+        <main class="content registry-page">
+            <div class="page-heading">
+                <div><h1>Nova venda</h1><p class="muted">Selecione o cliente e defina o desconto inicial do pedido.</p></div>
+            </div>
+            <section class="registry-card panel-body">
+                <form th:action="@{/vendas}" method="post" class="form-grid">
+                    <label>Cliente
+                        <select name="clienteId" required>
+                            <option value="">Selecione</option>
+                            <option th:each="cliente : ${clientes}" th:if="${cliente.ativo}" th:value="${cliente.id}" th:text="${cliente.nome + ' - ' + cliente.documento}"></option>
+                        </select>
+                    </label>
+                    <label>Desconto
+                        <input name="desconto" type="number" min="0" step="0.01" value="0">
+                    </label>
+                    <div class="form-actions">
+                        <a class="button secondary" th:href="@{/vendas}">Cancelar</a>
+                        <button type="submit">Criar pedido</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+</div>
+</body>
+</html>

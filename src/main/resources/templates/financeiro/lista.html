@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Financeiro | ERP</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
+</head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('financeiro')}"></aside>
+    <div class="app-main">
+        <header th:replace="~{fragments/topbar :: topbar('Operação / Financeiro')}"></header>
+        <main class="content registry-page">
+            <div th:replace="~{fragments/alerts :: alerts}"></div>
+            <div class="page-heading">
+                <div><h1>Financeiro</h1><p class="muted">Contas a receber e a pagar geradas pelas operações comerciais.</p></div>
+            </div>
+
+            <div class="registry-toolbar">
+                <a class="button" th:classappend="${filtro == 'abertos'} ? ' active'" th:href="@{/financeiro(filtro='abertos')}">Em aberto</a>
+                <a class="button secondary" th:href="@{/financeiro(filtro='vencidos')}">Vencidos</a>
+            </div>
+
+            <section class="registry-card">
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Tipo</th><th>Descrição</th><th>Cliente/Fornecedor</th><th>Parcela</th><th>Vencimento</th><th>Valor</th><th>Status</th><th></th></tr></thead>
+                        <tbody>
+                        <tr th:each="titulo : ${titulos}">
+                            <td th:text="${titulo.tipo}"></td>
+                            <td th:text="${titulo.descricao}"></td>
+                            <td th:text="${titulo.cliente != null ? titulo.cliente.nome : titulo.fornecedor.nome}"></td>
+                            <td th:text="${titulo.parcela + '/' + titulo.totalParcelas}"></td>
+                            <td th:text="${#temporals.format(titulo.dataVencimento, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${'R$ ' + #numbers.formatDecimal(titulo.valor, 1, 2)}"></td>
+                            <td><span class="badge" th:text="${titulo.status}"></span></td>
+                            <td>
+                                <form th:if="${titulo.status.name() == 'ABERTO'}" th:action="@{/financeiro/{id}/pagar(id=${titulo.id})}" method="post">
+                                    <button type="submit">Dar baixa</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(titulos)}"><td colspan="8">Nenhum título encontrado.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+</body>
+</html>

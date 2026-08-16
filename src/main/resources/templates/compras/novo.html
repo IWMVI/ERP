@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nova compra | ERP</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
+</head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('compras')}"></aside>
+    <div class="app-main">
+        <header th:replace="~{fragments/topbar :: topbar('Operação / Compras / Nova')}"></header>
+        <main class="content registry-page">
+            <div class="page-heading">
+                <div><h1>Nova compra</h1><p class="muted">Selecione o fornecedor para iniciar o pedido.</p></div>
+            </div>
+            <section class="registry-card panel-body">
+                <form th:action="@{/compras}" method="post" class="form-grid">
+                    <label>Fornecedor
+                        <select name="fornecedorId" required>
+                            <option value="">Selecione</option>
+                            <option th:each="fornecedor : ${fornecedores}" th:if="${fornecedor.ativo}" th:value="${fornecedor.id}" th:text="${fornecedor.nome + ' - ' + fornecedor.documento}"></option>
+                        </select>
+                    </label>
+                    <div class="form-actions">
+                        <a class="button secondary" th:href="@{/compras}">Cancelar</a>
+                        <button type="submit">Criar pedido</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+</div>
+</body>
+</html>
