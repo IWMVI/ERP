@@ -1,9 +1,12 @@
 package iwmvi.erp.estoque;
 
+import iwmvi.erp.produto.Produto;
 import iwmvi.erp.shared.exception.SaldoEstoqueInsuficienteException;
+import iwmvi.erp.shared.web.PageView;
 import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Map;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,14 +31,38 @@ public class EstoqueController {
     @GetMapping
     public String painel(
             @RequestParam(required = false) Long produtoId,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                    LocalDate inicio,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                    LocalDate fim,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fim,
+            @RequestParam(defaultValue = "0") int pageProdutos,
+            @RequestParam(defaultValue = "0") int pageMovimentacoes,
             Model model) {
-        model.addAttribute("produtos", service.produtos());
+        var produtos = service.produtos();
+        PageView<Produto> paginacaoProdutos = PageView.of(
+                produtos,
+                pageProdutos,
+                "/estoque",
+                Map.of(
+                        "pageMovimentacoes", pageMovimentacoes,
+                        "produtoId", produtoId == null ? "" : produtoId,
+                        "inicio", inicio == null ? "" : inicio,
+                        "fim", fim == null ? "" : fim));
+
+        PageView<MovimentacaoEstoque> paginacaoMovimentacoes = PageView.of(
+                service.historico(produtoId, inicio, fim),
+                pageMovimentacoes,
+                "/estoque",
+                Map.of(
+                        "pageProdutos", pageProdutos,
+                        "produtoId", produtoId == null ? "" : produtoId,
+                        "inicio", inicio == null ? "" : inicio,
+                        "fim", fim == null ? "" : fim));
+
+        model.addAttribute("produtos", produtos);
+        model.addAttribute("produtosPagina", paginacaoProdutos.items());
+        model.addAttribute("paginacaoProdutos", paginacaoProdutos);
         model.addAttribute("abaixoMinimo", service.abaixoDoMinimo());
-        model.addAttribute("movimentacoes", service.historico(produtoId, inicio, fim));
+        model.addAttribute("movimentacoes", paginacaoMovimentacoes.items());
+        model.addAttribute("paginacaoMovimentacoes", paginacaoMovimentacoes);
         model.addAttribute("produtoId", produtoId);
         model.addAttribute("inicio", inicio);
         model.addAttribute("fim", fim);
@@ -44,10 +71,8 @@ public class EstoqueController {
 
     @GetMapping("/movimentar")
     public String movimentar(Model model) {
-        prepararFormulario(
-                model,
-                new MovimentacaoEstoqueRequest(
-                        null, TipoMovimentacao.ENTRADA, BigDecimal.ONE, "AJUSTE MANUAL"));
+        prepararFormulario(model,
+                new MovimentacaoEstoqueRequest(null, TipoMovimentacao.ENTRADA, BigDecimal.ONE, "AJUSTE MANUAL"));
         return "estoque/form";
     }
 
@@ -59,6 +84,7 @@ public class EstoqueController {
             RedirectAttributes redirect) {
         if (result.hasErrors()) {
             prepararFormulario(model, request);
+            model.addAttribute("erroGlobal", "Revise os campos destacados antes de registrar a movimentação.");
             return "estoque/form";
         }
 
@@ -67,6 +93,7 @@ public class EstoqueController {
         } catch (SaldoEstoqueInsuficienteException | IllegalStateException exception) {
             result.reject("estoque.invalido", exception.getMessage());
             prepararFormulario(model, request);
+            model.addAttribute("erroGlobal", exception.getMessage());
             return "estoque/form";
         }
 
