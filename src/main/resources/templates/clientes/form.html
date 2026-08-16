@@ -5,71 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Cliente | ERP</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
 </head>
 <body>
-<main class="content">
-    <div class="page-heading">
-        <div>
-            <h1 th:text="${id == null ? 'Novo cliente' : 'Editar cliente'}"></h1>
-            <p class="muted">Dados cadastrais, contato e endereço.</p>
-        </div>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('clientes')}"></aside>
+    <div class="app-main">
+        <header class="topbar"><span class="topbar-title">Cadastros / Clientes</span></header>
+        <main class="content">
+            <div class="page-heading">
+                <div>
+                    <h1 th:text="${id == null ? 'Novo cliente' : 'Editar cliente'}"></h1>
+                    <p class="muted">Dados cadastrais, contato e endereço.</p>
+                </div>
+            </div>
+            <form th:action="${id == null} ? @{/clientes} : @{/clientes/{id}(id=${id})}"
+                  th:object="${clienteRequest}"
+                  method="post"
+                  class="panel panel-body form-panel">
+                <div class="form-grid">
+                    <div>
+                        <label for="tipoPessoa">Tipo</label>
+                        <select id="tipoPessoa" th:field="*{tipoPessoa}">
+                            <option th:each="tipo : ${tiposPessoa}" th:value="${tipo}" th:text="${tipo}"></option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="nome">Nome</label>
+                        <input id="nome" th:field="*{nome}">
+                        <small class="field-error" th:errors="*{nome}"></small>
+                    </div>
+                    <div>
+                        <label for="documento">CPF/CNPJ</label>
+                        <input id="documento" th:field="*{documento}">
+                        <small class="field-error" th:errors="*{documento}"></small>
+                    </div>
+                    <div>
+                        <label for="email">E-mail</label>
+                        <input id="email" type="email" th:field="*{email}">
+                        <small class="field-error" th:errors="*{email}"></small>
+                    </div>
+                    <div>
+                        <label for="telefone">Telefone</label>
+                        <input id="telefone" th:field="*{telefone}">
+                    </div>
+                    <div>
+                        <label for="cep">CEP</label>
+                        <input id="cep" th:field="*{cep}">
+                    </div>
+                    <div class="full-width">
+                        <label for="logradouro">Logradouro</label>
+                        <input id="logradouro" th:field="*{logradouro}">
+                    </div>
+                    <div>
+                        <label for="numero">Número</label>
+                        <input id="numero" th:field="*{numero}">
+                    </div>
+                    <div>
+                        <label for="cidade">Cidade</label>
+                        <input id="cidade" th:field="*{cidade}">
+                    </div>
+                    <div>
+                        <label for="estado">UF</label>
+                        <input id="estado" th:field="*{estado}" maxlength="2">
+                    </div>
+                </div>
+                <div class="actions">
+                    <a class="button secondary" th:href="@{/clientes}">Cancelar</a>
+                    <button type="submit">Salvar</button>
+                </div>
+            </form>
+        </main>
     </div>
-    <form th:action="${id == null} ? @{/clientes} : @{/clientes/{id}(id=${id})}"
-          th:object="${clienteRequest}"
-          method="post"
-          class="panel panel-body form-panel">
-        <div class="form-grid">
-            <div>
-                <label for="tipoPessoa">Tipo</label>
-                <select id="tipoPessoa" th:field="*{tipoPessoa}">
-                    <option th:each="tipo : ${tiposPessoa}" th:value="${tipo}" th:text="${tipo}"></option>
-                </select>
-            </div>
-            <div>
-                <label for="nome">Nome</label>
-                <input id="nome" th:field="*{nome}">
-                <small class="field-error" th:errors="*{nome}"></small>
-            </div>
-            <div>
-                <label for="documento">CPF/CNPJ</label>
-                <input id="documento" th:field="*{documento}">
-                <small class="field-error" th:errors="*{documento}"></small>
-            </div>
-            <div>
-                <label for="email">E-mail</label>
-                <input id="email" type="email" th:field="*{email}">
-                <small class="field-error" th:errors="*{email}"></small>
-            </div>
-            <div>
-                <label for="telefone">Telefone</label>
-                <input id="telefone" th:field="*{telefone}">
-            </div>
-            <div>
-                <label for="cep">CEP</label>
-                <input id="cep" th:field="*{cep}">
-            </div>
-            <div class="full-width">
-                <label for="logradouro">Logradouro</label>
-                <input id="logradouro" th:field="*{logradouro}">
-            </div>
-            <div>
-                <label for="numero">Número</label>
-                <input id="numero" th:field="*{numero}">
-            </div>
-            <div>
-                <label for="cidade">Cidade</label>
-                <input id="cidade" th:field="*{cidade}">
-            </div>
-            <div>
-                <label for="estado">UF</label>
-                <input id="estado" th:field="*{estado}" maxlength="2">
-            </div>
-        </div>
-        <div class="actions">
-            <a class="button secondary" th:href="@{/clientes}">Cancelar</a>
-            <button type="submit">Salvar</button>
-        </div>
-    </form>
-</main>
+</div>
 </body>
 </html>

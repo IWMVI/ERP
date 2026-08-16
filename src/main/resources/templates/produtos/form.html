@@ -5,58 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Produto | ERP</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
 </head>
 <body>
-<main class="content">
-    <div class="page-heading">
-        <div>
-            <h1 th:text="${id == null ? 'Novo produto' : 'Editar produto'}"></h1>
-            <p class="muted">Informações comerciais e parâmetros mínimos de estoque.</p>
-        </div>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('produtos')}"></aside>
+    <div class="app-main">
+        <header class="topbar"><span class="topbar-title">Cadastros / Produtos</span></header>
+        <main class="content">
+            <div class="page-heading">
+                <div>
+                    <h1 th:text="${id == null ? 'Novo produto' : 'Editar produto'}"></h1>
+                    <p class="muted">Informações comerciais e parâmetros mínimos de estoque.</p>
+                </div>
+            </div>
+            <form th:action="${id == null} ? @{/produtos} : @{/produtos/{id}(id=${id})}"
+                  th:object="${produtoRequest}"
+                  method="post"
+                  class="panel panel-body form-panel">
+                <div class="form-grid">
+                    <div>
+                        <label for="codigo">Código/SKU</label>
+                        <input id="codigo" th:field="*{codigo}">
+                        <small class="field-error" th:errors="*{codigo}"></small>
+                    </div>
+                    <div>
+                        <label for="nome">Nome</label>
+                        <input id="nome" th:field="*{nome}">
+                        <small class="field-error" th:errors="*{nome}"></small>
+                    </div>
+                    <div>
+                        <label for="categoria">Categoria</label>
+                        <input id="categoria" th:field="*{categoria}">
+                    </div>
+                    <div>
+                        <label for="unidadeMedida">Unidade</label>
+                        <select id="unidadeMedida" th:field="*{unidadeMedida}">
+                            <option th:each="unidade : ${unidades}" th:value="${unidade}" th:text="${unidade}"></option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="precoVenda">Preço de venda</label>
+                        <input id="precoVenda" type="number" step="0.01" th:field="*{precoVenda}">
+                    </div>
+                    <div>
+                        <label for="custo">Custo</label>
+                        <input id="custo" type="number" step="0.01" th:field="*{custo}">
+                    </div>
+                    <div>
+                        <label for="estoqueMinimo">Estoque mínimo</label>
+                        <input id="estoqueMinimo" type="number" step="0.001" th:field="*{estoqueMinimo}">
+                    </div>
+                </div>
+                <div class="actions">
+                    <a class="button secondary" th:href="@{/produtos}">Cancelar</a>
+                    <button type="submit">Salvar</button>
+                </div>
+            </form>
+        </main>
     </div>
-    <form th:action="${id == null} ? @{/produtos} : @{/produtos/{id}(id=${id})}"
-          th:object="${produtoRequest}"
-          method="post"
-          class="panel panel-body form-panel">
-        <div class="form-grid">
-            <div>
-                <label for="codigo">Código/SKU</label>
-                <input id="codigo" th:field="*{codigo}">
-                <small class="field-error" th:errors="*{codigo}"></small>
-            </div>
-            <div>
-                <label for="nome">Nome</label>
-                <input id="nome" th:field="*{nome}">
-                <small class="field-error" th:errors="*{nome}"></small>
-            </div>
-            <div>
-                <label for="categoria">Categoria</label>
-                <input id="categoria" th:field="*{categoria}">
-            </div>
-            <div>
-                <label for="unidadeMedida">Unidade</label>
-                <select id="unidadeMedida" th:field="*{unidadeMedida}">
-                    <option th:each="unidade : ${unidades}" th:value="${unidade}" th:text="${unidade}"></option>
-                </select>
-            </div>
-            <div>
-                <label for="precoVenda">Preço de venda</label>
-                <input id="precoVenda" type="number" step="0.01" th:field="*{precoVenda}">
-            </div>
-            <div>
-                <label for="custo">Custo</label>
-                <input id="custo" type="number" step="0.01" th:field="*{custo}">
-            </div>
-            <div>
-                <label for="estoqueMinimo">Estoque mínimo</label>
-                <input id="estoqueMinimo" type="number" step="0.001" th:field="*{estoqueMinimo}">
-            </div>
-        </div>
-        <div class="actions">
-            <a class="button secondary" th:href="@{/produtos}">Cancelar</a>
-            <button type="submit">Salvar</button>
-        </div>
-    </form>
-</main>
+</div>
 </body>
 </html>

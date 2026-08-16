@@ -5,54 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Início | ERP</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
 </head>
 <body>
 <div class="app-shell">
-    <aside class="sidebar">
-        <a th:href="@{/}" class="sidebar-brand">
-            <span class="brand-mark">ERP</span>
-            <span>Gestão Empresarial</span>
-        </a>
-        <nav class="sidebar-nav">
-            <span class="sidebar-section-title">Principal</span>
-            <a th:href="@{/}" class="nav-item active">
-                <span class="nav-symbol">IN</span>
-                <span>Início</span>
-            </a>
-
-            <span class="sidebar-section-title">Cadastros</span>
-            <a th:href="@{/clientes}" class="nav-item">
-                <span class="nav-symbol">CL</span>
-                <span>Clientes</span>
-            </a>
-            <a th:href="@{/fornecedores}" class="nav-item">
-                <span class="nav-symbol">FO</span>
-                <span>Fornecedores</span>
-            </a>
-            <a th:href="@{/produtos}" class="nav-item">
-                <span class="nav-symbol">PR</span>
-                <span>Produtos</span>
-            </a>
-
-            <span class="sidebar-section-title">Operação</span>
-            <a th:href="@{/estoque}" class="nav-item">
-                <span class="nav-symbol">ES</span>
-                <span>Estoque</span>
-            </a>
-
-            <span class="sidebar-section-title" th:if="${admin}">Administração</span>
-            <a th:if="${admin}" th:href="@{/usuarios}" class="nav-item">
-                <span class="nav-symbol">US</span>
-                <span>Usuários</span>
-            </a>
-            <a th:if="${admin}" th:href="@{/auditoria}" class="nav-item">
-                <span class="nav-symbol">AU</span>
-                <span>Auditoria</span>
-            </a>
-        </nav>
-        <div class="sidebar-spacer"></div>
-        <div class="sidebar-footer">ERP · Ambiente de gestão</div>
-    </aside>
+    <aside th:replace="~{fragments/sidebar :: sidebar('inicio')}"></aside>
 
     <div class="app-main">
         <header class="topbar">

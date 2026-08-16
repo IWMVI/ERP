@@ -5,20 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Auditoria | ERP</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
 </head>
 <body>
 <div class="app-shell">
-    <aside class="sidebar">
-        <a th:href="@{/}" class="sidebar-brand"><span class="brand-mark">ERP</span><span>Gestão Empresarial</span></a>
-        <nav class="sidebar-nav">
-            <a th:href="@{/}" class="nav-item">Início</a>
-            <span class="sidebar-section-title">Administração</span>
-            <a th:href="@{/usuarios}" class="nav-item">Usuários</a>
-            <a th:href="@{/auditoria}" class="nav-item active">Auditoria</a>
-        </nav>
-    </aside>
+    <aside th:replace="~{fragments/sidebar :: sidebar('auditoria')}"></aside>
     <div class="app-main">
-        <header class="topbar"><span class="topbar-title">Auditoria</span></header>
+        <header class="topbar"><span class="topbar-title">Administração / Auditoria</span></header>
         <main class="content">
             <div class="page-heading">
                 <div><h1>Auditoria de ações</h1><p class="muted">Consulte operações realizadas no sistema.</p></div>
@@ -32,9 +25,7 @@
             </form>
             <div class="table-wrapper">
                 <table>
-                    <thead>
-                    <tr><th>Data/hora</th><th>Usuário</th><th>Operação</th><th>Entidade</th><th>ID</th><th>Descrição</th></tr>
-                    </thead>
+                    <thead><tr><th>Data/hora</th><th>Usuário</th><th>Operação</th><th>Entidade</th><th>ID</th><th>Descrição</th></tr></thead>
                     <tbody>
                     <tr th:each="registro : ${registros}">
                         <td th:text="${registro.dataHora}"></td>

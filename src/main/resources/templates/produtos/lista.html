@@ -5,22 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Produtos | ERP</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
 </head>
 <body>
 <div class="app-shell">
-    <aside class="sidebar">
-        <a th:href="@{/}" class="sidebar-brand"><span class="brand-mark">ERP</span><span>Gestão Empresarial</span></a>
-        <nav class="sidebar-nav">
-            <a th:href="@{/}" class="nav-item">Início</a>
-            <span class="sidebar-section-title">Cadastros</span>
-            <a th:href="@{/clientes}" class="nav-item">Clientes</a>
-            <a th:href="@{/fornecedores}" class="nav-item">Fornecedores</a>
-            <a th:href="@{/produtos}" class="nav-item active">Produtos</a>
-            <a th:href="@{/estoque}" class="nav-item">Estoque</a>
-        </nav>
-    </aside>
+    <aside th:replace="~{fragments/sidebar :: sidebar('produtos')}"></aside>
     <div class="app-main">
-        <header class="topbar"><span class="topbar-title">Produtos</span></header>
+        <header class="topbar"><span class="topbar-title">Cadastros / Produtos</span></header>
         <main class="content">
             <div class="page-heading">
                 <div><h1>Produtos</h1><p class="muted">Catálogo comercial e parâmetros de estoque.</p></div>
@@ -33,9 +24,7 @@
             <div class="alert success" th:if="${sucesso}" th:text="${sucesso}"></div>
             <div class="table-wrapper">
                 <table>
-                    <thead>
-                    <tr><th>Código</th><th>Produto</th><th>Categoria</th><th>Venda</th><th>Saldo</th><th>Status</th><th>Ações</th></tr>
-                    </thead>
+                    <thead><tr><th>Código</th><th>Produto</th><th>Categoria</th><th>Venda</th><th>Saldo</th><th>Status</th><th>Ações</th></tr></thead>
                     <tbody>
                     <tr th:each="produto : ${produtos}">
                         <td th:text="${produto.codigo}"></td>
