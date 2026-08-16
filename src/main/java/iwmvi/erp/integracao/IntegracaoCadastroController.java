@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -39,6 +40,8 @@ public class IntegracaoCadastroController {
                     dados.street());
         } catch (RestClientResponseException exception) {
             throw traduzirErroExterno(exception, "CEP");
+        } catch (RestClientException exception) {
+            throw servicoIndisponivel("CEP");
         }
     }
 
@@ -71,6 +74,8 @@ public class IntegracaoCadastroController {
                     dados.telefone());
         } catch (RestClientResponseException exception) {
             throw traduzirErroExterno(exception, "CNPJ");
+        } catch (RestClientException exception) {
+            throw servicoIndisponivel("CNPJ");
         }
     }
 
@@ -82,6 +87,10 @@ public class IntegracaoCadastroController {
         if (exception.getStatusCode().value() == 404) {
             return new ResponseStatusException(HttpStatus.NOT_FOUND, tipo + " não encontrado.");
         }
+        return servicoIndisponivel(tipo);
+    }
+
+    private ResponseStatusException servicoIndisponivel(String tipo) {
         return new ResponseStatusException(
                 HttpStatus.BAD_GATEWAY,
                 "Não foi possível consultar " + tipo + " no serviço externo.");
