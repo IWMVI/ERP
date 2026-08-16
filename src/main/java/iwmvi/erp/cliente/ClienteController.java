@@ -5,6 +5,7 @@ import iwmvi.erp.integracao.PessoaCadastroLookupService.PessoaCadastroLookupResu
 import iwmvi.erp.shared.exception.CepInvalidoException;
 import iwmvi.erp.shared.exception.DocumentoInvalidoException;
 import iwmvi.erp.shared.exception.DocumentoJaCadastradoException;
+import iwmvi.erp.shared.web.PageView;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,8 +32,10 @@ public class ClienteController {
     }
 
     @GetMapping
-    public String listar(Model model) {
-        model.addAttribute("clientes", service.listar());
+    public String listar(@RequestParam(defaultValue = "0") int page, Model model) {
+        PageView<Cliente> paginacao = PageView.of(service.listar(), page, "/clientes");
+        model.addAttribute("clientes", paginacao.items());
+        model.addAttribute("paginacao", paginacao);
         return "clientes/lista";
     }
 
