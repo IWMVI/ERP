@@ -3,8 +3,10 @@ package iwmvi.erp.produto;
 import iwmvi.erp.shared.exception.CodigoProdutoJaCadastradoException;
 import iwmvi.erp.shared.exception.DocumentoInvalidoException;
 import iwmvi.erp.shared.storage.ImagemStorageService;
+import iwmvi.erp.shared.web.PageView;
 import jakarta.validation.Valid;
 import java.math.BigDecimal;
+import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,8 +32,13 @@ public class ProdutoController {
     }
 
     @GetMapping
-    public String listar(@RequestParam(required = false) String q, Model model) {
-        model.addAttribute("produtos", service.listar(q));
+    public String listar(
+            @RequestParam(required = false) String q,
+            @RequestParam(defaultValue = "0") int page,
+            Model model) {
+        PageView<Produto> paginacao = PageView.of(service.listar(q), page, "/produtos", Map.of("q", q == null ? "" : q));
+        model.addAttribute("produtos", paginacao.items());
+        model.addAttribute("paginacao", paginacao);
         model.addAttribute("q", q);
         return "produtos/lista";
     }
@@ -45,39 +52,24 @@ public class ProdutoController {
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable Long id, Model model) {
         Produto produto = service.buscar(id);
-        preparar(
-                model,
-                new ProdutoRequest(
-                        produto.getCodigo(),
-                        produto.getGtin(),
-                        produto.getNome(),
-                        produto.getDescricao(),
-                        produto.getMarca(),
-                        produto.getCategoria(),
-                        produto.getSubcategoria(),
-                        produto.getUnidadeMedida(),
-                        produto.getPrecoVenda(),
-                        produto.getCusto(),
-                        produto.getEstoqueMinimo(),
-                        produto.getEstoqueMaximo(),
-                        produto.getLocalizacao()),
+        preparar(model,
+                new ProdutoRequest(produto.getCodigo(), produto.getGtin(), produto.getNome(), produto.getDescricao(),
+                        produto.getMarca(), produto.getCategoria(), produto.getSubcategoria(), produto.getUnidadeMedida(),
+                        produto.getPrecoVenda(), produto.getCusto(), produto.getEstoqueMinimo(),
+                        produto.getEstoqueMaximo(), produto.getLocalizacao()),
                 id);
         return "produtos/form";
     }
 
     @PostMapping
-    public String criar(
-            @Valid @ModelAttribute("produtoRequest") ProdutoRequest request,
-            BindingResult result,
-            @RequestParam(required = false) MultipartFile foto,
-            Model model,
-            RedirectAttributes redirect) {
+    public String criar(@Valid @ModelAttribute("produtoRequest") ProdutoRequest request,
+            BindingResult result, @RequestParam(required = false) MultipartFile foto,
+            Model model, RedirectAttributes redirect) {
         if (result.hasErrors()) {
             preparar(model, request, null);
             model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o produto.");
             return "produtos/form";
         }
-
         try {
             Produto produto = service.criar(request);
             salvarFoto(produto, foto);
@@ -97,25 +89,20 @@ public class ProdutoController {
             model.addAttribute("erroGlobal", exception.getMessage());
             return "produtos/form";
         }
-
         redirect.addFlashAttribute("sucesso", "Produto cadastrado com sucesso.");
         return "redirect:/produtos";
     }
 
     @PostMapping("/{id}")
-    public String atualizar(
-            @PathVariable Long id,
+    public String atualizar(@PathVariable Long id,
             @Valid @ModelAttribute("produtoRequest") ProdutoRequest request,
-            BindingResult result,
-            @RequestParam(required = false) MultipartFile foto,
-            Model model,
-            RedirectAttributes redirect) {
+            BindingResult result, @RequestParam(required = false) MultipartFile foto,
+            Model model, RedirectAttributes redirect) {
         if (result.hasErrors()) {
             preparar(model, request, id);
             model.addAttribute("erroGlobal", "Revise os campos destacados antes de salvar o produto.");
             return "produtos/form";
         }
-
         try {
             Produto atual = service.buscar(id);
             String fotoAnterior = atual.getFotoArquivo();
@@ -141,7 +128,6 @@ public class ProdutoController {
             model.addAttribute("erroGlobal", exception.getMessage());
             return "produtos/form";
         }
-
         redirect.addFlashAttribute("sucesso", "Produto atualizado com sucesso.");
         return "redirect:/produtos";
     }
@@ -154,9 +140,7 @@ public class ProdutoController {
     }
 
     private void salvarFoto(Produto produto, MultipartFile foto) {
-        if (foto == null || foto.isEmpty()) {
-            return;
-        }
+        if (foto == null || foto.isEmpty()) return;
         String arquivo = imagemStorageService.salvar(foto, "produtos");
         service.atualizarFoto(produto.getId(), arquivo);
     }
@@ -169,19 +153,7 @@ public class ProdutoController {
     }
 
     private ProdutoRequest vazio() {
-        return new ProdutoRequest(
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                UnidadeMedida.UNIDADE,
-                BigDecimal.ZERO,
-                BigDecimal.ZERO,
-                BigDecimal.ZERO,
-                BigDecimal.ZERO,
-                "");
+        return new ProdutoRequest("", "", "", "", "", "", "", UnidadeMedida.UNIDADE,
+                BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "");
     }
 }
