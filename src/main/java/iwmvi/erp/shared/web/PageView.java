@@ -48,7 +48,7 @@ public final class PageView<T> {
         Map<String, ?> parameters) {
         int totalItems = source.size();
         int totalPages = Math.max(1, (int) Math.ceil(totalItems / (double) PAGE_SIZE));
-        int page = Math.max(0, Math.min(requestedPage, totalPages - 1));
+        int page = Math.clamp(requestedPage, 0, totalPages - 1);
         int from = Math.min(page * PAGE_SIZE, totalItems);
         int to = Math.min(from + PAGE_SIZE, totalItems);
 
@@ -58,7 +58,7 @@ public final class PageView<T> {
                 if (value != null && !value.toString().isBlank()) {
                     normalized.put(key, value.toString());
                 }
-        });
+            });
 
         return new PageView<>(
             List.copyOf(source.subList(from, to)),
@@ -111,7 +111,7 @@ public final class PageView<T> {
     }
 
     public String url(int targetPage) {
-        int safePage = Math.max(0, Math.min(targetPage, totalPages - 1));
+        int safePage = Math.clamp(targetPage, 0, totalPages - 1);
         StringBuilder url =
             new StringBuilder(basePath)
                 .append('?')
